@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>슬립메이트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07060F}
+body{font-family:'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit}
+.jua{font-family:'Jua',sans-serif;font-weight:400}
+.press:active{transform:translateY(3px);box-shadow:none!important}
+
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#1B1A36,#07060F 70%)}
+.frame{position:relative;flex-shrink:0;overflow:hidden;border-radius:52px;box-shadow:0 0 0 9px #1A1930,0 0 0 11px #34325A,0 30px 80px rgba(0,0,0,.6)}
+.full .frame{border-radius:0;box-shadow:none}
+#phone{position:absolute;left:0;top:0;width:390px;height:844px;transform-origin:0 0;overflow:hidden;background:#0B0A1A;color:#F2F0FF;user-select:none;-webkit-user-select:none}
+
+/* 시스템 UI */
+.sb{position:absolute;left:0;right:0;top:0;height:47px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:6px 28px 0 36px;pointer-events:none;font-size:16px;font-weight:700;color:#fff}
+.sb-icons{display:flex;gap:6px;align-items:center}
+.island{position:absolute;left:50%;top:11px;width:122px;height:35px;margin-left:-61px;border-radius:20px;background:#000;z-index:51;pointer-events:none}
+.homebar{position:absolute;left:50%;bottom:0;width:200px;height:30px;margin-left:-100px;z-index:60;border:0;background:transparent;padding:0 0 8px;cursor:pointer;display:flex;align-items:flex-end;justify-content:center}
+.homebar span{display:block;width:134px;height:5px;border-radius:3px;background:#fff;opacity:.85}
+.banner{position:absolute;left:10px;right:10px;top:54px;z-index:55;display:flex;gap:12px;align-items:center;padding:12px 14px;border:0;border-radius:24px;background:rgba(46,44,84,.94);box-shadow:0 10px 30px rgba(0,0,0,.45);text-align:left;cursor:pointer;transform:translateY(-160%);transition:transform .5s cubic-bezier(.2,.85,.25,1)}
+.banner.show{transform:none}
+.banner .bi{width:40px;height:40px;border-radius:11px;background:#6C5CE7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.banner .bt{display:flex;justify-content:space-between;font-size:12px;color:#C9C6E0;font-weight:600}
+.banner .bh{font-size:15px;font-weight:700;margin-top:1px}
+.banner .bb{font-size:13px;color:#D9D7EA;margin-top:1px}
+
+/* 화면 전환 */
+.screen{position:absolute;inset:0;overflow:hidden}
+#scr-home{transition:transform .42s cubic-bezier(.2,.85,.25,1),filter .42s}
+#scr-home.dim{transform:scale(.94);filter:brightness(.55)}
+.app{z-index:10;opacity:0;visibility:hidden;transform:scale(.16);border-radius:60px;transition:transform .42s cubic-bezier(.2,.85,.25,1),opacity .3s,border-radius .42s,visibility 0s .42s}
+.app.on{opacity:1;visibility:visible;transform:none;border-radius:0;transition:transform .42s cubic-bezier(.2,.85,.25,1),opacity .2s,border-radius .42s,visibility 0s}
+
+/* 홈 화면 */
+.wall{background:radial-gradient(130% 70% at 50% 0%,#2B2160 0%,#15142B 55%,#0B0A1A 100%)}
+.star{position:absolute;border-radius:50%;background:#fff}
+.h-clock{position:absolute;left:0;right:0;top:62px;text-align:center}
+.h-date{font-size:15px;color:#D9D7EA;font-weight:600}
+.h-time{font-size:72px;line-height:1.05}
+.widget{position:absolute;left:16px;right:16px;top:186px;background:rgba(34,33,64,.94);border:2px solid #3A3866;border-radius:28px;padding:14px 14px 14px;box-shadow:0 5px 0 #07060F;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.w-top{display:flex;align-items:center;justify-content:space-between}
+.w-brand{display:flex;align-items:center;gap:8px;font-size:18px}
+.w-streak{display:flex;align-items:center;gap:4px;font-size:15px;color:#FFC531}
+.w-sub{font-size:13px;color:#B3B0CC;margin:4px 0 10px}
+.w-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.w-m{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:18px;transition:background .5s}
+.w-av{position:relative;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:16px;color:#15142B;flex-shrink:0;transition:opacity .5s}
+.w-dot{position:absolute;right:-2px;top:-2px;width:12px;height:12px;border-radius:50%;border:2px solid #222140}
+.w-n{font-size:14px;font-weight:700}
+.w-s{font-size:12px;font-weight:600}
+.apps{position:absolute;left:10px;right:10px;top:410px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px 0}
+.ic{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;cursor:pointer;font-size:11.5px;color:#EDEBFA}
+.ic .sq{position:relative;width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.ic:active .sq{transform:scale(.9)}
+.ic.hint .sq::after{content:'';position:absolute;inset:-6px;border-radius:21px;border:3px solid #FFC531;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{opacity:1;transform:scale(.92)}100%{opacity:0;transform:scale(1.18)}}
+.ic.nope .sq{animation:nope .35s}
+@keyframes nope{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.pdots{position:absolute;left:0;right:0;bottom:128px;display:flex;justify-content:center;gap:7px}
+.pdots span{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.35}
+.pdots span:first-child{opacity:.9}
+.dock{position:absolute;left:12px;right:12px;bottom:24px;height:88px;border-radius:32px;background:rgba(70,68,115,.45);display:grid;grid-template-columns:repeat(4,1fr);place-items:center}
+.dock .ic span:last-child{display:none}
+
+/* 슬립메이트 앱 */
+.sm{background:#15142B}
+.sm-body{position:absolute;top:47px;left:0;right:0;bottom:84px;overflow-y:auto;scrollbar-width:none}
+.sm-body::-webkit-scrollbar,.mo-feed::-webkit-scrollbar{display:none}
+.sm-top{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 4px}
+.sm-brand{display:flex;align-items:center;gap:8px;font-size:22px}
+.chip-streak{display:flex;align-items:center;gap:6px;padding:5px 12px;border:2px solid #3A3866;border-radius:999px;font-size:17px;color:#FFC531}
+.panel{display:none;padding-bottom:20px}
+.panel.on{display:block}
+.pad{padding:8px 24px 0}
+.c-title{margin:0;font-size:26px;line-height:1.25}
+.c-sub{margin:6px 0 0;font-size:15px;color:#B3B0CC}
+.dial-wrap{display:flex;justify-content:center;padding:14px 0 4px}
+.dial{width:256px;height:256px;border-radius:50%;background:#2D2B52;box-shadow:0 8px 0 #0B0A1A;touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center}
+.locked .dial{cursor:default}
+.ctrl{display:flex;align-items:center;justify-content:space-between;padding:14px 24px 0;gap:12px}
+.sq-btn{width:52px;height:52px;border-radius:16px;border:2px solid #3A3866;background:#222140;box-shadow:0 4px 0 #3A3866;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:opacity .3s}
+.d-label{font-size:38px;line-height:1.1}
+.d-bed{font-size:15px;color:#B3B0CC;margin-top:2px}
+.d-bed b{color:#A99EFF}
+.d-chip{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:700}
+.presets{display:flex;gap:8px;justify-content:center;padding:14px 24px 0;transition:opacity .3s}
+.presets button{height:44px;padding:0 16px;border-radius:14px;border:2px solid #3A3866;background:#222140;color:#F2F0FF;font-size:17px;cursor:pointer;box-shadow:0 3px 0 #3A3866}
+.presets button.sel{background:#2F2A66;color:#C9C2FF;border-color:#8F82FF;box-shadow:0 3px 0 #8F82FF}
+.locked .sq-btn,.locked .presets{opacity:.25;pointer-events:none}
+.cta{width:100%;height:58px;border:none;border-radius:18px;background:#6C5CE7;box-shadow:0 5px 0 #4B3DC2;color:#fff;font-size:22px;cursor:pointer}
+.cta:disabled{background:#123A2A;color:#7EE2AE;box-shadow:0 5px 0 #23995C;border:2px solid #34C27A;font-size:18px;cursor:default}
+.toast{position:absolute;left:16px;right:16px;bottom:98px;z-index:5;background:#123A2A;border:2px solid #34C27A;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 0 #23995C;transform:translateY(20px);opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.2,.85,.25,1)}
+.toast.show{transform:none;opacity:1;visibility:visible}
+.toast-btn{font-size:16px;color:#7EE2AE;padding:10px 14px;border-radius:12px;background:#222140;border:2px solid #34C27A;cursor:pointer;white-space:nowrap}
+.sm-nav{position:absolute;left:0;right:0;bottom:0;height:84px;padding-bottom:24px;border-top:2px solid #3A3866;background:#15142B;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.sm-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;background:none;color:#9894B8;font-size:12px;font-weight:600;cursor:pointer}
+.sm-nav button svg{stroke:#9894B8}
+.sm-nav button.on{color:#A99EFF;font-weight:700}
+.sm-nav button.on svg{stroke:#6C5CE7}
+.splash{position:absolute;inset:0;z-index:20;background:radial-gradient(circle at 50% 40%,#3A2E8C,#15142B 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .45s,visibility 0s .45s}
+.splash.hide{opacity:0;visibility:hidden}
+.splash .sp-tag{font-size:15px;color:#C9C2FF}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:20px 20px 0}
+.sec h2{margin:0;font-size:21px;font-weight:400}
+.sec span{font-size:13px;color:#B3B0CC}
+.card-streak{margin:10px 20px 0;border-radius:24px;background:#2D2B52;box-shadow:0 6px 0 #0B0A1A;padding:18px 20px;display:flex;align-items:center;gap:16px}
+.week{margin:18px 20px 0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
+.week div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#B3B0CC}
+.week i{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #3A3866;background:#222140}
+.week i.done{background:#FFC531;border-color:#E0A400}
+.week i.today{border-color:#8F82FF}
+.warn{margin:16px 20px 0;padding:12px 14px;border-radius:16px;background:#3A2614;border:2px solid #6B4520;display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#FFD3A6;line-height:1.45}
+.g-list{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;overflow:hidden}
+.g-row{display:flex;align-items:center;gap:12px;padding:11px 14px}
+.g-row+.g-row{border-top:2px solid #3A3866}
+.g-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:#15142B;flex-shrink:0}
+.g-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:13px;font-weight:700;transition:background .5s}
+.g-chip i{width:10px;height:10px;border-radius:50%}
+.ghost{width:100%;height:56px;border:2px solid #3A3866;border-radius:18px;background:#222140;box-shadow:0 4px 0 #3A3866;color:#A99EFF;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.st-card{margin:12px 20px 0;border:2px solid #34C27A;border-radius:22px;box-shadow:0 5px 0 #23995C;padding:16px;background:#123A2A}
+.st-tiles{margin:14px 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.st-tiles div{border:2px solid #3A3866;border-radius:18px;padding:12px 14px;font-size:13px;color:#B3B0CC;font-weight:600}
+.st-tiles b{display:block;font-family:'Jua',sans-serif;font-weight:400;font-size:25px;color:#F2F0FF;margin-top:2px}
+.chart{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:14px 12px 10px}
+.bars{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end}
+.bars button{border-radius:10px 10px 6px 6px;padding:0;cursor:pointer;border:3px solid transparent}
+.bars button.sel{border-color:#F2F0FF}
+.legend{display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:12px;color:#B3B0CC;font-weight:600}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend i{width:10px;height:10px;border-radius:3px}
+
+/* 모먼트 (콘텐츠 앱) */
+.mo{background:#000;color:#F5F5F5}
+.mo-head{position:absolute;left:0;right:0;top:47px;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#000;z-index:2}
+.mo-logo{font-family:'Pacifico',cursive;font-size:26px;line-height:1}
+.mo-feed{position:absolute;left:0;right:0;top:97px;bottom:84px;overflow-y:auto;scrollbar-width:none}
+.stories{display:flex;gap:14px;padding:8px 14px 12px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #1E1E1E}
+.stories::-webkit-scrollbar{display:none}
+.story{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;color:#E5E5E5;flex-shrink:0;width:68px}
+.story .ring{width:68px;height:68px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#FFC531,#FF5A7A 50%,#A44CE0)}
+.story .ring.seen{background:#3A3A3A}
+.story .av{width:100%;height:100%;border-radius:50%;border:3px solid #000;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:22px;color:#15142B}
+.post{padding-bottom:14px}
+.p-head{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.p-head .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px;color:#15142B}
+.p-head b{font-size:14px}
+.p-head small{display:block;font-size:12px;color:#A8A8A8}
+.p-img svg{display:block;width:390px;height:390px}
+.p-act{display:flex;align-items:center;gap:14px;padding:10px 12px 4px}
+.p-act button{background:none;border:0;padding:0;cursor:pointer;display:flex}
+.p-act .sp{flex:1}
+.like.on svg path{fill:#FF3B5C;stroke:#FF3B5C}
+.like.pop{animation:pop .3s}
+@keyframes pop{50%{transform:scale(1.25)}}
+.p-likes{padding:2px 12px;font-size:14px;font-weight:700}
+.p-cap{padding:2px 12px;font-size:14px;line-height:1.45}
+.p-time{padding:4px 12px 0;font-size:12px;color:#8A8A8A}
+.mo-nav{position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 10px 30px;background:#000;border-top:1px solid #1E1E1E;display:flex;align-items:center;justify-content:space-around}
+.mo-nav span{display:flex}
+
+/* 팝업 시계 */
+.popup{position:absolute;z-index:40;top:150px;right:14px;width:124px;height:150px;border-radius:26px;background:rgba(40,38,74,.97);border:2px solid #4A4780;box-shadow:0 5px 0 rgba(0,0,0,.45);padding:0;margin:0;color:#F2F0FF;cursor:grab;touch-action:none;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:top .32s cubic-bezier(.2,.8,.2,1),right .32s cubic-bezier(.2,.8,.2,1),width .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),border-radius .32s,transform .32s cubic-bezier(.2,.8,.2,1),opacity 1s,visibility 0s}
+.popup.collapsed{top:230px;right:-2px;width:42px;height:176px;border-radius:20px 0 0 20px}
+.popup.dragging{transition:opacity 1s}
+.popup.off{opacity:0!important;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s}
+.popup *{pointer-events:none}
+.pp-x{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pp-wrap{position:relative;width:92px;height:92px}
+.pp-light{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #15142B;z-index:2;transition:background .6s,box-shadow .6s}
+.pp-ring{position:absolute;inset:8px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pp-hole{width:60px;height:60px;border-radius:50%;background:#15142B;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pp-left{font-size:19px;line-height:1}
+.pp-cap{font-size:10px;font-weight:700;color:#B3B0CC}
+.pp-awake{font-size:12px;font-weight:700}
+.pp-goal{font-size:11px;color:#B3B0CC;margin-top:-4px}
+.pp-c{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pp-c .dot{width:10px;height:10px;border-radius:50%}
+.pp-bar{width:8px;height:52px;border-radius:4px;background:#3A3866;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;margin-top:4px}
+.pp-bar div{width:100%;border-radius:4px;transition:height .6s}
+
+.notice{position:absolute;z-index:45;left:10px;right:10px;bottom:94px;background:#222140;border:2px solid #3A3866;border-radius:24px;padding:16px;box-shadow:0 5px 0 #0B0A1A,0 16px 40px rgba(0,0,0,.6);transform:translateY(40px);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.2,.85,.25,1),opacity .3s,visibility 0s .45s}
+.notice.show{transform:none;opacity:1;visibility:visible;transition:transform .45s cubic-bezier(.2,.85,.25,1),opacity .3s,visibility 0s}
+.n-av{position:relative;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:19px;color:#15142B;flex-shrink:0}
+.n-moon{position:absolute;right:-3px;bottom:-3px;width:20px;height:20px;border-radius:50%;background:#15142B;display:flex;align-items:center;justify-content:center}
+.n-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.n-btns button{height:48px;border-radius:14px;font-size:17px;cursor:pointer}
+
+.sleep{position:absolute;inset:0;z-index:70;background:#07060F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px;opacity:0;visibility:hidden;transition:opacity .9s,visibility 0s .9s}
+.sleep.show{opacity:1;visibility:visible;transition:opacity .9s,visibility 0s}
+.sleep .msg{font-size:15px;color:#B3B0CC;line-height:1.6;max-width:28ch}
+.sleep .ghost{width:auto;padding:0 22px;height:46px;font-size:16px;color:#F2F0FF;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="frame" id="frame">
+<div id="phone">
+
+  <!-- 홈 화면 -->
+  <section class="screen wall" id="scr-home" aria-label="홈 화면">
+    <div id="stars"></div>
+    <div class="h-clock">
+      <div class="h-date">10월 12일 월요일</div>
+      <div class="h-time jua" id="h-time">23:00</div>
+    </div>
+    <button class="widget" id="widget" aria-label="슬립메이트 위젯 열기">
+      <div class="w-top">
+        <div class="w-brand jua"><span class="mascot" data-s="28"></span>우리 수면 그룹</div>
+        <span class="w-streak jua"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>12일</span>
+      </div>
+      <div class="w-sub" id="w-sub"></div>
+      <div class="w-grid" id="w-grid"></div>
+    </button>
+    <div class="apps" id="apps"></div>
+    <div class="pdots" aria-hidden="true"><span></span><span></span></div>
+    <div class="dock" id="dock"></div>
+  </section>
+
+  <!-- 슬립메이트 -->
+  <section class="screen app sm" id="scr-sm" aria-label="슬립메이트">
+    <div class="sm-body" id="sm-body">
+      <div class="sm-top">
+        <div class="sm-brand jua"><span class="mascot" data-s="40"></span>슬립메이트</div>
+        <div class="chip-streak jua"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>12일</div>
+      </div>
+
+      <div class="panel on" id="tab-clock">
+        <div class="pad">
+          <h1 class="c-title jua" id="c-title">오늘 밤, 폰은 얼마나 할까요?</h1>
+          <p class="c-sub" id="c-sub">가운데 태엽을 돌려서 시간을 감아 주세요</p>
+        </div>
+        <div class="dial-wrap">
+          <div class="dial" id="dial">
+            <svg width="242" height="242" viewBox="0 0 280 280" role="img" id="d-svg" aria-label="태엽 시계">
+              <circle cx="140" cy="140" r="122" id="d-face" fill="#262449"/>
+              <path id="d-wedge" d="" fill="#34C27A"/>
+              <path id="d-minor" stroke="#E8E6FF" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+              <path id="d-major" stroke="#E8E6FF" stroke-width="4" stroke-linecap="round"/>
+              <text x="140" y="56" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">0</text>
+              <text x="226" y="147" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">15</text>
+              <text x="140" y="238" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">30</text>
+              <text x="54" y="147" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">45</text>
+              <g id="d-hand"><line x1="140" y1="140" x2="140" y2="40" stroke="#FF7A45" stroke-width="5" stroke-linecap="round"/><circle cx="140" cy="40" r="7" fill="#FF7A45"/></g>
+              <g id="d-crown">
+                <path id="d-crown-p" fill="#6C5CE7" stroke="#2B2A3A" stroke-width="3" stroke-linejoin="round"/>
+                <circle cx="140" cy="140" r="17" fill="#8F82FF" stroke="#2B2A3A" stroke-width="2.5"/>
+                <rect x="136" y="126" width="8" height="28" rx="4" fill="#FFF8EC"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="ctrl">
+          <button class="sq-btn press" id="minus" aria-label="5분 줄이기"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" stroke="#F2F0FF" stroke-width="3" stroke-linecap="round"/></svg></button>
+          <div style="text-align:center;flex:1">
+            <div class="d-label jua" id="d-label">45분</div>
+            <div class="d-bed" id="d-bed"></div>
+            <div class="d-chip" id="d-chip"></div>
+          </div>
+          <button class="sq-btn press" id="plus" aria-label="5분 늘리기"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="#F2F0FF" stroke-width="3" stroke-linecap="round"/></svg></button>
+        </div>
+        <div class="presets" id="presets">
+          <button class="press jua" data-v="15">15분</button>
+          <button class="press jua" data-v="30">30분</button>
+          <button class="press jua" data-v="60">1시간</button>
+        </div>
+        <div class="pad" style="padding-top:18px">
+          <button class="cta press jua" id="save">이대로 감기 완료</button>
+        </div>
+      </div>
+
+      <div class="panel" id="tab-group">
+        <div class="sec" style="margin-top:12px"><h2 class="jua">우리 수면 그룹</h2><span>4명</span></div>
+        <div class="card-streak">
+          <svg width="68" height="68" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/><circle cx="18" cy="5" r="1" fill="#fff"/><circle cx="21" cy="9" r=".7" fill="#fff"/></svg>
+          <div>
+            <div class="jua" style="font-size:40px;line-height:1;color:#FFC531">12일 연속</div>
+            <div style="font-size:14px;color:#E4E2F2;margin-top:6px">어젯밤 4명 모두 계획대로 잠들었어요</div>
+          </div>
+        </div>
+        <div class="week" id="week"></div>
+        <div class="warn">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFB067" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.5"/></svg>
+          <span>한 명이라도 계획한 시간을 넘기면 연속 기록이 0일로 돌아가요</span>
+        </div>
+        <div class="sec"><h2 class="jua">오늘 밤 현황</h2><span id="g-time">23:00 기준</span></div>
+        <div class="g-list" id="g-list"></div>
+        <div style="padding:16px 20px 0">
+          <button class="ghost press jua"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A99EFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>친구 초대하기</button>
+        </div>
+      </div>
+
+      <div class="panel" id="tab-stats">
+        <div class="sec" style="margin-top:12px"><h2 class="jua">수면 기록</h2></div>
+        <div class="st-card">
+          <div style="font-size:13px;color:#A8E9C6;font-weight:600">어젯밤 · 10월 11일</div>
+          <div class="jua" style="font-size:25px;color:#7EE2AE;margin-top:2px">계획보다 13분 일찍 잠들었어요</div>
+          <div style="margin-top:12px;height:14px;border-radius:999px;background:#222140;border:2px solid #2E6B4C;overflow:hidden"><div style="width:71%;height:100%;background:#34C27A;border-radius:999px"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#A8E9C6;margin-top:6px;font-weight:600"><span>사용 32분</span><span>계획 45분</span></div>
+        </div>
+        <div class="st-tiles">
+          <div>잠든 시각<b>23:32</b></div>
+          <div>수면 시간<b>7시간 18분</b></div>
+          <div>잠들기까지<b>32분</b></div>
+          <div>내 연속 기록<b style="color:#FFC531">15일</b></div>
+        </div>
+        <div class="sec"><h2 class="jua">지난주 폰 사용 시간</h2><span>막대를 눌러 보세요</span></div>
+        <div class="chart">
+          <div style="font-size:14px;font-weight:700;min-height:20px" id="st-detail"></div>
+          <div style="position:relative;height:130px;margin-top:8px">
+            <div id="st-goal" style="position:absolute;left:0;right:0;border-top:2px dashed #8F82FF"></div>
+            <span id="st-goal-l" style="position:absolute;right:0;font-size:11px;font-weight:700;color:#A99EFF;background:#15142B;padding:0 4px">계획 45분</span>
+            <div class="bars" id="st-bars"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;text-align:center;margin-top:6px;font-size:12px;font-weight:700;color:#B3B0CC" id="st-days"></div>
+          <div class="legend"><span><i style="background:#34C27A"></i>계획 이내</span><span><i style="background:#FFC531"></i>조금 초과</span><span><i style="background:#FF5A4E"></i>많이 초과</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status">
+      <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="11" fill="#34C27A"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="flex:1;min-width:0">
+        <div class="jua" style="font-size:18px;color:#7EE2AE">태엽을 다 감았어요!</div>
+        <div style="font-size:13px;color:#A8E9C6"><span id="toast-bed">23:45</span>까지 팝업 시계가 함께해요</div>
+      </div>
+      <button class="toast-btn jua press" id="toast-home">홈으로</button>
+    </div>
+
+    <nav class="sm-nav" id="sm-nav" aria-label="슬립메이트 메뉴">
+      <button class="on" data-tab="clock"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 4l3-2M19 4l-3-2"/></svg>시계</button>
+      <button data-tab="group"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.8"/><path d="M16.5 14.6c2.6.2 4.4 2 5 5"/></svg>그룹</button>
+      <button data-tab="stats"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>기록</button>
+    </nav>
+
+    <div class="splash hide" id="splash">
+      <span class="mascot" data-s="104"></span>
+      <div class="jua" style="font-size:36px">슬립메이트</div>
+      <div class="sp-tag">친구와 함께 일찍 잠드는 습관</div>
+    </div>
+  </section>
+
+  <!-- 모먼트 (콘텐츠 앱) -->
+  <section class="screen app mo" id="scr-mo" aria-label="모먼트">
+    <header class="mo-head">
+      <span class="mo-logo">moment</span>
+      <span style="display:flex;gap:20px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></svg>
+      </span>
+    </header>
+    <div class="mo-feed" id="feed">
+      <div class="stories" id="stories"></div>
+      <div id="posts"></div>
+    </div>
+    <nav class="mo-nav" aria-hidden="true">
+      <span><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5V21h-6v-6H9v6H3z" fill="#F5F5F5"/></svg></span>
+      <span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></span>
+      <span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg></span>
+      <span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M3 8h18M8 3l3 5M14 3l3 5"/><path d="M10 11.5v6l5-3z" fill="#F5F5F5"/></svg></span>
+      <span><span style="width:28px;height:28px;border-radius:50%;background:#C2BAFF;border:2px solid #F5F5F5;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:13px;color:#15142B">나</span></span>
+    </nav>
+  </section>
+
+  <!-- 다른 앱 위에 뜨는 팝업 시계 -->
+  <button class="popup off" id="popup" aria-label="팝업 시계"></button>
+
+  <div class="notice" id="notice" role="status">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="n-av" id="n-av"></div>
+      <div style="min-width:0">
+        <div class="jua" style="font-size:18px" id="n-title"></div>
+        <div style="font-size:13px;color:#B3B0CC;margin-top:2px" id="n-sub"></div>
+      </div>
+    </div>
+    <div class="n-btns">
+      <button class="press jua" id="snooze" style="border:2px solid #3A3866;background:#2D2B52;box-shadow:0 4px 0 #3A3866;color:#F2F0FF">5분만 더</button>
+      <button class="press jua" id="sleepNow" style="border:none;background:#34C27A;box-shadow:0 4px 0 #23995C;color:#0F2A1C">나도 끄고 자기</button>
+    </div>
+  </div>
+
+  <div class="sb" aria-hidden="true">
+    <span id="sb-time">23:00</span>
+    <span class="sb-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="#fff"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#fff"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5l2.4-2.9a3.6 3.6 0 0 0-4.8 0zM3.5 6.2a6.8 6.8 0 0 1 9 0l1.4-1.7a9 9 0 0 0-11.8 0zM.2 2.8l1.4 1.7a10.2 10.2 0 0 1 12.8 0l1.4-1.7a12.5 12.5 0 0 0-15.6 0z" fill="#fff"/></svg>
+      <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="#fff" stroke-opacity=".45"/><rect x="2" y="2" width="15" height="9" rx="2" fill="#fff"/><path d="M25 4.5v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".45"/></svg>
+    </span>
+  </div>
+  <div class="island" aria-hidden="true"></div>
+
+  <button class="banner" id="banner" aria-label="슬립메이트 알림 열기">
+    <span class="bi"><span class="mascot" data-s="32"></span></span>
+    <span style="flex:1;min-width:0;display:block">
+      <span class="bt"><span>슬립메이트</span><span>지금</span></span>
+      <span class="bh" style="display:block">오늘 밤 태엽을 감을 시간이에요</span>
+      <span class="bb" style="display:block">지민, 서윤, 도현님은 벌써 계획을 세웠어요</span>
+    </span>
+  </button>
+
+  <div class="sleep" id="sleep">
+    <svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>
+    <div class="jua" style="font-size:30px">잘 자요</div>
+    <div class="msg" id="sleep-msg"></div>
+    <button class="ghost press jua" id="restart">처음부터 다시 보기</button>
+  </div>
+
+  <button class="homebar" id="homebar" aria-label="홈으로"><span></span></button>
+</div>
+</div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var phone = $('phone'), frame = $('frame'), scale = 1;
+
+  function fit() {
+    var small = innerWidth < 520;
+    document.body.classList.toggle('full', small);
+    var pad = small ? 0 : 56;
+    scale = Math.min((innerWidth - pad) / 390, (innerHeight - pad) / 844);
+    if (!small) scale = Math.min(scale, 1);
+    phone.style.transform = 'scale(' + scale + ')';
+    frame.style.width = 390 * scale + 'px';
+    frame.style.height = 844 * scale + 'px';
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  /* ---------- 공통 데이터 ---------- */
+  var MS_PER_MIN = 1000;          // 실제 1초 = 앱 속 1분
+  var START = 23 * 60, T_MAX = 120;
+  var people = [
+    { name: '나', sleepAt: null, color: '#C2BAFF' },
+    { name: '지민', sleepAt: 20, goal: '23:25', color: '#FFD8A8' },
+    { name: '서윤', sleepAt: 38, goal: '23:40', color: '#B9EBCF' },
+    { name: '도현', sleepAt: 55, goal: '00:00', color: '#FFC9D1' }
+  ];
+  var MOON = '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>';
+  function mascot(s) {
+    return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 48 48" aria-hidden="true">' +
+      '<path d="M13 42 L10 46 M35 42 L38 46" stroke="#B3B0CC" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
+      '<circle cx="11" cy="11" r="6" fill="#FFC531" stroke="#2B2A3A" stroke-width="2.5"/>' +
+      '<circle cx="37" cy="11" r="6" fill="#FFC531" stroke="#2B2A3A" stroke-width="2.5"/>' +
+      '<circle cx="24" cy="27" r="17" fill="#6C5CE7" stroke="#2B2A3A" stroke-width="2.5"/>' +
+      '<circle cx="24" cy="27" r="12" fill="#FFF8EC"/>' +
+      '<path d="M16.5 25 q2.5 2.5 5 0 M26.5 25 q2.5 2.5 5 0 M21 31 q3 2.2 6 0" stroke="#2B2A3A" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.mascot'), function (el) {
+    el.style.display = 'inline-flex';
+    el.innerHTML = mascot(+el.dataset.s);
+  });
+
+  var S, lastMin, shownKey, bannerTimer;
+  function initState() {
+    S = { screen: 'home', tab: 'clock', raw: 45, plan: null, t: 0, collapsed: false,
+          dismissed: {}, reminders: [], asleep: false, splashed: false, visitedFeed: false };
+    lastMin = -1; shownKey = null;
+  }
+  initState();
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function hm(m) { m = ((m % 1440) + 1440) % 1440; return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); }
+  function now() { return Math.floor(S.t); }
+  function isAwake(i) { var p = people[i]; return p.sleepAt == null ? !S.asleep : now() < p.sleepAt; }
+  function awakeNames() { return people.filter(function (p, i) { return isAwake(i); }).map(function (p) { return p.name; }); }
+  function dur(m) { var h = Math.floor(m / 60), r = m % 60; return h ? (r ? h + '시간 ' + r + '분' : h + '시간') : r + '분'; }
+
+  /* ---------- 홈 화면 ---------- */
+  (function buildHome() {
+    var pts = [[30, 18], [92, 60], [150, 30], [214, 44], [280, 20], [350, 70], [60, 160], [330, 150], [20, 520], [370, 470], [120, 690], [300, 640], [200, 120], [45, 400]];
+    $('stars').innerHTML = pts.map(function (p, i) {
+      var r = i % 3 === 0 ? 3 : 2;
+      return '<span class="star" style="left:' + p[0] + 'px;top:' + p[1] + 'px;width:' + r + 'px;height:' + r + 'px;opacity:' + (i % 2 ? .35 : .6) + '"></span>';
+    }).join('');
+    var g = function (d, extra) { return '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"' + (extra || '') + '>' + d + '</svg>'; };
+    var apps = [
+      ['메모', '#D9A62E', g('<path d="M7 8h10M7 12h10M7 16h6"/>')],
+      ['사진', 'linear-gradient(135deg,#FF8A65,#B75CFF)', g('<path d="M4 18l5-6 4 4 3-3 4 5z"/><circle cx="16" cy="8" r="2"/>')],
+      ['음악', '#E5484D', g('<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>')],
+      ['지도', '#2FA36B', g('<path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2"/>')],
+      ['캘린더', '#F2F0FF', '<span style="display:flex;flex-direction:column;align-items:center;line-height:1"><span style="font-size:10px;font-weight:700;color:#E5484D">월요일</span><span style="font-size:26px;color:#15142B;font-weight:400" class="jua">12</span></span>'],
+      ['날씨', '#3E7BE0', g('<path d="M7 18h10a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.5A3.3 3.3 0 0 0 7 18z"/>')],
+      ['슬립메이트', '#6C5CE7', mascot(48), 'sm'],
+      ['모먼트', 'linear-gradient(45deg,#FFC531,#FF5A7A 50%,#A44CE0)', g('<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6" fill="#fff"/>'), 'mo']
+    ];
+    var dock = [
+      ['전화', '#34C27A', '<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h3l1.5 4-2 1.3a11 11 0 0 0 5.1 5.1l1.3-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="#fff"/></svg>'],
+      ['메시지', '#4C8DF6', '<svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c5 0 9 3.2 9 7.2s-4 7.2-9 7.2c-1 0-2-.1-2.9-.4L5 20l1-3.6c-1.9-1.3-3-3.1-3-5.2C3 7.2 7 4 12 4z" fill="#fff"/></svg>'],
+      ['브라우저', '#F2F0FF', '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3E7BE0" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="#E5484D" stroke="none"/></svg>'],
+      ['카메라', '#5E5B80', g('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>')]
+    ];
+    function icon(a) {
+      return '<button class="ic" ' + (a[3] ? 'id="ic-' + a[3] + '" data-app="' + a[3] + '"' : '') + ' aria-label="' + a[0] + '">' +
+        '<span class="sq" style="background:' + a[1] + '">' + a[2] + '</span><span>' + a[0] + '</span></button>';
+    }
+    $('apps').innerHTML = apps.map(icon).join('');
+    $('dock').innerHTML = dock.map(icon).join('');
+    $('scr-home').addEventListener('click', function (e) {
+      var ic = e.target.closest('.ic');
+      if (!ic) return;
+      if (ic.dataset.app) { openApp(ic.dataset.app, ic.querySelector('.sq')); return; }
+      ic.classList.remove('nope'); void ic.offsetWidth; ic.classList.add('nope');
+    });
+    $('widget').addEventListener('click', function () { openApp('sm', $('widget')); });
+  })();
+
+  function memberLook(a) {
+    return {
+      dot: a ? '#FFC531' : '#5E5B80',
+      glow: a ? '0 0 8px 2px rgba(255,197,49,.75)' : 'none',
+      bg: a ? '#3D3418' : '#2D2B52',
+      fg: a ? '#FFD66B' : '#B3B0CC',
+      status: a ? '폰 하는 중' : '잠들었어요'
+    };
+  }
+  function renderHome() {
+    $('h-time').textContent = hm(START + now());
+    var n = awakeNames().length;
+    $('w-sub').textContent = n === 4 ? '4명 모두 깨어 있어요' : n + '명 깨어 있음 · ' + (4 - n) + '명 잠들었어요';
+    $('w-grid').innerHTML = people.map(function (p, i) {
+      var a = isAwake(i), L = memberLook(a);
+      return '<div class="w-m" style="background:' + L.bg + '"><div class="w-av" style="background:' + p.color + ';opacity:' + (a ? 1 : .55) + '">' + p.name.slice(0, 1) +
+        '<span class="w-dot" style="background:' + L.dot + ';box-shadow:' + L.glow + '"></span></div>' +
+        '<div><div class="w-n">' + p.name + '</div><div class="w-s" style="color:' + L.fg + '">' + L.status + '</div></div></div>';
+    }).join('');
+    $('ic-sm').classList.toggle('hint', S.plan == null);
+    $('ic-mo').classList.toggle('hint', S.plan != null && !S.visitedFeed);
+  }
+
+  /* ---------- 화면 이동 ---------- */
+  function originOf(el) {
+    var r = el.getBoundingClientRect(), pr = phone.getBoundingClientRect();
+    return ((r.left + r.width / 2 - pr.left) / scale) + 'px ' + ((r.top + r.height / 2 - pr.top) / scale) + 'px';
+  }
+  function openApp(name, fromEl) {
+    if (S.screen === name || S.asleep) return;
+    var el = $('scr-' + name);
+    el.style.transformOrigin = originOf(fromEl || $('ic-' + name));
+    $('banner').classList.remove('show');
+    clearTimeout(bannerTimer);
+    if (name === 'sm' && !S.splashed) {
+      S.splashed = true;
+      $('splash').classList.remove('hide');
+      setTimeout(function () { $('splash').classList.add('hide'); }, 1200);
+    }
+    if (name === 'mo') S.visitedFeed = true;
+    el.classList.add('on');
+    $('scr-home').classList.add('dim');
+    S.screen = name;
+    renderLive();
+  }
+  function goHome() {
+    if (S.screen === 'home' || S.asleep) return;
+    var el = $('scr-' + S.screen);
+    el.style.transformOrigin = originOf($('ic-' + S.screen));
+    el.classList.remove('on');
+    $('scr-home').classList.remove('dim');
+    $('toast').classList.remove('show');
+    S.screen = 'home';
+    renderLive();
+  }
+  $('homebar').addEventListener('click', goHome);
+  $('toast-home').addEventListener('click', goHome);
+  $('banner').addEventListener('click', function () { openApp('sm', $('banner').querySelector('.bi')); });
+  function scheduleBanner() {
+    clearTimeout(bannerTimer);
+    bannerTimer = setTimeout(function () {
+      if (S.screen === 'home' && S.plan == null) $('banner').classList.add('show');
+    }, 1400);
+  }
+
+  /* ---------- 슬립메이트: 태엽 시계 ---------- */
+  (function buildDial() {
+    var cx = 140, cy = 140, minor = '', major = '', crown = '';
+    for (var i = 0; i < 60; i++) {
+      var a = (i / 60) * 2 * Math.PI, s = Math.sin(a), c = Math.cos(a);
+      var r1 = i % 5 === 0 ? 100 : 106, r2 = 114;
+      var seg = 'M' + (cx + r1 * s).toFixed(1) + ' ' + (cy - r1 * c).toFixed(1) + 'L' + (cx + r2 * s).toFixed(1) + ' ' + (cy - r2 * c).toFixed(1);
+      if (i % 5 === 0) major += seg; else minor += seg;
+    }
+    for (var j = 0; j < 36; j++) {
+      var b = (j / 36) * 2 * Math.PI, r = j % 2 === 0 ? 38 : 32;
+      crown += (j === 0 ? 'M' : 'L') + (cx + r * Math.sin(b)).toFixed(1) + ' ' + (cy - r * Math.cos(b)).toFixed(1);
+    }
+    $('d-minor').setAttribute('d', minor);
+    $('d-major').setAttribute('d', major);
+    $('d-crown-p').setAttribute('d', crown + 'Z');
+  })();
+
+  function renderDial() {
+    var active = S.plan != null;
+    var left = active ? S.plan - now() : 0;
+    var raw = active ? Math.max(left, 0) : S.raw;
+    var mins = active ? raw : Math.round(raw / 5) * 5;
+    var frac = (raw % 60) / 60, wedge = '';
+    if (raw >= 60 && frac < 0.001) wedge = 'M140 28 A112 112 0 1 1 139.99 28 Z';
+    else if (frac > 0.001) {
+      var a = frac * 2 * Math.PI;
+      wedge = 'M140 140 L140 28 A112 112 0 ' + (frac > 0.5 ? 1 : 0) + ' 1 ' + (140 + 112 * Math.sin(a)).toFixed(2) + ' ' + (140 - 112 * Math.cos(a)).toFixed(2) + ' Z';
+    }
+    var zone = mins < 25 ? 0 : mins < 60 ? 1 : 2;
+    $('d-wedge').setAttribute('d', wedge);
+    $('d-wedge').setAttribute('fill', active ? '#34C27A' : ['#34C27A', '#FFC531', '#FF5A4E'][zone]);
+    $('d-face').setAttribute('fill', ['#262449', '#4A2030', '#5A2434', '#6A2838'][Math.min(Math.floor(raw / 60), 3)]);
+    $('d-hand').setAttribute('transform', 'rotate(' + frac * 360 + ' 140 140)');
+    $('d-crown').setAttribute('transform', 'rotate(' + raw * 12 + ' 140 140)');
+    var chip = $('d-chip');
+    if (active) {
+      $('d-label').textContent = left >= 0 ? dur(left) + ' 남음' : '+' + dur(-left) + ' 초과';
+      $('d-bed').innerHTML = '지금 ' + hm(START + now()) + ' · 목표 취침 <b>' + hm(START + S.plan) + '</b>';
+      chip.textContent = left >= 0 ? '태엽이 풀리는 중' : '약속 시간이 지났어요';
+      chip.style.background = left >= 0 ? '#123A2A' : '#4A1E24';
+      chip.style.color = left >= 0 ? '#7EE2AE' : '#FF8A80';
+    } else {
+      $('d-label').textContent = dur(mins);
+      $('d-bed').innerHTML = '지금 23:00 · 목표 취침 <b>' + hm(START + mins) + '</b>';
+      chip.textContent = ['짧고 좋아요', '조금 길어요', '너무 길어요'][zone];
+      chip.style.background = ['#123A2A', '#3D3418', '#4A1E24'][zone];
+      chip.style.color = ['#7EE2AE', '#FFD66B', '#FF8A80'][zone];
+    }
+    $('d-svg').setAttribute('aria-label', '태엽 시계: ' + $('d-label').textContent);
+    Array.prototype.forEach.call($('presets').children, function (b) { b.classList.toggle('sel', !active && +b.dataset.v === mins); });
+    $('tab-clock').classList.toggle('locked', active);
+    $('c-title').textContent = active ? '오늘 밤 태엽이 풀리는 중' : '오늘 밤, 폰은 얼마나 할까요?';
+    $('c-sub').textContent = active ? '팝업 시계가 다른 앱 위에서 함께해요' : '가운데 태엽을 돌려서 시간을 감아 주세요';
+    $('save').disabled = active;
+    $('save').textContent = active ? hm(START + S.plan) + '까지 함께하는 중' : '이대로 감기 완료';
+  }
+
+  (function wireDial() {
+    var dial = $('dial'), c, last, drag = false;
+    var clamp = function (v) { return Math.max(0, Math.min(180, v)); };
+    var snap = function (v) { return Math.round(v / 5) * 5; };
+    dial.addEventListener('pointerdown', function (e) {
+      if (S.plan != null) return;
+      var r = dial.getBoundingClientRect();
+      c = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      last = Math.atan2(e.clientY - c.y, e.clientX - c.x);
+      drag = true;
+      try { dial.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    dial.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var a = Math.atan2(e.clientY - c.y, e.clientX - c.x), d = a - last;
+      if (d > Math.PI) d -= 2 * Math.PI;
+      if (d < -Math.PI) d += 2 * Math.PI;
+      last = a;
+      S.raw = clamp(S.raw + (d / (2 * Math.PI)) * 60);
+      renderDial();
+    });
+    var up = function () { if (!drag) return; drag = false; S.raw = snap(S.raw); renderDial(); };
+    dial.addEventListener('pointerup', up);
+    dial.addEventListener('pointercancel', up);
+    $('minus').addEventListener('click', function () { S.raw = clamp(snap(S.raw) - 5); renderDial(); });
+    $('plus').addEventListener('click', function () { S.raw = clamp(snap(S.raw) + 5); renderDial(); });
+    $('presets').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { S.raw = +b.dataset.v; renderDial(); } });
+    $('save').addEventListener('click', function () {
+      if (S.plan != null) return;
+      S.plan = Math.max(5, snap(S.raw));
+      S.t = 0; lastMin = -1;
+      $('toast-bed').textContent = hm(START + S.plan);
+      $('toast').classList.add('show');
+      renderLive();
+    });
+  })();
+
+  /* ---------- 슬립메이트: 탭 ---------- */
+  $('sm-nav').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    S.tab = b.dataset.tab;
+    Array.prototype.forEach.call($('sm-nav').children, function (x) { x.classList.toggle('on', x === b); });
+    ['clock', 'group', 'stats'].forEach(function (t) { $('tab-' + t).classList.toggle('on', t === S.tab); });
+    $('sm-body').scrollTop = 0;
+  });
+
+  $('week').innerHTML = ['화', '수', '목', '금', '토', '일', '월'].map(function (d, i) {
+    var done = i < 6;
+    return '<div>' + d + '<i class="' + (done ? 'done' : 'today') + '">' + (done ? '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#2B2A3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '') + '</i></div>';
+  }).join('');
+
+  function renderGroup() {
+    $('g-time').textContent = hm(START + now()) + ' 기준';
+    $('g-list').innerHTML = people.map(function (p, i) {
+      var a = isAwake(i), L = memberLook(a);
+      var goal = p.sleepAt == null ? (S.plan != null ? hm(START + S.plan) : '아직 안 정했어요') : p.goal;
+      return '<div class="g-row"><div class="g-av" style="background:' + p.color + '">' + p.name.slice(0, 1) + '</div>' +
+        '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">' + p.name + '</div><div style="font-size:13px;color:#B3B0CC">목표 취침 ' + goal + '</div></div>' +
+        '<div class="g-chip" style="background:' + L.bg + ';color:' + L.fg + '"><i style="background:' + L.dot + ';box-shadow:' + L.glow + '"></i>' + L.status + '</div></div>';
+    }).join('');
+  }
+
+  (function buildStats() {
+    var goal = 45, maxV = 90, H = 130, sel = 6;
+    var data = [['월', 40], ['화', 52], ['수', 30], ['목', 81], ['금', 45], ['토', 38], ['일', 32]];
+    var goalPx = H - Math.round((goal / maxV) * H);
+    $('st-goal').style.top = goalPx + 'px';
+    $('st-goal-l').style.top = (goalPx - 16) + 'px';
+    $('st-days').innerHTML = data.map(function (d) { return '<span>' + d[0] + '</span>'; }).join('');
+    function draw() {
+      $('st-bars').innerHTML = data.map(function (d, i) {
+        var over = d[1] - goal, color = over <= 0 ? '#34C27A' : over <= 15 ? '#FFC531' : '#FF5A4E';
+        return '<button data-i="' + i + '" class="' + (i === sel ? 'sel' : '') + '" style="height:' + Math.round((Math.min(d[1], maxV) / maxV) * H) + 'px;background:' + color + '" aria-label="' + d[0] + '요일 ' + d[1] + '분"></button>';
+      }).join('');
+      var d = data[sel], over = d[1] - goal;
+      $('st-detail').textContent = d[0] + '요일 · ' + d[1] + '분 사용 · ' + (over <= 0 ? '계획 이내' : over + '분 초과');
+    }
+    $('st-bars').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { sel = +b.dataset.i; draw(); } });
+    draw();
+  })();
+
+  /* ---------- 모먼트 피드 ---------- */
+  (function buildFeed() {
+    var stories = [['내 스토리', '#C2BAFF', '나', 'seen'], ['jimin.log', '#FFD8A8', '지'], ['trip.seoyun', '#B9EBCF', '서'], ['dohyun__', '#FFC9D1', '도'], ['cafe_onda', '#E9D8C2', 'C'], ['neon.night', '#9C8CFF', 'N'], ['daily.cat', '#FFE08A', 'D']];
+    $('stories').innerHTML = stories.map(function (s) {
+      return '<div class="story"><div class="ring ' + (s[3] || '') + '"><div class="av" style="background:' + s[1] + '">' + s[2] + '</div></div><span>' + s[0] + '</span></div>';
+    }).join('');
+    var art = [
+      '<svg viewBox="0 0 390 390" aria-hidden="true"><defs><linearGradient id="a1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B2A6B"/><stop offset=".6" stop-color="#E0608A"/><stop offset="1" stop-color="#FFB36B"/></linearGradient><linearGradient id="a1w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6B3B6E"/><stop offset="1" stop-color="#1E1A3A"/></linearGradient></defs><rect width="390" height="260" fill="url(#a1)"/><circle cx="276" cy="226" r="36" fill="#FFE2A8"/><path d="M0 260V214h26v-22h22v30h18v-46h24v28h20v-16h26v26h20v60z" fill="#241D45"/><rect y="258" width="390" height="132" fill="url(#a1w)"/><path d="M0 222h390v8H0z" fill="#1E1838"/><path d="M20 230v28M110 230v28M200 230v28M290 230v28M380 230v28" stroke="#1E1838" stroke-width="6"/><g fill="#FFE2A8" opacity=".55"><rect x="236" y="276" width="80" height="4" rx="2"/><rect x="250" y="292" width="52" height="3" rx="1.5"/><rect x="262" y="308" width="30" height="3" rx="1.5"/></g></svg>',
+      '<svg viewBox="0 0 390 390" aria-hidden="true"><rect width="390" height="390" fill="#C99E73"/><path d="M0 70h390M0 150h390M0 230h390M0 310h390" stroke="#B88B5F" stroke-width="3"/><circle cx="190" cy="200" r="138" fill="#F4EEE6"/><circle cx="190" cy="200" r="100" fill="#fff"/><circle cx="190" cy="200" r="84" fill="#7A4A2E"/><path d="M190 246C150 216 142 182 166 174c14-4 24 7 24 18 0-11 10-22 24-18 24 8 16 42-24 72z" fill="#F1DCC2"/><rect x="286" y="186" width="44" height="26" rx="13" fill="#fff"/><rect x="40" y="300" width="70" height="8" rx="4" fill="#9B6B43" transform="rotate(-30 75 304)"/></svg>',
+      '<svg viewBox="0 0 390 390" aria-hidden="true"><defs><linearGradient id="a3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB98A"/><stop offset=".5" stop-color="#FFDCB0"/><stop offset="1" stop-color="#C9E2FF"/></linearGradient></defs><rect width="390" height="390" fill="url(#a3)"/><circle cx="110" cy="170" r="30" fill="#FFF4D6"/><path d="M0 300L80 170 150 250 230 120 320 240 390 180V390H0z" fill="#7A8DB8"/><path d="M230 120l22 30-12-4-10 10-10-11-12 5zM80 170l14 22-9-3-6 7-7-7-8 3z" fill="#fff"/><path d="M0 330L110 236 190 300 280 214 390 306V390H0z" fill="#3E5C86"/><path d="M0 362l70-40 60 28 80-36 90 30 90-24V390H0z" fill="#26405F"/></svg>',
+      '<svg viewBox="0 0 390 390" aria-hidden="true"><defs><radialGradient id="a4"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect width="390" height="390" fill="#120F2A"/><g opacity=".75"><circle cx="70" cy="90" r="46" fill="#FF5A7A"/><circle cx="200" cy="60" r="34" fill="#FFC531"/><circle cx="320" cy="110" r="52" fill="#6C5CE7"/><circle cx="120" cy="200" r="28" fill="#34C27A"/><circle cx="290" cy="220" r="36" fill="#FF8A3D"/><circle cx="40" cy="260" r="22" fill="#4C8DF6"/></g><circle cx="200" cy="140" r="90" fill="url(#a4)" opacity=".35"/><path d="M0 390V300c30-10 40-40 70-36s30 30 60 26 30-40 64-40 40 30 70 30 40-26 66-20 40 20 60 24V390z" fill="#05040D"/><path d="M190 300l-12-60M206 300l14-62" stroke="#05040D" stroke-width="10" stroke-linecap="round"/></svg>'
+    ];
+    var posts = [
+      ['jimin.log', '#FFD8A8', '지', '한강공원', art[0], 128, '퇴근길 한강 노을 보고 왔어요. 오늘은 진짜 일찍 자야지', '2시간 전'],
+      ['cafe_onda', '#E9D8C2', 'C', '연남동', art[1], 2041, '새로 나온 흑임자 라떼, 내일 아침 8시부터 만나요', '4시간 전'],
+      ['trip.seoyun', '#B9EBCF', '서', '설악산', art[2], 356, '대청봉 일출 보려면 내일 새벽 4시 기상… 그래서 오늘은 일찍 잡니다', '5시간 전'],
+      ['neon.night', '#9C8CFF', 'N', '공연장', art[3], 8912, '금요일 밤 공연 하이라이트 · 풀영상은 프로필 링크에서', '어제']
+    ];
+    var heart = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+    var cmt = '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></svg>';
+    var send = '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></svg>';
+    var mark = '<svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>';
+    $('posts').innerHTML = posts.map(function (p) {
+      return '<article class="post"><div class="p-head"><span class="av" style="background:' + p[1] + '">' + p[2] + '</span><div style="flex:1"><b>' + p[0] + '</b><small>' + p[3] + '</small></div><span style="font-size:18px;color:#ccc">···</span></div>' +
+        '<div class="p-img">' + p[4] + '</div>' +
+        '<div class="p-act"><button class="like" aria-label="좋아요" data-n="' + p[5] + '">' + heart + '</button><button aria-label="댓글">' + cmt + '</button><button aria-label="공유">' + send + '</button><span class="sp"></span><button aria-label="저장">' + mark + '</button></div>' +
+        '<div class="p-likes">좋아요 <span>' + p[5].toLocaleString('ko-KR') + '</span>개</div>' +
+        '<div class="p-cap"><b>' + p[0] + '</b> ' + p[6] + '</div><div class="p-time">' + p[7] + '</div></article>';
+    }).join('');
+    $('posts').addEventListener('click', function (e) {
+      var b = e.target.closest('.like');
+      if (!b) return;
+      var on = b.classList.toggle('on');
+      b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+      b.parentNode.nextSibling.querySelector('span').textContent = (+b.dataset.n + (on ? 1 : 0)).toLocaleString('ko-KR');
+    });
+  })();
+
+  /* ---------- 팝업 시계 ---------- */
+  var pp = $('popup');
+  function renderPopup() {
+    var vis = S.screen === 'mo' && S.plan != null && !S.asleep;
+    pp.classList.toggle('off', !vis);
+    if (S.plan == null) return;
+    var t = now(), goal = S.plan, over = t - goal, color, frac;
+    var lerp = function (a, b, k) { return Math.round(a + (b - a) * k); };
+    if (over <= 0) { color = 'rgb(52,194,122)'; frac = (goal - t) / goal; }
+    else {
+      var k = Math.min(over / 30, 1);
+      color = 'rgb(' + lerp(255, 255, k) + ',' + lerp(197, 90, k) + ',' + lerp(49, 78, k) + ')';
+      frac = 1;
+    }
+    var deg = (frac * 360).toFixed(1);
+    var awakeArr = people.map(function (p, i) { return isAwake(i); });
+    var awake = awakeArr.filter(Boolean).length;
+    pp.style.opacity = (0.45 + 0.55 * (Math.max(awake - 1, 0) / 3)).toFixed(2);
+    pp.classList.toggle('collapsed', S.collapsed);
+    pp.setAttribute('aria-label', S.collapsed ? '접힌 팝업 시계, 왼쪽으로 밀거나 눌러서 펼치기' : '팝업 시계, 오른쪽으로 밀거나 눌러서 접기');
+    var lightStyle = function (a) { return 'background:' + (a ? '#FFC531' : '#5E5B80') + ';box-shadow:' + (a ? '0 0 8px 3px rgba(255,197,49,.75)' : 'none'); };
+    if (!S.collapsed) {
+      var angles = [-54, -18, 18, 54];
+      var lights = awakeArr.map(function (a, i) {
+        var r = angles[i] * Math.PI / 180;
+        return '<span class="pp-light" style="left:' + (46 + 44 * Math.sin(r) - 7).toFixed(1) + 'px;top:' + (46 - 44 * Math.cos(r) - 7).toFixed(1) + 'px;' + lightStyle(a) + '"></span>';
+      }).join('');
+      pp.innerHTML = '<div class="pp-x"><div class="pp-wrap">' + lights +
+        '<div class="pp-ring" style="background:conic-gradient(' + color + ' 0deg ' + deg + 'deg,#3A3866 ' + deg + 'deg 360deg)"><div class="pp-hole">' +
+        '<span class="pp-left jua">' + (over <= 0 ? (goal - t) + '분' : '+' + over + '분') + '</span><span class="pp-cap">' + (over <= 0 ? '남음' : '초과') + '</span></div></div></div>' +
+        '<span class="pp-awake">' + (awake <= 1 ? '나만 남았어요' : awake + '명 남았어요') + '</span><span class="pp-goal">목표 ' + hm(START + goal) + '</span></div>';
+    } else {
+      pp.innerHTML = '<div class="pp-c">' + awakeArr.map(function (a) { return '<span class="dot" style="' + lightStyle(a) + '"></span>'; }).join('') +
+        '<div class="pp-bar"><div style="height:' + Math.round(frac * 100) + '%;background:' + color + '"></div></div>' +
+        '<span class="jua" style="font-size:12px;line-height:1.1;text-align:center">' + (over <= 0 ? (goal - t) + '분' : '+' + over) + '</span></div>';
+    }
+  }
+  (function wirePopup() {
+    var drag = null, moved = false;
+    pp.addEventListener('pointerdown', function (e) {
+      drag = { x0: e.clientX, dx: 0 }; moved = false;
+      try { pp.setPointerCapture(e.pointerId); } catch (err) {}
+      pp.classList.add('dragging');
+    });
+    pp.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = (e.clientX - drag.x0) / scale;
+      if (Math.abs(dx) > 6) moved = true;
+      dx = S.collapsed ? Math.max(-120, Math.min(0, dx)) : Math.max(0, Math.min(140, dx));
+      drag.dx = dx;
+      pp.style.transform = 'translateX(' + dx + 'px)';
+    });
+    function end() {
+      if (!drag) return;
+      var dx = drag.dx; drag = null;
+      pp.classList.remove('dragging');
+      pp.style.transform = '';
+      if (!S.collapsed && dx > 40) S.collapsed = true;
+      else if (S.collapsed && dx < -30) S.collapsed = false;
+      renderPopup();
+    }
+    pp.addEventListener('pointerup', end);
+    pp.addEventListener('pointercancel', end);
+    pp.addEventListener('click', function () {
+      if (moved) { moved = false; return; }
+      S.collapsed = !S.collapsed;
+      renderPopup();
+    });
+  })();
+
+  /* ---------- 소등 알림 ---------- */
+  function currentEvent() {
+    var t = now(), evs = [];
+    people.forEach(function (p) { if (p.sleepAt != null && t >= p.sleepAt) evs.push({ key: p.name, at: p.sleepAt, kind: 'friend', p: p }); });
+    if (S.plan != null && t >= S.plan) evs.push({ key: 'goal', at: S.plan, kind: 'goal' });
+    S.reminders.forEach(function (r) { if (t >= r) evs.push({ key: 'r' + r, at: r, kind: 'remind' }); });
+    evs.sort(function (a, b) { return a.at - b.at; });
+    return evs.length ? evs[evs.length - 1] : null;
+  }
+  function renderNotice() {
+    var ev = currentEvent();
+    var show = !!ev && S.plan != null && S.screen === 'mo' && !S.asleep && now() - ev.at < 12 && !S.dismissed[ev.key];
+    if (ev && ev.key !== shownKey) {
+      shownKey = ev.key;
+      var av = $('n-av');
+      if (ev.kind === 'friend') {
+        av.style.background = ev.p.color;
+        av.innerHTML = ev.p.name.slice(0, 1) + '<span class="n-moon">' + MOON + '</span>';
+        $('n-title').textContent = ev.p.name + '님이 방금 소등했어요';
+      } else {
+        av.style.background = '#6C5CE7';
+        av.innerHTML = mascot(38);
+        $('n-title').textContent = ev.kind === 'goal' ? '약속한 ' + hm(START + S.plan) + '이 됐어요' : '5분이 지났어요, 이제 잘 시간!';
+      }
+    }
+    var names = awakeNames();
+    $('n-sub').textContent = '아직 깨어 있는 사람: ' + (names.length ? names.join(', ') : '없음');
+    $('notice').classList.toggle('show', show);
+  }
+  $('snooze').addEventListener('click', function () {
+    var ev = currentEvent();
+    if (ev) S.dismissed[ev.key] = true;
+    if (now() + 5 <= T_MAX) S.reminders.push(now() + 5);
+    renderNotice();
+  });
+  $('sleepNow').addEventListener('click', function () {
+    var t = now(), goal = S.plan;
+    S.asleep = true;
+    var friends = people.filter(function (p) { return p.sleepAt != null && t >= p.sleepAt; }).map(function (p) { return p.name; });
+    $('sleep-msg').innerHTML = (t <= goal ? '계획보다 ' + (goal - t) + '분 일찍 폰을 껐어요.<br>그룹 기록을 지켰어요!' : '계획보다 ' + (t - goal) + '분 늦었지만,<br>이제라도 푹 자요.') +
+      (friends.length ? '<br><br>' + friends.join(', ') + '님도 잠들어 있어요.' : '');
+    $('sleep').classList.add('show');
+    renderLive();
+  });
+  $('restart').addEventListener('click', function () {
+    initState();
+    ['sm', 'mo'].forEach(function (n) { $('scr-' + n).classList.remove('on'); });
+    $('scr-home').classList.remove('dim');
+    $('toast').classList.remove('show');
+    $('splash').classList.add('hide');
+    $('sleep').classList.remove('show');
+    $('feed').scrollTop = 0;
+    $('sm-nav').children[0].click();
+    renderDial();
+    renderLive();
+    scheduleBanner();
+  });
+
+  /* ---------- 시간 흐름 ---------- */
+  function renderLive() {
+    $('sb-time').textContent = hm(START + now());
+    renderHome();
+    renderGroup();
+    renderDial();
+    renderPopup();
+    renderNotice();
+  }
+  setInterval(function () {
+    if (S.plan == null || S.asleep) return;
+    if (S.t < T_MAX) S.t = Math.min(T_MAX, S.t + 100 / MS_PER_MIN);
+    if (now() !== lastMin) { lastMin = now(); renderLive(); }
+  }, 100);
+
+  renderDial();
+  renderLive();
+  scheduleBanner();
+})();
+</script>
+</body>
+</html>

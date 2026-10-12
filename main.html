@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시간 설정 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#A99EFF}a:hover{color:#C9C2FF}
+.press:active{transform:translateY(4px);box-shadow:none !important}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:390px;height:844px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="390" data-h="844"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #15142B; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; display: flex; flex-direction: column; box-sizing: border-box">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 8px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M13 42 L10 46 M35 42 L38 46" stroke="#B3B0CC" stroke-width="2.5" stroke-linecap="round" fill="none"></path>
+        <circle cx="11" cy="11" r="6" fill="#FFC531" stroke="#2B2A3A" stroke-width="2.5"></circle>
+        <circle cx="37" cy="11" r="6" fill="#FFC531" stroke="#2B2A3A" stroke-width="2.5"></circle>
+        <circle cx="24" cy="27" r="17" fill="#6C5CE7" stroke="#2B2A3A" stroke-width="2.5"></circle>
+        <circle cx="24" cy="27" r="12" fill="#FFF8EC"></circle>
+        <path d="M16.5 25 q2.5 2.5 5 0 M26.5 25 q2.5 2.5 5 0 M21 31 q3 2.2 6 0" stroke="#2B2A3A" stroke-width="2" stroke-linecap="round" fill="none"></path>
+      </svg>
+      <span style="font-family: 'Jua', sans-serif; font-size: 24px; color: #F2F0FF">같이자</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 2px solid #3A3866; border-radius: 999px">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"></path></svg>
+      <span style="font-family: 'Jua', sans-serif; font-size: 18px; color: #FFC531">12일</span>
+    </div>
+  </div>
+
+  <div style="padding: 8px 24px 0">
+    <h1 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 30px; line-height: 1.25">오늘 밤, 폰은 얼마나 할까요?</h1>
+    <p style="margin: 6px 0 0; font-size: 15px; color: #B3B0CC">가운데 태엽을 돌려서 시간을 감아 주세요</p>
+  </div>
+
+  <div style="display: flex; justify-content: center; padding: 16px 0 4px">
+    <div onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerCancel="{{up}}" style="width: 288px; height: 288px; border-radius: 50%; background: #2D2B52; box-shadow: 0 8px 0 #0B0A1A; touch-action: none; cursor: grab; position: relative; display: flex; align-items: center; justify-content: center">
+      <svg width="272" height="272" viewBox="0 0 280 280" role="img" aria-label="태엽 시계: {{label}} 설정됨">
+        <circle cx="140" cy="140" r="122" fill="{{faceFill}}"></circle>
+        <path d="{{wedge}}" fill="{{wedgeFill}}"></path>
+        <path d="{{minorTicks}}" stroke="#E8E6FF" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"></path>
+        <path d="{{majorTicks}}" stroke="#E8E6FF" stroke-width="4" stroke-linecap="round"></path>
+        <text x="140" y="56" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">0</text>
+        <text x="226" y="147" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">15</text>
+        <text x="140" y="238" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">30</text>
+        <text x="54" y="147" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="#E8E6FF">45</text>
+        <g transform="rotate({{handDeg}} 140 140)">
+          <line x1="140" y1="140" x2="140" y2="40" stroke="#FF7A45" stroke-width="5" stroke-linecap="round"></line>
+          <circle cx="140" cy="40" r="7" fill="#FF7A45"></circle>
+        </g>
+        <g transform="rotate({{crownDeg}} 140 140)">
+          <path d="{{crownPath}}" fill="#6C5CE7" stroke="#2B2A3A" stroke-width="3" stroke-linejoin="round"></path>
+          <circle cx="140" cy="140" r="17" fill="#8F82FF" stroke="#2B2A3A" stroke-width="2.5"></circle>
+          <rect x="136" y="126" width="8" height="28" rx="4" fill="#FFF8EC"></rect>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px 0; gap: 12px">
+    <button class="press" onClick="{{minus}}" aria-label="5분 줄이기" style="width: 52px; height: 52px; border-radius: 16px; border: 2px solid #3A3866; background: #222140; box-shadow: 0 4px 0 #3A3866; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" stroke="#F2F0FF" stroke-width="3" stroke-linecap="round"></path></svg>
+    </button>
+    <div style="text-align: center; flex: 1">
+      <div style="font-family: 'Jua', sans-serif; font-size: 40px; line-height: 1.1; color: #F2F0FF">{{label}}</div>
+      <div style="font-size: 15px; color: #B3B0CC; margin-top: 2px">23:00 시작 · 목표 취침 <b style="color: #A99EFF">{{bedTime}}</b></div>
+      <div style="display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: {{zoneBg}}; color: {{zoneColor}}; font-size: 13px; font-weight: 700">{{zoneText}}</div>
+    </div>
+    <button class="press" onClick="{{plus}}" aria-label="5분 늘리기" style="width: 52px; height: 52px; border-radius: 16px; border: 2px solid #3A3866; background: #222140; box-shadow: 0 4px 0 #3A3866; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke="#F2F0FF" stroke-width="3" stroke-linecap="round"></path></svg>
+    </button>
+  </div>
+
+  <div style="display: flex; gap: 8px; justify-content: center; padding: 14px 24px 0">
+    <sc-for list="{{presets}}" as="p" hint-placeholder-count="3">
+      <button class="press" onClick="{{p.pick}}" style="height: 44px; padding: 0 16px; border-radius: 14px; border: 2px solid {{p.border}}; background: {{p.bg}}; color: {{p.fg}}; font-family: 'Jua', sans-serif; font-size: 17px; cursor: pointer; box-shadow: 0 3px 0 {{p.border}}">{{p.text}}</button>
+    </sc-for>
+  </div>
+
+  <div style="padding: 18px 24px 0">
+    <button class="press" onClick="{{save}}" style="width: 100%; height: 58px; border: none; border-radius: 18px; background: #6C5CE7; box-shadow: 0 5px 0 #4B3DC2; color: #FFFFFF; font-family: 'Jua', sans-serif; font-size: 22px; cursor: pointer">이대로 감기 완료</button>
+  </div>
+
+  <sc-if value="{{saved}}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 16px; right: 16px; bottom: 92px; background: #123A2A; border: 2px solid #34C27A; border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 0 #23995C">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#34C27A"></circle><path d="M7 12.5l3.2 3.2L17 9" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="flex: 1">
+        <div style="font-family: 'Jua', sans-serif; font-size: 18px; color: #7EE2AE">태엽을 다 감았어요!</div>
+        <div style="font-size: 13px; color: #A8E9C6">{{bedTime}}까지 팝업 시계가 함께해요</div>
+      </div>
+      <a href="popup.html" style="font-family: 'Jua', sans-serif; font-size: 16px; color: #7EE2AE; text-decoration: none; padding: 10px 12px; border-radius: 12px; background: #222140; border: 2px solid #34C27A">미리보기</a>
+    </div>
+  </sc-if>
+
+  <nav aria-label="하단 메뉴" style="position: absolute; left: 0; right: 0; bottom: 0; height: 76px; border-top: 2px solid #3A3866; background: #15142B; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a href="main.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #A99EFF; font-size: 12px; font-weight: 700">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#6C5CE7" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2M5 4l3-2M19 4l-3-2"></path></svg>
+      시계
+    </a>
+    <a href="group.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"></path><circle cx="17" cy="9" r="2.8"></circle><path d="M16.5 14.6c2.6.2 4.4 2 5 5"></path></svg>
+      그룹
+    </a>
+    <a href="stats.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+      기록
+    </a>
+  </nav>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  handlers() {
+    if (this._h) return this._h;
+    const clamp = (v) => Math.max(0, Math.min(180, v));
+    const snap = (v) => Math.round(v / 5) * 5;
+    const cur = () => (this.state && this.state.raw != null ? this.state.raw : 45);
+    this._h = {
+      down: (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        this._c = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        this._last = Math.atan2(e.clientY - this._c.y, e.clientX - this._c.x);
+        this._drag = true;
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+      },
+      move: (e) => {
+        if (!this._drag) return;
+        const a = Math.atan2(e.clientY - this._c.y, e.clientX - this._c.x);
+        let d = a - this._last;
+        if (d > Math.PI) d -= 2 * Math.PI;
+        if (d < -Math.PI) d += 2 * Math.PI;
+        this._last = a;
+        this.setState({ raw: clamp(cur() + (d / (2 * Math.PI)) * 60), saved: false });
+      },
+      up: () => {
+        if (!this._drag) return;
+        this._drag = false;
+        this.setState({ raw: snap(cur()) });
+      },
+      minus: () => this.setState({ raw: clamp(snap(cur()) - 5), saved: false }),
+      plus: () => this.setState({ raw: clamp(snap(cur()) + 5), saved: false }),
+      save: () => this.setState({ saved: true }),
+      set: (v) => this.setState({ raw: v, saved: false })
+    };
+    return this._h;
+  }
+  renderVals() {
+    const h = this.handlers();
+    const raw = this.state && this.state.raw != null ? this.state.raw : 45;
+    const mins = Math.round(raw / 5) * 5;
+    const hrs = Math.floor(mins / 60), rem = mins % 60;
+    const label = hrs ? (rem ? hrs + '시간 ' + rem + '분' : hrs + '시간') : rem + '분';
+    const bed = 23 * 60 + mins;
+    const pad = (n) => (n < 10 ? '0' : '') + n;
+    const bedTime = pad(Math.floor(bed / 60) % 24) + ':' + pad(bed % 60);
+
+    const cx = 140, cy = 140, R = 112;
+    const frac = (raw % 60) / 60;
+    let wedge = '';
+    if (raw >= 60 && frac < 0.001) {
+      wedge = 'M140 28 A112 112 0 1 1 139.99 28 Z';
+    } else if (frac > 0.001) {
+      const a = frac * 2 * Math.PI;
+      const x = cx + R * Math.sin(a), y = cy - R * Math.cos(a);
+      wedge = 'M140 140 L140 28 A112 112 0 ' + (frac > 0.5 ? 1 : 0) + ' 1 ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' Z';
+    }
+    const layer = Math.floor(raw / 60);
+    const zone = mins < 25 ? 0 : mins < 60 ? 1 : 2;
+    const faceFill = ['#262449', '#4A2030', '#5A2434', '#6A2838'][Math.min(layer, 3)];
+    const wedgeFill = ['#34C27A', '#FFC531', '#FF5A4E'][zone];
+    const zoneColor = ['#7EE2AE', '#FFD66B', '#FF8A80'][zone];
+    const zoneBg = ['#123A2A', '#3D3418', '#4A1E24'][zone];
+    const zoneText = ['짧고 좋아요', '조금 길어요', '너무 길어요'][zone];
+
+    let minor = '', major = '';
+    for (let i = 0; i < 60; i++) {
+      const a = (i / 60) * 2 * Math.PI, s = Math.sin(a), c = Math.cos(a);
+      const r1 = i % 5 === 0 ? 100 : 106, r2 = 114;
+      const seg = 'M' + (cx + r1 * s).toFixed(1) + ' ' + (cy - r1 * c).toFixed(1) + 'L' + (cx + r2 * s).toFixed(1) + ' ' + (cy - r2 * c).toFixed(1);
+      if (i % 5 === 0) major += seg; else minor += seg;
+    }
+    let crown = '';
+    const teeth = 18;
+    for (let i = 0; i < teeth * 2; i++) {
+      const a = (i / (teeth * 2)) * 2 * Math.PI;
+      const r = i % 2 === 0 ? 38 : 32;
+      crown += (i === 0 ? 'M' : 'L') + (cx + r * Math.sin(a)).toFixed(1) + ' ' + (cy - r * Math.cos(a)).toFixed(1);
+    }
+    crown += 'Z';
+
+    const presets = [15, 30, 60].map((v) => {
+      const on = mins === v;
+      return {
+        text: v === 60 ? '1시간' : v + '분',
+        pick: () => h.set(v),
+        bg: on ? '#2F2A66' : '#222140',
+        fg: on ? '#C9C2FF' : '#F2F0FF',
+        border: on ? '#8F82FF' : '#3A3866'
+      };
+    });
+
+    return {
+      label, bedTime, wedge, faceFill, wedgeFill, zoneColor, zoneBg, zoneText,
+      minorTicks: minor, majorTicks: major, crownPath: crown,
+      handDeg: ((raw % 60) / 60) * 360,
+      crownDeg: raw * 12,
+      presets,
+      saved: !!(this.state && this.state.saved),
+      down: h.down, move: h.move, up: h.up,
+      minus: h.minus, plus: h.plus, save: h.save
+    };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>

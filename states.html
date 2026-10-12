@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>팝업 시계 상태 정의 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:24px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:1240px;height:520px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="1240" data-h="520"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 1240px; height: 520px; box-sizing: border-box; padding: 40px 48px; background: #15142B; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; display: flex; flex-direction: column; gap: 28px">
+  <div>
+    <h1 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 34px">팝업 시계 상태</h1>
+    <p style="margin: 6px 0 0; font-size: 16px; color: #B3B0CC">링 색 = 내 사용 시간 (초록 → 노랑 → 빨강) · 불빛 = 깨어 있는 친구 · 투명도 = 잠든 친구가 많을수록 흐려짐</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; flex: 1">
+    <sc-for list="{{states}}" as="s" hint-placeholder-count="4">
+      <div style="background: #222140; border: 2px solid #3A3866; border-radius: 28px; box-shadow: 0 6px 0 #0B0A1A; padding: 24px 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px">
+        <div style="width: 150px; padding: 14px 10px; border-radius: 30px; background: #2D2B52; border: 2px solid #4A4780; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: {{s.opacity}}">
+          <div style="position: relative; width: 112px; height: 112px">
+            <sc-for list="{{s.lights}}" as="l" hint-placeholder-count="4">
+              <span style="position: absolute; left: {{l.x}}; top: {{l.y}}; width: 18px; height: 18px; border-radius: 50%; background: {{l.fill}}; border: 2px solid #2B2A3A; box-shadow: {{l.glow}}; box-sizing: border-box; z-index: 2"></span>
+            </sc-for>
+            <div style="position: absolute; inset: 10px; border-radius: 50%; background: {{s.ring}}; display: flex; align-items: center; justify-content: center">
+              <div style="width: 72px; height: 72px; border-radius: 50%; background: #15142B; display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <span style="font-family: 'Jua', sans-serif; font-size: 22px; line-height: 1">{{s.left}}</span>
+                <span style="font-size: 11px; font-weight: 700; color: #B3B0CC">{{s.caption}}</span>
+              </div>
+            </div>
+          </div>
+          <span style="font-size: 13px; font-weight: 700">{{s.awakeText}}</span>
+        </div>
+        <div style="text-align: center">
+          <div style="font-family: 'Jua', sans-serif; font-size: 20px; color: #FFFFFF">{{s.title}}</div>
+          <div style="font-size: 14px; color: #D9D7EA; margin-top: 4px">{{s.desc}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  renderVals() {
+    const defs = [
+      { title: '모두 깨어 있음', desc: '계획 이내 · 시계 선명', color: '#34C27A', deg: 220, left: '25분', caption: '남음', awake: 4 },
+      { title: '한 명 잠듦', desc: '계획 이내 · 살짝 흐려짐', color: '#34C27A', deg: 90, left: '10분', caption: '남음', awake: 3 },
+      { title: '소폭 초과', desc: '노랑 경고 · 절반이 잠듦', color: '#FFC531', deg: 360, left: '+8분', caption: '초과', awake: 2 },
+      { title: '크게 초과 · 나만 남음', desc: '빨강 경고 · 가장 흐림', color: '#FF5A4E', deg: 360, left: '+32분', caption: '초과', awake: 1 }
+    ];
+    const angles = [-54, -18, 18, 54];
+    const states = defs.map((d) => ({
+      ...d,
+      ring: 'conic-gradient(' + d.color + ' 0deg ' + d.deg + 'deg, #3A3866 ' + d.deg + 'deg 360deg)',
+      opacity: (0.4 + 0.6 * ((d.awake - 1) / 3)).toFixed(2),
+      awakeText: d.awake === 1 ? '나만 깨어 있음' : d.awake + '명 깨어 있음',
+      lights: angles.map((deg, i) => {
+        const a = (deg * Math.PI) / 180, r = 54;
+        const on = i < d.awake;
+        return {
+          x: (56 + r * Math.sin(a) - 9).toFixed(1) + 'px',
+          y: (56 - r * Math.cos(a) - 9).toFixed(1) + 'px',
+          fill: on ? '#FFC531' : '#5E5B80',
+          glow: on ? '0 0 10px 3px rgba(255,197,49,0.75)' : 'none'
+        };
+      })
+    }));
+    return { states };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>

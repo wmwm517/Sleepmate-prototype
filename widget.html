@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배경화면 위젯 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:390px;height:844px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="390" data-h="844"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0E0D1E; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; box-sizing: border-box; padding: 40px 16px 0">
+  <sc-for list="{{stars}}" as="s" hint-placeholder-count="12">
+    <span aria-hidden="true" style="position: absolute; left: {{s.x}}; top: {{s.y}}; width: {{s.r}}; height: {{s.r}}; border-radius: 50%; background: #FFFFFF; opacity: {{s.o}}"></span>
+  </sc-for>
+
+  <div style="position: relative; text-align: center; margin-bottom: 22px">
+    <div style="font-size: 15px; color: #D9D7EA; font-weight: 600">10월 12일 월요일</div>
+    <div style="font-family: 'Jua', sans-serif; font-size: 64px; line-height: 1.1">23:24</div>
+  </div>
+
+  <section aria-label="같이자 그룹 위젯" style="position: relative; background: rgba(34,33,64,0.94); border: 2px solid #3A3866; border-radius: 28px; padding: 16px; box-shadow: 0 5px 0 #07060F">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="11" cy="11" r="6" fill="#FFC531" stroke="#0D0C1F" stroke-width="2.5"></circle>
+          <circle cx="37" cy="11" r="6" fill="#FFC531" stroke="#0D0C1F" stroke-width="2.5"></circle>
+          <circle cx="24" cy="27" r="17" fill="#6C5CE7" stroke="#0D0C1F" stroke-width="2.5"></circle>
+          <circle cx="24" cy="27" r="12" fill="#FFF8EC"></circle>
+          <path d="M16.5 25 q2.5 2.5 5 0 M26.5 25 q2.5 2.5 5 0 M21 31 q3 2.2 6 0" stroke="#2B2A3A" stroke-width="2" stroke-linecap="round" fill="none"></path>
+        </svg>
+        <span style="font-family: 'Jua', sans-serif; font-size: 18px">우리 수면 그룹</span>
+      </div>
+      <span style="display: flex; align-items: center; gap: 4px; font-family: 'Jua', sans-serif; font-size: 15px; color: #FFC531">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"></path></svg>
+        12일
+      </span>
+    </div>
+    <div style="font-size: 13px; color: #B3B0CC; margin: 4px 0 12px">2명 깨어 있음 · 2명 잠들었어요</div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{members}}" as="m" hint-placeholder-count="4">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 18px; background: {{m.bg}}">
+          <div style="position: relative; width: 38px; height: 38px; border-radius: 50%; background: {{m.color}}; opacity: {{m.avatarO}}; display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 16px; color: #15142B; flex-shrink: 0">
+            {{m.initial}}
+            <span style="position: absolute; right: -2px; top: -2px; width: 12px; height: 12px; border-radius: 50%; background: {{m.dot}}; border: 2px solid #222140; box-shadow: {{m.glow}}"></span>
+          </div>
+          <div style="min-width: 0">
+            <div style="font-size: 14px; font-weight: 700">{{m.name}}</div>
+            <div style="font-size: 12px; color: {{m.fg}}; font-weight: 600">{{m.status}}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 12px; margin-top: 26px">
+    <sc-for list="{{apps}}" as="a" hint-placeholder-count="8">
+      <div aria-hidden="true" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <div style="width: 60px; height: 60px; border-radius: 16px; background: {{a.bg}}"></div>
+        <span style="font-size: 11px; color: #D9D7EA">{{a.name}}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div aria-hidden="true" style="position: absolute; left: 12px; right: 12px; bottom: 14px; height: 88px; border-radius: 30px; background: rgba(42,41,70,0.85); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; justify-items: center">
+    <div style="width: 58px; height: 58px; border-radius: 16px; background: #34C27A"></div>
+    <div style="width: 58px; height: 58px; border-radius: 16px; background: #4C8DF6"></div>
+    <div style="width: 58px; height: 58px; border-radius: 16px; background: #F2F0FF"></div>
+    <div style="width: 58px; height: 58px; border-radius: 16px; background: #6C5CE7"></div>
+  </div>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  renderVals() {
+    const raw = [
+      { name: '나', awake: true, color: '#C2BAFF' },
+      { name: '지민', awake: true, color: '#FFD8A8' },
+      { name: '서윤', awake: false, color: '#B9EBCF' },
+      { name: '도현', awake: false, color: '#FFC9D1' }
+    ];
+    const members = raw.map((m) => ({
+      ...m,
+      initial: m.name.slice(0, 1),
+      status: m.awake ? '폰 하는 중' : '잠들었어요',
+      dot: m.awake ? '#FFC531' : '#5E5B80',
+      glow: m.awake ? '0 0 8px 2px rgba(255,197,49,0.75)' : 'none',
+      bg: m.awake ? '#3D3418' : '#2D2B52',
+      fg: m.awake ? '#FFD66B' : '#B3B0CC',
+      avatarO: m.awake ? '1' : '0.55'
+    }));
+    const pts = [[30, 18], [92, 60], [150, 12], [214, 44], [280, 20], [350, 70], [60, 160], [330, 150], [20, 520], [370, 470], [120, 760], [300, 610]];
+    const stars = pts.map(([x, y], i) => ({ x: x + 'px', y: y + 'px', r: (i % 3 === 0 ? 3 : 2) + 'px', o: i % 2 ? '0.35' : '0.6' }));
+    const apps = [
+      ['메모', '#2D2B52'], ['사진', '#3A3866'], ['음악', '#2D2B52'], ['지도', '#3A3866'],
+      ['캘린더', '#3A3866'], ['날씨', '#2D2B52'], ['같이자', '#6C5CE7'], ['설정', '#2D2B52']
+    ].map(([name, bg]) => ({ name, bg }));
+    return { members, stars, apps };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>

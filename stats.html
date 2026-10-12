@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수면 기록 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#A99EFF}a:hover{color:#C9C2FF}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:390px;height:844px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="390" data-h="844"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #15142B; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; display: flex; flex-direction: column; box-sizing: border-box">
+
+  <div style="padding: 22px 24px 0">
+    <h1 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 28px">수면 기록</h1>
+  </div>
+
+  <div style="margin: 14px 20px 0; border: 2px solid #34C27A; border-radius: 22px; box-shadow: 0 5px 0 #23995C; padding: 16px; background: #123A2A">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div>
+        <div style="font-size: 13px; color: #A8E9C6; font-weight: 600">어젯밤 · 10월 11일</div>
+        <div style="font-family: 'Jua', sans-serif; font-size: 26px; color: #7EE2AE; margin-top: 2px">계획보다 13분 일찍 잠들었어요</div>
+      </div>
+    </div>
+    <div style="margin-top: 12px; height: 14px; border-radius: 999px; background: #222140; border: 2px solid #2E6B4C; overflow: hidden">
+      <div style="width: 71%; height: 100%; background: #34C27A; border-radius: 999px"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #A8E9C6; margin-top: 6px; font-weight: 600">
+      <span>사용 32분</span><span>계획 45분</span>
+    </div>
+  </div>
+
+  <div style="margin: 14px 20px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <div style="border: 2px solid #3A3866; border-radius: 18px; padding: 12px 14px">
+      <div style="font-size: 13px; color: #B3B0CC; font-weight: 600">잠든 시각</div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 26px; margin-top: 2px">23:32</div>
+    </div>
+    <div style="border: 2px solid #3A3866; border-radius: 18px; padding: 12px 14px">
+      <div style="font-size: 13px; color: #B3B0CC; font-weight: 600">수면 시간</div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 26px; margin-top: 2px">7시간 18분</div>
+    </div>
+    <div style="border: 2px solid #3A3866; border-radius: 18px; padding: 12px 14px">
+      <div style="font-size: 13px; color: #B3B0CC; font-weight: 600">잠들기까지</div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 26px; margin-top: 2px">32분</div>
+    </div>
+    <div style="border: 2px solid #3A3866; border-radius: 18px; padding: 12px 14px">
+      <div style="font-size: 13px; color: #B3B0CC; font-weight: 600">내 연속 기록</div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 26px; margin-top: 2px; color: #FFC531">15일</div>
+    </div>
+  </div>
+
+  <div style="margin: 20px 20px 0; display: flex; align-items: baseline; justify-content: space-between">
+    <h2 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 21px">이번 주 폰 사용 시간</h2>
+    <span style="font-size: 13px; color: #B3B0CC">막대를 눌러 보세요</span>
+  </div>
+
+  <div style="margin: 10px 20px 0; border: 2px solid #3A3866; border-radius: 20px; padding: 14px 12px 10px">
+    <div style="font-size: 14px; font-weight: 700; color: #F2F0FF; min-height: 20px">{{detail}}</div>
+    <div style="position: relative; height: 140px; margin-top: 8px">
+      <div style="position: absolute; left: 0; right: 0; top: {{goalTop}}; border-top: 2px dashed #8F82FF"></div>
+      <span style="position: absolute; right: 0; top: {{goalLabelTop}}; font-size: 11px; font-weight: 700; color: #A99EFF; background: #15142B; padding: 0 4px">계획 45분</span>
+      <div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: end">
+        <sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+          <button onClick="{{b.pick}}" aria-label="{{b.aria}}" style="height: {{b.h}}; background: {{b.color}}; border: {{b.ring}}; border-radius: 10px 10px 6px 6px; padding: 0; cursor: pointer"></button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; text-align: center; margin-top: 6px">
+      <sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+        <span style="font-size: 12px; font-weight: 700; color: #B3B0CC">{{b.day}}</span>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-top: 10px; font-size: 12px; color: #B3B0CC; font-weight: 600">
+      <span style="display: flex; align-items: center; gap: 4px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #34C27A"></span>계획 이내</span>
+      <span style="display: flex; align-items: center; gap: 4px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FFC531"></span>조금 초과</span>
+      <span style="display: flex; align-items: center; gap: 4px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FF5A4E"></span>많이 초과</span>
+    </div>
+  </div>
+
+  <nav aria-label="하단 메뉴" style="position: absolute; left: 0; right: 0; bottom: 0; height: 76px; border-top: 2px solid #3A3866; background: #15142B; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a href="main.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2M5 4l3-2M19 4l-3-2"></path></svg>
+      시계
+    </a>
+    <a href="group.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"></path><circle cx="17" cy="9" r="2.8"></circle><path d="M16.5 14.6c2.6.2 4.4 2 5 5"></path></svg>
+      그룹
+    </a>
+    <a href="stats.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #A99EFF; font-size: 12px; font-weight: 700">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#6C5CE7" stroke-width="2.4" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+      기록
+    </a>
+  </nav>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  renderVals() {
+    const goal = 45, maxV = 90, H = 140;
+    const data = [['월', 40], ['화', 52], ['수', 30], ['목', 81], ['금', 45], ['토', 38], ['일', 32]];
+    const sel = this.state && this.state.sel != null ? this.state.sel : 6;
+    const bars = data.map(([day, v], i) => {
+      const over = v - goal;
+      const color = over <= 0 ? '#34C27A' : over <= 15 ? '#FFC531' : '#FF5A4E';
+      const status = over <= 0 ? '계획 이내' : over + '분 초과';
+      return {
+        day,
+        h: Math.round((Math.min(v, maxV) / maxV) * H) + 'px',
+        color,
+        ring: i === sel ? '3px solid #F2F0FF' : '3px solid transparent',
+        aria: day + '요일 ' + v + '분, ' + status,
+        pick: () => this.setState({ sel: i }),
+        text: day + '요일 · ' + v + '분 사용 · ' + status
+      };
+    });
+    const goalPx = H - Math.round((goal / maxV) * H);
+    return {
+      bars,
+      detail: bars[sel].text,
+      goalTop: goalPx + 'px',
+      goalLabelTop: (goalPx - 16) + 'px'
+    };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>

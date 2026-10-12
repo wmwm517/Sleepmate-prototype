@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>팝업 시계 시뮬레이션 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#A99EFF}a:hover{color:#C9C2FF}
+.press:active{transform:translateY(4px);box-shadow:none !important}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:730px;height:844px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="730" data-h="844"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 730px; height: 844px; display: flex; background: #15142B; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; overflow: hidden">
+
+  <div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0E0D1E; flex-shrink: 0">
+    <div aria-hidden="true" style="position: absolute; left: 25px; top: 230px; width: 340px; height: 340px; border-radius: 50%; background: #1B1A33; display: flex; align-items: center; justify-content: center">
+      <div style="width: 180px; height: 180px; border-radius: 32px; background: #24233F; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #8E8BAE">[시청 중인 콘텐츠]</div>
+    </div>
+    <div aria-hidden="true" style="position: absolute; right: 18px; top: 600px; display: flex; flex-direction: column; gap: 26px">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D9D7EA" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D9D7EA" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#D9D7EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l6 6-6 6M20 11H10a6 6 0 0 0-6 6"></path></svg>
+    </div>
+    <div aria-hidden="true" style="position: absolute; left: 16px; top: 640px; display: flex; flex-direction: column; gap: 10px">
+      <div style="width: 130px; height: 12px; border-radius: 6px; background: #2A2946"></div>
+      <div style="width: 240px; height: 10px; border-radius: 5px; background: #22213B"></div>
+      <div style="width: 200px; height: 10px; border-radius: 5px; background: #22213B"></div>
+    </div>
+
+    <button onPointerDown="{{down}}" onPointerMove="{{move}}" onPointerUp="{{up}}" onPointerCancel="{{up}}" onClick="{{tap}}" aria-label="{{popupAria}}" style="position: absolute; top: {{pTop}}; right: {{pRight}}; width: {{pW}}; height: {{pH}}; border-radius: {{pRadius}}; transform: translateX({{dragX}}); transition: {{pTransition}}; opacity: {{opacity}}; background: rgba(40,38,74,0.97); border: 2px solid #4A4780; box-shadow: 0 5px 0 rgba(0,0,0,0.45); padding: 0; margin: 0; color: #F2F0FF; font-family: inherit; cursor: grab; touch-action: none; overflow: hidden; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center">
+      <sc-if value="{{expanded}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none">
+          <div style="position: relative; width: 92px; height: 92px">
+            <sc-for list="{{lights}}" as="l" hint-placeholder-count="4">
+              <span style="position: absolute; left: {{l.x}}; top: {{l.y}}; width: 14px; height: 14px; border-radius: 50%; background: {{l.fill}}; border: 2px solid #15142B; box-shadow: {{l.glow}}; box-sizing: border-box; z-index: 2"></span>
+            </sc-for>
+            <div style="position: absolute; inset: 8px; border-radius: 50%; background: {{ring}}; display: flex; align-items: center; justify-content: center">
+              <div style="width: 60px; height: 60px; border-radius: 50%; background: #15142B; display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <span style="font-family: 'Jua', sans-serif; font-size: 19px; line-height: 1">{{left}}</span>
+                <span style="font-size: 10px; font-weight: 700; color: #B3B0CC">{{leftCaption}}</span>
+              </div>
+            </div>
+          </div>
+          <span style="font-size: 12px; font-weight: 700">{{awakeText}}</span>
+          <span style="font-size: 11px; color: #B3B0CC; margin-top: -4px">목표 23:45</span>
+        </div>
+      </sc-if>
+      <sc-if value="{{collapsed}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none">
+          <sc-for list="{{lights}}" as="l" hint-placeholder-count="4">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: {{l.fill}}; box-shadow: {{l.glow}}"></span>
+          </sc-for>
+          <div style="width: 8px; height: 52px; border-radius: 4px; background: #3A3866; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; margin-top: 4px">
+            <div style="width: 100%; height: {{fillPct}}; background: {{color}}; border-radius: 4px"></div>
+          </div>
+          <span style="font-family: 'Jua', sans-serif; font-size: 12px; line-height: 1.1; text-align: center">{{shortLeft}}</span>
+        </div>
+      </sc-if>
+    </button>
+
+    <sc-if value="{{showNotice}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="position: absolute; left: 10px; right: 10px; bottom: 12px; background: #222140; border: 2px solid #3A3866; border-radius: 24px; padding: 16px; box-shadow: 0 5px 0 #0B0A1A">
+        <div style="display: flex; align-items: center; gap: 12px">
+          <div style="position: relative; width: 44px; height: 44px; border-radius: 50%; background: {{notice.color}}; display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 19px; color: #15142B; flex-shrink: 0">
+            {{notice.initial}}
+            <span style="position: absolute; right: -3px; bottom: -3px; width: 20px; height: 20px; border-radius: 50%; background: #15142B; display: flex; align-items: center; justify-content: center">
+              <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"></path></svg>
+            </span>
+          </div>
+          <div style="min-width: 0">
+            <div style="font-family: 'Jua', sans-serif; font-size: 18px">{{notice.title}}</div>
+            <div style="font-size: 13px; color: #B3B0CC; margin-top: 2px">아직 깨어 있는 사람: {{stillAwake}}</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px">
+          <button class="press" onClick="{{snooze}}" style="height: 48px; border-radius: 14px; border: 2px solid #3A3866; background: #2D2B52; box-shadow: 0 4px 0 #3A3866; color: #F2F0FF; font-family: 'Jua', sans-serif; font-size: 17px; cursor: pointer">5분만 더</button>
+          <button class="press" onClick="{{sleepNow}}" style="height: 48px; border-radius: 14px; border: none; background: #34C27A; box-shadow: 0 4px 0 #23995C; color: #0F2A1C; font-family: 'Jua', sans-serif; font-size: 17px; cursor: pointer">나도 끄고 자기</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{meAsleep}}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; inset: 0; background: #07060F; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 32px">
+        <svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"></path></svg>
+        <div style="font-family: 'Jua', sans-serif; font-size: 30px">잘 자요</div>
+        <div style="font-size: 15px; color: #B3B0CC; line-height: 1.5">{{sleepMsg}}</div>
+        <button class="press" onClick="{{reset}}" style="margin-top: 10px; height: 46px; padding: 0 22px; border-radius: 14px; border: 2px solid #3A3866; background: #222140; box-shadow: 0 4px 0 #3A3866; color: #F2F0FF; font-family: 'Jua', sans-serif; font-size: 16px; cursor: pointer">처음부터 다시 보기</button>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="flex: 1; min-width: 0; border-left: 2px solid #3A3866; padding: 32px 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+    <div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 24px">데모 컨트롤</div>
+      <div style="font-size: 13px; color: #B3B0CC; margin-top: 4px; line-height: 1.5">시계를 오른쪽으로 밀면 세로 막대로 접히고, 왼쪽으로 밀면 다시 펼쳐져요. 눌러도 전환돼요.</div>
+    </div>
+    <div style="border: 2px solid #3A3866; border-radius: 20px; padding: 16px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <label for="t" style="font-size: 13px; color: #B3B0CC; font-weight: 600">현재 시각</label>
+        <span style="font-family: 'Jua', sans-serif; font-size: 30px; color: #A99EFF">{{clock}}</span>
+      </div>
+      <input id="t" type="range" min="0" max="90" step="1" value="{{t}}" onChange="{{onT}}" style="width: 100%; margin: 12px 0 4px; accent-color: #6C5CE7">
+      <div style="font-size: 12px; color: #B3B0CC">23:00부터 {{t}}분 경과 · 내 계획 45분</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px">
+        <button class="press" onClick="{{toggle}}" style="height: 48px; border: none; border-radius: 14px; background: #6C5CE7; box-shadow: 0 4px 0 #4B3DC2; color: #FFFFFF; font-family: 'Jua', sans-serif; font-size: 17px; cursor: pointer">{{playLabel}}</button>
+        <button class="press" onClick="{{reset}}" style="height: 48px; border-radius: 14px; border: 2px solid #3A3866; background: #222140; box-shadow: 0 4px 0 #3A3866; color: #F2F0FF; font-family: 'Jua', sans-serif; font-size: 17px; cursor: pointer">처음으로</button>
+      </div>
+    </div>
+    <div>
+      <div style="font-size: 13px; color: #B3B0CC; font-weight: 600; margin-bottom: 8px">그룹 상태</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{friends}}" as="f" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 14px; background: {{f.bg}}">
+            <span style="width: 12px; height: 12px; border-radius: 50%; background: {{f.dot}}; box-shadow: {{f.glow}}; flex-shrink: 0"></span>
+            <div>
+              <div style="font-size: 14px; font-weight: 700">{{f.name}}</div>
+              <div style="font-size: 12px; color: #B3B0CC">{{f.state}}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="font-size: 12px; color: #9894B8; line-height: 1.6">지민 23:20 · 서윤 23:38 · 도현 23:55에 잠들어요. 친구가 잠들면 아래에서 소등 알림이 올라와요.</div>
+  </div>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  componentWillUnmount() { if (this._timer) clearInterval(this._timer); }
+  st(k, d) { return this.state && this.state[k] != null ? this.state[k] : d; }
+  stop() { if (this._timer) { clearInterval(this._timer); this._timer = null; } }
+  handlers() {
+    if (this._h) return this._h;
+    this._h = {
+      onT: (e) => this.setState({ t: Number(e.target.value) }),
+      toggle: () => {
+        if (this._timer) { this.stop(); this.setState({ playing: false }); return; }
+        let t = this.st('t', 0);
+        if (t >= 90) t = 0;
+        this.setState({ playing: true, t, meAsleep: false });
+        this._timer = setInterval(() => {
+          const cur = this.st('t', 0);
+          if (cur >= 90 || this.st('meAsleep', false)) { this.stop(); this.setState({ playing: false }); return; }
+          this.setState({ t: cur + 1 });
+        }, 150);
+      },
+      reset: () => { this.stop(); this.setState({ t: 0, playing: false, meAsleep: false, dismissed: null, collapsed: false }); },
+      snooze: () => this.setState({ dismissed: this._noticeName }),
+      sleepNow: () => { this.stop(); this.setState({ meAsleep: true, playing: false }); },
+      down: (e) => {
+        this._x0 = e.clientX; this._drag = true; this._moved = false;
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+        this.setState({ dragging: true, dx: 0 });
+      },
+      move: (e) => {
+        if (!this._drag) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        const scale = r.width / (e.currentTarget.offsetWidth || r.width);
+        let dx = (e.clientX - this._x0) / (scale || 1);
+        if (Math.abs(dx) > 6) this._moved = true;
+        dx = this.st('collapsed', false) ? Math.max(-120, Math.min(0, dx)) : Math.max(0, Math.min(140, dx));
+        this.setState({ dx });
+      },
+      up: () => {
+        if (!this._drag) return;
+        this._drag = false;
+        const dx = this.st('dx', 0);
+        const c = this.st('collapsed', false);
+        let next = c;
+        if (!c && dx > 40) next = true;
+        if (c && dx < -30) next = false;
+        this.setState({ dragging: false, dx: 0, collapsed: next });
+      },
+      tap: () => {
+        if (this._moved) { this._moved = false; return; }
+        this.setState({ collapsed: !this.st('collapsed', false) });
+      }
+    };
+    return this._h;
+  }
+  renderVals() {
+    const h = this.handlers();
+    const t = this.st('t', 10);
+    const meAsleep = this.st('meAsleep', false);
+    const collapsed = this.st('collapsed', false);
+    const goal = 45;
+    const people = [
+      { name: '나', sleepAt: null, color: '#C2BAFF' },
+      { name: '지민', sleepAt: 20, color: '#FFD8A8' },
+      { name: '서윤', sleepAt: 38, color: '#B9EBCF' },
+      { name: '도현', sleepAt: 55, color: '#FFC9D1' }
+    ];
+    const awakeArr = people.map((p) => (p.sleepAt == null ? !meAsleep : t < p.sleepAt));
+    const awake = awakeArr.filter(Boolean).length;
+
+    const lerp = (a, b, k) => Math.round(a + (b - a) * k);
+    const mix = (c1, c2, k) => 'rgb(' + lerp(c1[0], c2[0], k) + ',' + lerp(c1[1], c2[1], k) + ',' + lerp(c1[2], c2[2], k) + ')';
+    const over = t - goal;
+    let color, frac;
+    if (over <= 0) { color = 'rgb(52,194,122)'; frac = (goal - t) / goal; }
+    else { color = mix([255, 197, 49], [255, 90, 78], Math.min(over / 30, 1)); frac = 1; }
+    const deg = (frac * 360).toFixed(1);
+    const ring = 'conic-gradient(' + color + ' 0deg ' + deg + 'deg, #3A3866 ' + deg + 'deg 360deg)';
+
+    const angles = [-54, -18, 18, 54];
+    const lights = people.map((p, i) => {
+      const a = (angles[i] * Math.PI) / 180;
+      return {
+        x: (46 + 44 * Math.sin(a) - 7).toFixed(1) + 'px',
+        y: (46 - 44 * Math.cos(a) - 7).toFixed(1) + 'px',
+        fill: awakeArr[i] ? '#FFC531' : '#5E5B80',
+        glow: awakeArr[i] ? '0 0 8px 3px rgba(255,197,49,0.75)' : 'none'
+      };
+    });
+    const friends = people.map((p, i) => ({
+      name: p.name,
+      state: awakeArr[i] ? '폰 하는 중' : '잠들었어요',
+      dot: awakeArr[i] ? '#FFC531' : '#5E5B80',
+      glow: awakeArr[i] ? '0 0 6px 2px rgba(255,197,49,0.7)' : 'none',
+      bg: awakeArr[i] ? '#3D3418' : '#2D2B52'
+    }));
+
+    const slept = people.filter((p) => p.sleepAt != null && t >= p.sleepAt);
+    const latest = slept.length ? slept[slept.length - 1] : null;
+    const dismissed = this.st('dismissed', null);
+    const showNotice = !!latest && t - latest.sleepAt < 15 && dismissed !== latest.name && !meAsleep;
+    this._noticeName = latest ? latest.name : null;
+    const awakeNames = people.filter((p, i) => awakeArr[i]).map((p) => p.name);
+
+    const dragging = this.st('dragging', false);
+    const pad = (n) => (n < 10 ? '0' : '') + n;
+    const now = 23 * 60 + t;
+    return {
+      t,
+      clock: pad(Math.floor(now / 60) % 24) + ':' + pad(now % 60),
+      ring, color, lights, friends,
+      expanded: !collapsed, collapsed,
+      pTop: collapsed ? '150px' : '20px',
+      pRight: collapsed ? '-2px' : '16px',
+      pW: collapsed ? '42px' : '124px',
+      pH: collapsed ? '176px' : '150px',
+      pRadius: collapsed ? '20px 0 0 20px' : '26px',
+      dragX: this.st('dx', 0) + 'px',
+      pTransition: dragging ? 'opacity 0.4s' : 'all 0.32s cubic-bezier(.2,.8,.2,1)',
+      popupAria: collapsed ? '접힌 팝업 시계, 왼쪽으로 밀거나 눌러서 펼치기' : '팝업 시계, 오른쪽으로 밀거나 눌러서 접기',
+      left: over <= 0 ? (goal - t) + '분' : '+' + over + '분',
+      leftCaption: over <= 0 ? '남음' : '초과',
+      shortLeft: over <= 0 ? (goal - t) + '분' : '+' + over,
+      fillPct: Math.round(frac * 100) + '%',
+      awakeText: awake <= 1 ? '나만 남았어요' : awake + '명 남았어요',
+      opacity: (0.45 + 0.55 * (Math.max(awake - 1, 0) / 3)).toFixed(2),
+      showNotice,
+      notice: latest ? { title: latest.name + '님이 방금 소등했어요', initial: latest.name.slice(0, 1), color: latest.color } : { title: '', initial: '', color: '#3A3866' },
+      stillAwake: awakeNames.length ? awakeNames.join(', ') : '없음',
+      meAsleep,
+      sleepMsg: t <= goal ? '계획보다 ' + (goal - t) + '분 일찍 폰을 껐어요. 그룹 기록을 지켰어요!' : '계획보다 ' + over + '분 늦었지만, 이제라도 푹 자요.',
+      playLabel: this.st('playing', false) ? '일시정지' : '재생',
+      onT: h.onT, toggle: h.toggle, reset: h.reset, snooze: h.snooze, sleepNow: h.sleepNow,
+      down: h.down, move: h.move, up: h.up, tap: h.tap
+    };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>

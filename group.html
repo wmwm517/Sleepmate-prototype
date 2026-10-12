@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수면 그룹 · 같이자 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&amp;family=IBM+Plex+Sans+KR:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#A99EFF}a:hover{color:#C9C2FF}
+.press:active{transform:translateY(4px);box-shadow:none !important}
+</style>
+<style>
+html,body{background:#0B0A1A;margin:0}
+.stage{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+.frame{position:relative;overflow:hidden;border-radius:40px;box-shadow:0 0 0 2px #2D2B52,0 24px 60px rgba(0,0,0,.5)}
+#app{width:390px;height:844px;transform-origin:0 0;position:absolute;left:0;top:0}
+.back{font-family:'IBM Plex Sans KR',sans-serif;font-size:14px;color:#B3B0CC;text-decoration:none}
+.back:hover{color:#F2F0FF}
+.embed .stage{padding:0;gap:0} .embed .back{display:none} .embed .frame{border-radius:0;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage">
+<a class="back" href="index.html">← 전체 화면 보기</a>
+<div class="frame"><div id="app" data-w="390" data-h="844"></div></div>
+</div>
+<template id="tpl">
+
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #15142B; color: #F2F0FF; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; display: flex; flex-direction: column; box-sizing: border-box">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 22px 24px 4px">
+    <h1 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 28px">우리 수면 그룹</h1>
+    <span style="font-size: 14px; color: #B3B0CC; font-weight: 600">4명</span>
+  </div>
+
+  <div style="margin: 12px 20px 0; border-radius: 24px; background: #2D2B52; box-shadow: 0 6px 0 #0B0A1A; padding: 20px; display: flex; align-items: center; gap: 16px">
+    <svg width="76" height="76" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"></path>
+      <circle cx="18" cy="5" r="1" fill="#FFFFFF"></circle><circle cx="21" cy="9" r="0.7" fill="#FFFFFF"></circle>
+    </svg>
+    <div>
+      <div style="font-family: 'Jua', sans-serif; font-size: 44px; line-height: 1; color: #FFC531">12일 연속</div>
+      <div style="font-size: 14px; color: #E4E2F2; margin-top: 6px">4명 모두 계획대로 잠들었어요</div>
+    </div>
+  </div>
+
+  <div style="margin: 20px 20px 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; text-align: center">
+    <sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+        <span style="font-size: 12px; font-weight: 700; color: #B3B0CC">{{d.day}}</span>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: {{d.bg}}; border: 2px solid {{d.border}}; display: flex; align-items: center; justify-content: center">
+          <sc-if value="{{d.done}}" hint-placeholder-val="{{ true }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#2B2A3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="margin: 16px 20px 0; padding: 12px 14px; border-radius: 16px; background: #3A2614; border: 2px solid #6B4520; display: flex; gap: 10px; align-items: flex-start">
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFB067" stroke-width="2.2" stroke-linecap="round"><path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4.5M12 17.5v.5"></path></svg>
+    <span style="font-size: 14px; color: #FFD3A6; line-height: 1.45">한 명이라도 계획한 시간을 넘기면 연속 기록이 0일로 돌아가요</span>
+  </div>
+
+  <div style="margin: 20px 20px 0; display: flex; align-items: baseline; justify-content: space-between">
+    <h2 style="margin: 0; font-family: 'Jua', sans-serif; font-weight: 400; font-size: 21px">오늘 밤 현황</h2>
+    <span style="font-size: 13px; color: #B3B0CC">23:24 기준</span>
+  </div>
+
+  <div style="margin: 10px 20px 0; border: 2px solid #3A3866; border-radius: 20px; overflow: hidden">
+    <sc-for list="{{members}}" as="m" hint-placeholder-count="4">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-top: {{m.divider}}">
+        <div style="width: 42px; height: 42px; border-radius: 50%; background: {{m.color}}; display: flex; align-items: center; justify-content: center; font-family: 'Jua', sans-serif; font-size: 18px; color: #15142B; flex-shrink: 0">{{m.initial}}</div>
+        <div style="flex: 1; min-width: 0">
+          <div style="font-weight: 700; font-size: 15px">{{m.name}}</div>
+          <div style="font-size: 13px; color: #B3B0CC">목표 취침 {{m.goal}}</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: {{m.chipBg}}">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: {{m.dot}}; box-shadow: {{m.glow}}"></span>
+          <span style="font-size: 13px; font-weight: 700; color: {{m.chipFg}}">{{m.status}}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 18px 20px 0">
+    <button class="press" style="width: 100%; height: 56px; border: 2px solid #3A3866; border-radius: 18px; background: #222140; box-shadow: 0 4px 0 #3A3866; color: #A99EFF; font-family: 'Jua', sans-serif; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A99EFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+      친구 초대하기
+    </button>
+  </div>
+
+  <nav aria-label="하단 메뉴" style="position: absolute; left: 0; right: 0; bottom: 0; height: 76px; border-top: 2px solid #3A3866; background: #15142B; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a href="main.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2M5 4l3-2M19 4l-3-2"></path></svg>
+      시계
+    </a>
+    <a href="group.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #A99EFF; font-size: 12px; font-weight: 700">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#6C5CE7" stroke-width="2.4" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"></path><circle cx="17" cy="9" r="2.8"></circle><path d="M16.5 14.6c2.6.2 4.4 2 5 5"></path></svg>
+      그룹
+    </a>
+    <a href="stats.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #9894B8; font-size: 12px; font-weight: 600">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+      기록
+    </a>
+  </nav>
+</div>
+</template>
+<script type="text/x-dc" id="logic">
+class Component extends DCLogic {
+  renderVals() {
+    const days = ['월', '화', '수', '목', '금', '토', '일'];
+    const week = days.map((day, i) => {
+      const done = i < 5;
+      const today = i === 5;
+      return {
+        day, done,
+        bg: done ? '#FFC531' : '#222140',
+        border: done ? '#E0A400' : (today ? '#8F82FF' : '#3A3866')
+      };
+    });
+    const raw = [
+      { name: '나', initial: '나', goal: '23:45', awake: true, color: '#C2BAFF' },
+      { name: '지민', initial: '지', goal: '23:30', awake: true, color: '#FFD8A8' },
+      { name: '서윤', initial: '서', goal: '23:20', awake: false, color: '#B9EBCF' },
+      { name: '도현', initial: '도', goal: '23:15', awake: false, color: '#FFC9D1' }
+    ];
+    const members = raw.map((m, i) => ({
+      ...m,
+      divider: i === 0 ? 'none' : '2px solid #3A3866',
+      status: m.awake ? '폰 하는 중' : '잠들었어요',
+      dot: m.awake ? '#FFC531' : '#5E5B80',
+      glow: m.awake ? '0 0 8px 2px rgba(255,197,49,0.7)' : 'none',
+      chipBg: m.awake ? '#3D3418' : '#2D2B52',
+      chipFg: m.awake ? '#FFD66B' : '#B3B0CC'
+    }));
+    return { week, members };
+  }
+}
+</script>
+<script src="morphdom-umd.min.js"></script>
+<script src="dc-lite.js"></script>
+</body>
+</html>
