@@ -31,6 +31,8 @@ button{font-family:inherit;color:inherit}
 .banner .bt{display:flex;justify-content:space-between;font-size:12px;color:#C9C6E0;font-weight:600}
 .banner .bh{font-size:15px;font-weight:700;margin-top:1px}
 .banner .bb{font-size:13px;color:#D9D7EA;margin-top:1px}
+.nightpill{position:absolute;left:50%;bottom:150px;z-index:56;transform:translate(-50%,12px);opacity:0;visibility:hidden;display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;border:2px solid #8F82FF;background:#2F2A66;color:#E4E0FF;font-size:15px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 0 #0B0A1A;transition:transform .35s,opacity .3s,visibility 0s .35s}
+.nightpill.show{transform:translate(-50%,0);opacity:1;visibility:visible;transition:transform .35s,opacity .3s,visibility 0s}
 
 /* 화면 전환 */
 .screen{position:absolute;inset:0;overflow:hidden}
@@ -41,6 +43,7 @@ button{font-family:inherit;color:inherit}
 
 /* 홈 화면 */
 .wall{background:radial-gradient(130% 70% at 50% 0%,#2B2160 0%,#15142B 55%,#0B0A1A 100%)}
+.wall.am{background:radial-gradient(130% 70% at 50% 0%,#6A5AB8 0%,#3B3170 50%,#1B1838 100%)}
 .star{position:absolute;border-radius:50%;background:#fff}
 .h-clock{position:absolute;left:0;right:0;top:62px;text-align:center}
 .h-date{font-size:15px;color:#D9D7EA;font-weight:600}
@@ -53,7 +56,7 @@ button{font-family:inherit;color:inherit}
 .w-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .w-m{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:18px;transition:background .5s}
 .w-av{position:relative;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:16px;color:#15142B;flex-shrink:0;transition:opacity .5s}
-.w-dot{position:absolute;right:-2px;top:-2px;width:12px;height:12px;border-radius:50%;border:2px solid #222140}
+.w-dot{position:absolute;right:-4px;top:-4px;display:flex}
 .w-n{font-size:14px;font-weight:700}
 .w-s{font-size:12px;font-weight:600}
 .apps{position:absolute;left:10px;right:10px;top:410px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px 0}
@@ -70,18 +73,34 @@ button{font-family:inherit;color:inherit}
 .dock{position:absolute;left:12px;right:12px;bottom:24px;height:88px;border-radius:32px;background:rgba(70,68,115,.45);display:grid;grid-template-columns:repeat(4,1fr);place-items:center}
 .dock .ic span:last-child{display:none}
 
+/* 불빛 (I-06 상태 색 · I-07 달 · I-11 모양) */
+.lt{display:block;overflow:visible}
+.blink{animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{50%{opacity:.3}}
+.rise{animation:rise .9s cubic-bezier(.2,.85,.25,1)}
+@keyframes rise{from{transform:translateY(7px);opacity:0}}
+
 /* 슬립메이트 앱 */
 .sm{background:#15142B}
 .sm-body{position:absolute;top:47px;left:0;right:0;bottom:84px;overflow-y:auto;scrollbar-width:none}
-.sm-body::-webkit-scrollbar,.mo-feed::-webkit-scrollbar{display:none}
+.sm-body::-webkit-scrollbar,.mo-feed::-webkit-scrollbar,.m-wrap::-webkit-scrollbar,.read::-webkit-scrollbar{display:none}
 .sm-top{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 4px}
 .sm-brand{display:flex;align-items:center;gap:8px;font-size:22px}
 .chip-streak{display:flex;align-items:center;gap:6px;padding:5px 12px;border:2px solid #3A3866;border-radius:999px;font-size:17px;color:#FFC531}
-.panel{display:none;padding-bottom:20px}
+.panel{display:none;padding-bottom:24px}
 .panel.on{display:block}
 .pad{padding:8px 24px 0}
 .c-title{margin:0;font-size:26px;line-height:1.25}
 .c-sub{margin:6px 0 0;font-size:15px;color:#B3B0CC}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badges:empty{display:none}
+.badge{padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;background:#2F2A66;color:#C9C2FF;border:1.5px solid #8F82FF}
+.badge.wk{background:#3D3418;color:#FFD66B;border-color:#B8901F}
+.badge.ed{background:#222140;color:#B3B0CC;border-color:#5E5B80}
+.mtabs{display:flex;gap:4px;margin:14px 24px 0;padding:4px;border-radius:16px;background:#222140;border:2px solid #3A3866}
+.mtabs button{flex:1;height:38px;border:0;border-radius:12px;background:none;color:#B3B0CC;font-size:16px;cursor:pointer}
+.mtabs button.on{background:#6C5CE7;color:#fff}
+.mtabs[hidden]{display:none}
 .dial-wrap{display:flex;justify-content:center;padding:14px 0 4px}
 .dial{width:256px;height:256px;border-radius:50%;background:#2D2B52;box-shadow:0 8px 0 #0B0A1A;touch-action:none;cursor:grab;display:flex;align-items:center;justify-content:center}
 .locked .dial{cursor:default}
@@ -97,10 +116,31 @@ button{font-family:inherit;color:inherit}
 .locked .sq-btn,.locked .presets{opacity:.25;pointer-events:none}
 .cta{width:100%;height:58px;border:none;border-radius:18px;background:#6C5CE7;box-shadow:0 5px 0 #4B3DC2;color:#fff;font-size:22px;cursor:pointer}
 .cta:disabled{background:#123A2A;color:#7EE2AE;box-shadow:0 5px 0 #23995C;border:2px solid #34C27A;font-size:18px;cursor:default}
+.sub-acts{display:flex;gap:8px;padding:14px 24px 0}
+.sub-acts button{flex:1;height:48px;border-radius:15px;font-size:16px;cursor:pointer}
+.sub-acts button[hidden]{display:none}
+.sub-acts button:disabled{opacity:.4;cursor:default;box-shadow:none}
+.sub-hint{margin:8px 24px 0;font-size:12.5px;color:#FFB067;line-height:1.45}
+.sub-hint:empty{display:none}
+.set-card{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;overflow:hidden}
+.set-row{display:flex;align-items:center;gap:12px;padding:13px 14px}
+.set-row+.set-row{border-top:2px solid #3A3866}
+.set-row b{display:block;font-size:15px}
+.set-row small{display:block;font-size:12.5px;color:#B3B0CC;margin-top:2px;line-height:1.45}
+.set-row.off b,.set-row.off small{opacity:.45}
+.sw{position:relative;width:52px;height:30px;border-radius:999px;border:0;background:#3A3866;cursor:pointer;flex-shrink:0;padding:0;transition:background .2s}
+.sw::after{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#F2F0FF;transition:transform .2s}
+.sw[aria-checked="true"]{background:#34C27A}
+.sw[aria-checked="true"]::after{transform:translateX(22px)}
+.sw:disabled{opacity:.35;cursor:default}
+.days{display:flex;gap:6px;margin-top:10px}
+.days button{width:34px;height:34px;border-radius:50%;border:2px solid #3A3866;background:#222140;color:#B3B0CC;font-weight:700;font-size:13px;cursor:pointer;padding:0}
+.days button.on{background:#3D3418;border-color:#FFC531;color:#FFD66B}
+.set-note{padding:10px 14px;border-top:2px solid #3A3866;font-size:12.5px;color:#9894B8}
 .toast{position:absolute;left:16px;right:16px;bottom:98px;z-index:5;background:#123A2A;border:2px solid #34C27A;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 0 #23995C;transform:translateY(20px);opacity:0;visibility:hidden;transition:all .35s cubic-bezier(.2,.85,.25,1)}
 .toast.show{transform:none;opacity:1;visibility:visible}
 .toast-btn{font-size:16px;color:#7EE2AE;padding:10px 14px;border-radius:12px;background:#222140;border:2px solid #34C27A;cursor:pointer;white-space:nowrap}
-.sm-nav{position:absolute;left:0;right:0;bottom:0;height:84px;padding-bottom:24px;border-top:2px solid #3A3866;background:#15142B;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.sm-nav{position:absolute;left:0;right:0;bottom:0;height:84px;padding-bottom:24px;border-top:2px solid #3A3866;background:#15142B;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .sm-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;background:none;color:#9894B8;font-size:12px;font-weight:600;cursor:pointer}
 .sm-nav button svg{stroke:#9894B8}
 .sm-nav button.on{color:#A99EFF;font-weight:700}
@@ -108,34 +148,146 @@ button{font-family:inherit;color:inherit}
 .splash{position:absolute;inset:0;z-index:20;background:radial-gradient(circle at 50% 40%,#3A2E8C,#15142B 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:opacity .45s,visibility 0s .45s}
 .splash.hide{opacity:0;visibility:hidden}
 .splash .sp-tag{font-size:15px;color:#C9C2FF}
-.sec{display:flex;align-items:baseline;justify-content:space-between;margin:20px 20px 0}
-.sec h2{margin:0;font-size:21px;font-weight:400}
-.sec span{font-size:13px;color:#B3B0CC}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 20px 0}
+.sec h2{margin:0;font-size:21px;font-weight:400;white-space:nowrap}
+.sec span{font-size:12.5px;color:#B3B0CC;text-align:right}
 .card-streak{margin:10px 20px 0;border-radius:24px;background:#2D2B52;box-shadow:0 6px 0 #0B0A1A;padding:18px 20px;display:flex;align-items:center;gap:16px}
 .week{margin:18px 20px 0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
 .week div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#B3B0CC}
 .week i{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #3A3866;background:#222140}
 .week i.done{background:#FFC531;border-color:#E0A400}
+.week i.miss{background:#2D2B52;border-color:#5E5B80}
 .week i.today{border-color:#8F82FF}
 .warn{margin:16px 20px 0;padding:12px 14px;border-radius:16px;background:#3A2614;border:2px solid #6B4520;display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#FFD3A6;line-height:1.45}
 .g-list{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;overflow:hidden}
 .g-row{display:flex;align-items:center;gap:12px;padding:11px 14px}
 .g-row+.g-row{border-top:2px solid #3A3866}
 .g-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:#15142B;flex-shrink:0}
-.g-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:13px;font-weight:700;transition:background .5s}
-.g-chip i{width:10px;height:10px;border-radius:50%}
+.g-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;font-size:13px;font-weight:700;transition:background .5s;white-space:nowrap}
+.first{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 7px;border-radius:999px;background:#3A3420;color:#FFE6A0;font-size:11px;font-weight:700;vertical-align:1px}
+.g-note{margin:8px 22px 0;font-size:12.5px;color:#9894B8;line-height:1.45}
 .ghost{width:100%;height:56px;border:2px solid #3A3866;border-radius:18px;background:#222140;box-shadow:0 4px 0 #3A3866;color:#A99EFF;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.st-card{margin:12px 20px 0;border:2px solid #34C27A;border-radius:22px;box-shadow:0 5px 0 #23995C;padding:16px;background:#123A2A}
+
+/* 기록 탭 */
+.st-card{margin:12px 20px 0;border:2px solid #34C27A;border-radius:22px;box-shadow:0 5px 0 #23995C;padding:16px;background:#123A2A;color:#A8E9C6}
+.st-card.mid{border-color:#FFC531;box-shadow:0 5px 0 #B8901F;background:#3D3418;color:#FFE3A0}
+.st-card.bad{border-color:#FF5A4E;box-shadow:0 5px 0 #B23A31;background:#3A1820;color:#FFB3AC}
+.st-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
+.ext-chip{padding:2px 9px;border-radius:999px;background:rgba(0,0,0,.28);font-size:12.5px;font-weight:700;color:#E4E0FF}
+.st-head{font-size:24px;margin-top:4px;color:#F2F0FF}
+.st-track{margin-top:12px;height:14px;border-radius:999px;background:#222140;border:2px solid rgba(255,255,255,.14);overflow:hidden}
+.st-track div{height:100%;border-radius:999px;background:currentColor}
+.st-foot{display:flex;justify-content:space-between;font-size:12px;margin-top:6px;font-weight:600}
 .st-tiles{margin:14px 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .st-tiles div{border:2px solid #3A3866;border-radius:18px;padding:12px 14px;font-size:13px;color:#B3B0CC;font-weight:600}
 .st-tiles b{display:block;font-family:'Jua',sans-serif;font-weight:400;font-size:25px;color:#F2F0FF;margin-top:2px}
-.chart{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:14px 12px 10px}
-.bars{position:absolute;inset:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end}
-.bars button{border-radius:10px 10px 6px 6px;padding:0;cursor:pointer;border:3px solid transparent}
-.bars button.sel{border-color:#F2F0FF}
-.legend{display:flex;gap:12px;justify-content:center;margin-top:10px;font-size:12px;color:#B3B0CC;font-weight:600}
+.chart{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:14px 12px 12px}
+.detail{font-size:14px;font-weight:700;min-height:20px}
+.cols{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;height:150px;margin-top:8px}
+.col{position:relative;height:100%}
+.bar{position:absolute;left:0;right:0;bottom:0;border-radius:10px 10px 6px 6px;border:3px solid transparent;padding:0;cursor:pointer}
+.bar.sel{border-color:#F2F0FF}
+.plan-mk{position:absolute;left:-3px;right:-3px;border-top:2px dashed #C9C2FF;z-index:1;pointer-events:none}
+.dots{position:absolute;left:0;right:0;display:flex;flex-direction:column-reverse;align-items:center;gap:2px;pointer-events:none}
+.dots i{width:8px;height:8px;border-radius:50%;background:#C9C2FF;border:2px solid #15142B}
+.xl{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;text-align:center;margin-top:6px;font-size:12px;font-weight:700;color:#B3B0CC}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;margin-top:10px;font-size:12px;color:#B3B0CC;font-weight:600}
 .legend span{display:flex;align-items:center;gap:4px}
 .legend i{width:10px;height:10px;border-radius:3px}
+.mtabs.seg{margin:10px 20px 0}
+.mtabs.mini{margin:0 0 10px;padding:3px}
+.mtabs.mini button{height:30px;font-size:14px}
+.cmp{font-size:22px;margin-top:2px}
+.cmp-sub{font-size:12.5px;color:#B3B0CC;margin-top:2px}
+.sl-sum{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:8px}
+.sl-sum b{font-size:22px;color:#F2F0FF}
+.sl-sum span{font-size:13px;color:#B3B0CC;font-weight:600}
+.insight{margin-top:12px;padding:10px 12px;border-radius:14px;background:#222140;font-size:13.5px;line-height:1.45;color:#E4E2F2}
+.est{display:inline-block;padding:1px 8px;border-radius:999px;background:#2D2B52;color:#C9C2FF;font-size:11.5px;font-weight:700}
+.fine{margin-top:10px;font-size:11.5px;color:#9894B8;line-height:1.45}
+.duel{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:16px}
+.duel p{margin:6px 0 12px;font-size:13.5px;color:#B3B0CC;line-height:1.5}
+.duel p b{color:#E4E2F2}
+.duel .cta{height:52px;font-size:19px}
+.vs{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.vs-p{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;width:96px;text-align:center}
+.vs-p .g-av{width:46px;height:46px}
+.vs-mid{font-size:13px;color:#B3B0CC;text-align:center;flex:1}
+.vs-mid b{display:block;font-family:'Jua',sans-serif;font-weight:400;font-size:26px;color:#FFC531}
+.vt{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+.vt td{padding:7px 4px;border-top:1px solid #3A3866;text-align:center;font-weight:700}
+.vt td:nth-child(2){color:#B3B0CC;font-weight:600;font-size:12.5px}
+.vt td.win{color:#7EE2AE}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid #3A3866;border-top-color:#A99EFF;animation:spin 1s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.linkbtn{background:none;border:0;padding:6px 0;color:#A99EFF;font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.shapes{margin:10px 20px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.shape{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px 10px;border-radius:18px;border:2px solid #3A3866;background:#222140;cursor:pointer;color:inherit;position:relative}
+.shape b{font-size:14px}
+.shape small{font-size:11.5px;color:#B3B0CC;text-align:center;line-height:1.35}
+.shape.on{border-color:#FFC531;box-shadow:0 0 0 2px #FFC531 inset}
+.shape.lock{cursor:default;background:#1B1A36}
+.shape .lk{position:absolute;right:8px;top:8px}
+
+/* 시계: 기본 시간 스테퍼 (1-1, 1-2) */
+.stepper{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.stepper button{width:36px;height:36px;border-radius:12px;border:2px solid #3A3866;background:#222140;box-shadow:0 3px 0 #3A3866;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.stepper button:disabled{opacity:.3;cursor:default;box-shadow:none}
+.stepper span{min-width:76px;text-align:center;font-size:18px}
+.set-row .linkbtn{padding:4px 0 0;font-size:12.5px}
+
+/* 메이트: 하위 메뉴 */
+.mtabs.top{margin:12px 20px 0}
+
+/* 기록: 날짜 선택 (3-2) */
+.datebar{display:flex;align-items:center;gap:8px;margin:10px 20px 0}
+.datebar .nav{width:44px;height:44px;border-radius:14px;border:2px solid #3A3866;background:#222140;box-shadow:0 3px 0 #3A3866;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0}
+.datebar .nav:disabled{opacity:.3;cursor:default;box-shadow:none}
+.datebtn{flex:1;min-width:0;height:44px;border-radius:14px;border:2px solid #8F82FF;background:#2F2A66;color:#E4E0FF;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.datebtn small{font-family:'IBM Plex Sans KR',sans-serif;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;background:#6C5CE7;color:#fff}
+.cal{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:12px 10px 10px;background:#1B1A36}
+.cal[hidden]{display:none}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin:0 4px 8px}
+.cal-head b{font-size:18px}
+.cal-head button{width:34px;height:34px;border-radius:11px;border:2px solid #3A3866;background:#222140;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.cal-head button:disabled{opacity:.3;cursor:default}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center}
+.cal-wd{font-size:11.5px;font-weight:700;color:#9894B8;padding:2px 0 4px}
+.cal-d{position:relative;height:42px;border:0;border-radius:12px;background:none;color:#F2F0FF;font-size:14px;font-weight:700;cursor:pointer;padding:0 0 9px}
+.cal-d::after{content:'';position:absolute;left:50%;bottom:7px;width:6px;height:6px;margin-left:-3px;border-radius:50%;box-sizing:border-box}
+.cal-d.has-st::after{background:#A99EFF}
+.cal-d.has-rec::after{border:1.5px solid #9894B8}
+.cal-d:disabled{color:#4E4B6E;cursor:default}
+.cal-d.sel{background:#6C5CE7;color:#fff}
+.cal-d.sel::after{background:#fff;border-color:#fff}
+.cal-d.today{box-shadow:inset 0 0 0 2px #8F82FF;color:#A99EFF}
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12px;color:#B3B0CC;font-weight:600}
+.cal-legend span{display:flex;align-items:center;gap:5px}
+.cal-legend i{width:7px;height:7px;border-radius:50%;box-sizing:border-box}
+.day-sum{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;color:#B3B0CC;font-weight:600;margin-bottom:6px}
+.day-sum b{color:#F2F0FF}
+
+/* 내 정보 (4) */
+.me-prof{margin:12px 20px 0;border-radius:24px;background:#2D2B52;box-shadow:0 6px 0 #0B0A1A;padding:18px;display:flex;align-items:center;gap:14px}
+.me-av{position:relative;width:64px;height:64px;border-radius:50%;background:#C2BAFF;color:#15142B;font-family:'Jua',sans-serif;font-size:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.me-av .w-dot{right:-2px;top:-2px}
+.me-edit{margin-left:auto;height:36px;padding:0 12px;border-radius:12px;border:2px solid #3A3866;background:#222140;color:#C9C2FF;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.st-tiles.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.st-tiles.three b{font-size:21px}
+.list{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;overflow:hidden}
+.li{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:none;text-align:left;cursor:pointer;font-size:15px;font-weight:600}
+.li+.li{border-top:2px solid #3A3866}
+.li .ic2{width:34px;height:34px;border-radius:11px;background:#222140;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.li small{display:block;font-size:12.5px;color:#B3B0CC;margin-top:1px;font-weight:400}
+.li .val{margin-left:auto;font-size:13px;color:#B3B0CC;white-space:nowrap;font-weight:600}
+.li .chev{flex-shrink:0;margin-left:4px}
+.li.feat{background:#222140}
+.backbar{display:flex;align-items:center;gap:4px;margin:8px 12px 0}
+.backbar button{display:flex;align-items:center;gap:2px;height:40px;padding:0 10px 0 4px;border:0;background:none;color:#A99EFF;font-size:15px;font-weight:700;cursor:pointer}
+.lp{margin:10px 20px 0;border:2px solid #3A3866;border-radius:20px;padding:14px 10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;text-align:center}
+.lp div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700}
+.lp .w-av{width:44px;height:44px;font-size:19px}
+.me-foot{display:flex;justify-content:center;gap:18px;margin:18px 0 0}
 
 /* 모먼트 (콘텐츠 앱) */
 .mo{background:#000;color:#F5F5F5}
@@ -167,36 +319,104 @@ button{font-family:inherit;color:inherit}
 .mo-nav span{display:flex}
 
 /* 팝업 시계 */
-.popup{position:absolute;z-index:40;top:150px;right:14px;width:124px;height:150px;border-radius:26px;background:rgba(40,38,74,.97);border:2px solid #4A4780;box-shadow:0 5px 0 rgba(0,0,0,.45);padding:0;margin:0;color:#F2F0FF;cursor:grab;touch-action:none;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:top .32s cubic-bezier(.2,.8,.2,1),right .32s cubic-bezier(.2,.8,.2,1),width .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),border-radius .32s,transform .32s cubic-bezier(.2,.8,.2,1),opacity 1s,visibility 0s}
-.popup.collapsed{top:230px;right:-2px;width:42px;height:176px;border-radius:20px 0 0 20px}
+.popup{position:absolute;z-index:40;top:150px;right:14px;width:124px;height:166px;border-radius:26px;background:rgba(40,38,74,.97);border:2px solid #4A4780;box-shadow:0 5px 0 rgba(0,0,0,.45);padding:0;margin:0;color:#F2F0FF;cursor:grab;touch-action:none;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:top .32s cubic-bezier(.2,.8,.2,1),right .32s cubic-bezier(.2,.8,.2,1),width .32s cubic-bezier(.2,.8,.2,1),height .32s cubic-bezier(.2,.8,.2,1),border-radius .32s,transform .32s cubic-bezier(.2,.8,.2,1),opacity 1s,visibility 0s}
+.popup.collapsed{top:230px;right:-2px;width:42px;height:186px;border-radius:20px 0 0 20px}
 .popup.dragging{transition:opacity 1s}
 .popup.off{opacity:0!important;visibility:hidden;pointer-events:none;transition:opacity .25s,visibility 0s .25s}
 .popup *{pointer-events:none}
-.pp-x{display:flex;flex-direction:column;align-items:center;gap:6px}
+.pp-x{display:flex;flex-direction:column;align-items:center;gap:5px}
 .pp-wrap{position:relative;width:92px;height:92px}
-.pp-light{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #15142B;z-index:2;transition:background .6s,box-shadow .6s}
+.pp-light{position:absolute;width:16px;height:16px;z-index:2;display:flex}
 .pp-ring{position:absolute;inset:8px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .pp-hole{width:60px;height:60px;border-radius:50%;background:#15142B;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .pp-left{font-size:19px;line-height:1}
 .pp-cap{font-size:10px;font-weight:700;color:#B3B0CC}
 .pp-awake{font-size:12px;font-weight:700}
+.pp-over{font-size:11px;font-weight:700;color:#FF8A80;margin-top:-4px}
 .pp-goal{font-size:11px;color:#B3B0CC;margin-top:-4px}
-.pp-c{display:flex;flex-direction:column;align-items:center;gap:8px}
-.pp-c .dot{width:10px;height:10px;border-radius:50%}
+.pp-c{display:flex;flex-direction:column;align-items:center;gap:7px}
 .pp-bar{width:8px;height:52px;border-radius:4px;background:#3A3866;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;margin-top:4px}
 .pp-bar div{width:100%;border-radius:4px;transition:height .6s}
 
 .notice{position:absolute;z-index:45;left:10px;right:10px;bottom:94px;background:#222140;border:2px solid #3A3866;border-radius:24px;padding:16px;box-shadow:0 5px 0 #0B0A1A,0 16px 40px rgba(0,0,0,.6);transform:translateY(40px);opacity:0;visibility:hidden;transition:transform .45s cubic-bezier(.2,.85,.25,1),opacity .3s,visibility 0s .45s}
 .notice.show{transform:none;opacity:1;visibility:visible;transition:transform .45s cubic-bezier(.2,.85,.25,1),opacity .3s,visibility 0s}
+.n-x{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:0;background:#2D2B52;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .n-av{position:relative;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:19px;color:#15142B;flex-shrink:0}
 .n-moon{position:absolute;right:-3px;bottom:-3px;width:20px;height:20px;border-radius:50%;background:#15142B;display:flex;align-items:center;justify-content:center}
 .n-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
 .n-btns button{height:48px;border-radius:14px;font-size:17px;cursor:pointer}
 
-.sleep{position:absolute;inset:0;z-index:70;background:#07060F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px;opacity:0;visibility:hidden;transition:opacity .9s,visibility 0s .9s}
-.sleep.show{opacity:1;visibility:visible;transition:opacity .9s,visibility 0s}
-.sleep .msg{font-size:15px;color:#B3B0CC;line-height:1.6;max-width:28ch}
-.sleep .ghost{width:auto;padding:0 22px;height:46px;font-size:16px;color:#F2F0FF;margin-top:10px}
+/* 공통 버튼 · 시트 · 전체 화면 */
+.btn1{border:none;background:#6C5CE7;box-shadow:0 4px 0 #4B3DC2;color:#fff}
+.btn2{border:2px solid #3A3866;background:#2D2B52;box-shadow:0 4px 0 #3A3866;color:#F2F0FF}
+.btn-g{border:none;background:#34C27A;box-shadow:0 4px 0 #23995C;color:#0F2A1C}
+.sheet-bg{position:absolute;inset:0;z-index:66;background:rgba(7,6,15,.62);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.sheet-bg.show{opacity:1;visibility:visible;transition:opacity .3s,visibility 0s}
+.sheet{position:absolute;left:10px;right:10px;bottom:28px;background:#222140;border:2px solid #3A3866;border-radius:26px;padding:20px 18px 16px;box-shadow:0 6px 0 #0B0A1A;transform:translateY(30px);transition:transform .4s cubic-bezier(.2,.85,.25,1)}
+.sheet-bg.show .sheet{transform:none}
+.sheet h3{margin:0;font-size:22px;font-weight:400;line-height:1.3}
+.sheet p{margin:6px 0 0;font-size:14px;color:#B3B0CC;line-height:1.5}
+.sh-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+.sh-btns button{height:50px;border-radius:14px;font-size:17px;cursor:pointer}
+.to-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.to{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;border:2px solid #3A3866;background:#15142B;font-size:13px;font-weight:700;cursor:pointer}
+.to .g-av{width:26px;height:26px;font-size:12px}
+.to.on{border-color:#FF8A80}
+.to:disabled{opacity:.45;cursor:default}
+.vids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.vid{border:2px solid #3A3866;border-radius:16px;padding:0;overflow:hidden;background:#15142B;cursor:pointer;text-align:left}
+.vid.on{border-color:#34C27A;box-shadow:0 0 0 2px #34C27A}
+.vid .th{height:62px;display:flex;align-items:center;justify-content:center}
+.vid b{display:block;font-size:12.5px;padding:6px 8px 0}
+.vid small{display:block;font-size:11px;color:#B3B0CC;padding:0 8px 8px}
+.sent{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 0 10px;text-align:center}
+
+.ovl{position:absolute;inset:0;z-index:68;display:flex;flex-direction:column;background:#0B0A1A;opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
+.ovl.show{opacity:1;visibility:visible;transition:opacity .35s,visibility 0s}
+.m-wrap{flex:1;overflow-y:auto;scrollbar-width:none;padding:66px 20px 34px}
+.m-item{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border-radius:18px;border:2px solid #3A3866;background:#222140;box-shadow:0 4px 0 #3A3866;cursor:pointer;margin-top:10px}
+.m-item b{font-size:16px}
+.m-item small{display:block;font-size:12.5px;color:#B3B0CC;margin-top:2px}
+.m-len{margin-left:auto;font-size:13px;font-weight:700;color:#A99EFF;white-space:nowrap}
+.rec{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#123A2A;color:#7EE2AE;font-size:11px;font-weight:700;vertical-align:2px}
+.m-run{flex:1;display:flex;flex-direction:column;padding:62px 20px 34px;gap:14px;min-height:0}
+.m-stage{flex:1;min-height:0;border-radius:24px;overflow:hidden;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.prog{height:8px;border-radius:999px;background:#2D2B52;overflow:hidden}
+.prog div{height:100%;width:0;background:#A99EFF;border-radius:999px}
+.m-meta{display:flex;justify-content:space-between;font-size:13px;color:#B3B0CC;font-weight:600}
+.breath{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#3A3470,#15142B 70%);animation:breath 5s ease-in-out infinite}
+@keyframes breath{50%{transform:scale(1.18);opacity:.6}}
+.read{overflow-y:auto;scrollbar-width:none;text-align:left;justify-content:flex-start;font-size:16px;line-height:1.9;color:#CFCBE6;background:#15142B;display:block;padding:24px 22px}
+.read p{margin:0 0 18px}
+.sub-line{position:absolute;left:14px;right:14px;bottom:14px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.72);color:#fff;font-size:14px;line-height:1.4}
+.float{animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.rain{position:absolute;inset:0;background:repeating-linear-gradient(100deg,transparent 0 22px,rgba(160,185,235,.18) 22px 23px);animation:rain .9s linear infinite}
+@keyframes rain{to{background-position:-40px 120px}}
+.v-dim{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none}
+
+.sleep{position:absolute;inset:0;z-index:70;background:#07060F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px;opacity:0;visibility:hidden;transition:opacity .9s,visibility 0s .9s,background 1.2s}
+.sleep.show{opacity:1;visibility:visible;transition:opacity .9s,visibility 0s,background 1.2s}
+.sleep .msg{font-size:15px;color:#B3B0CC;line-height:1.6;max-width:30ch}
+.sleep.measuring{background:#000}
+.sleep.measuring .sl-main{opacity:.28}
+.sl-main{display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity 1.2s}
+.sl-box{width:100%;max-width:310px;border:2px solid #3A3866;border-radius:22px;padding:16px;background:#15142B;text-align:left;font-size:13.5px;color:#B3B0CC;line-height:1.5}
+.sl-box b{display:block;font-size:17px;color:#F2F0FF;margin-bottom:4px}
+.sleep.measuring .sl-box{background:#07060F;border-color:#1E1D38;color:#77739A}
+.sleep.measuring .sl-box b{color:#A9A5CC}
+.sl-acts{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sleep .ghost{width:auto;padding:0 22px;height:46px;font-size:16px;color:#F2F0FF;margin-top:6px}
+.sleep.measuring .ghost{opacity:.5}
+.alarm{z-index:75;background:radial-gradient(circle at 50% 35%,#4A3E9E,#15142B 72%);align-items:center;justify-content:center;text-align:center;gap:10px;padding:32px}
+.alarm .big{font-size:84px;line-height:1}
+.morning{z-index:75;background:linear-gradient(180deg,#3B3170 0%,#5A4A9E 38%,#C98E86 100%)}
+.am-card{margin-top:10px;padding:14px 16px;border-radius:20px;background:rgba(21,20,43,.82);border:2px solid rgba(201,194,255,.25);font-size:13.5px;color:#D9D7EA;line-height:1.5;display:flex;gap:12px;align-items:flex-start}
+.am-card b{display:block;font-size:16px;color:#F2F0FF}
+.am-ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#2D2B52}
+.am-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.am-btns button{height:54px;border-radius:16px;font-size:17px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.blink,.rise,.breath,.float,.rain,.spin{animation:none}}
 </style>
 </head>
 <body>
@@ -208,13 +428,13 @@ button{font-family:inherit;color:inherit}
   <section class="screen wall" id="scr-home" aria-label="홈 화면">
     <div id="stars"></div>
     <div class="h-clock">
-      <div class="h-date">10월 12일 월요일</div>
+      <div class="h-date" id="h-date">10월 12일 월요일</div>
       <div class="h-time jua" id="h-time">23:00</div>
     </div>
     <button class="widget" id="widget" aria-label="슬립메이트 위젯 열기">
       <div class="w-top">
         <div class="w-brand jua"><span class="mascot" data-s="28"></span>우리 수면 그룹</div>
-        <span class="w-streak jua"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>12일</span>
+        <span class="w-streak jua"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg><span class="streak-n">12일</span></span>
       </div>
       <div class="w-sub" id="w-sub"></div>
       <div class="w-grid" id="w-grid"></div>
@@ -229,13 +449,18 @@ button{font-family:inherit;color:inherit}
     <div class="sm-body" id="sm-body">
       <div class="sm-top">
         <div class="sm-brand jua"><span class="mascot" data-s="40"></span>슬립메이트</div>
-        <div class="chip-streak jua"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>12일</div>
+        <div class="chip-streak jua"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg><span class="streak-n">12일</span></div>
       </div>
 
       <div class="panel on" id="tab-clock">
         <div class="pad">
           <h1 class="c-title jua" id="c-title">오늘 밤, 폰은 얼마나 할까요?</h1>
           <p class="c-sub" id="c-sub">가운데 태엽을 돌려서 시간을 감아 주세요</p>
+          <div class="badges" id="c-badges"></div>
+        </div>
+        <div class="mtabs" id="mtabs" hidden>
+          <button class="jua" data-act="mt" data-type="weekday">평일</button>
+          <button class="jua" data-act="mt" data-type="weekend">주말</button>
         </div>
         <div class="dial-wrap">
           <div class="dial" id="dial">
@@ -274,15 +499,30 @@ button{font-family:inherit;color:inherit}
         <div class="pad" style="padding-top:18px">
           <button class="cta press jua" id="save">이대로 감기 완료</button>
         </div>
+        <div class="sub-acts">
+          <button class="btn2 press jua" data-act="rewind" id="sa-rewind" hidden>오늘만 다시 감기</button>
+          <button class="btn-g press jua" data-act="sleep" id="sa-sleep" hidden>지금 끄고 자기</button>
+          <button class="btn2 press jua" data-act="cancel" id="sa-cancel" hidden>취소</button>
+          <button class="btn2 press jua" data-act="editdef" id="sa-edit" hidden>기본값 바꾸기</button>
+          <button class="btn1 press jua" data-act="tonight" id="sa-tonight" hidden>오늘 밤 23:00으로</button>
+        </div>
+        <div class="sub-hint" id="sub-hint"></div>
+        <div class="sec"><h2 class="jua">매일 반복</h2><span>시간 설정 부담 줄이기</span></div>
+        <div class="set-card" id="rep"></div>
       </div>
 
-      <div class="panel" id="tab-group">
-        <div class="sec" style="margin-top:12px"><h2 class="jua">우리 수면 그룹</h2><span>4명</span></div>
+      <div class="panel" id="tab-mate">
+        <div class="mtabs top" id="mate-sub">
+          <button class="jua on" data-act="msub" data-v="group">수면 그룹</button>
+          <button class="jua" data-act="msub" data-v="duel">1:1 대결</button>
+        </div>
+        <div id="mate-group">
+        <div class="sec"><h2 class="jua">우리 수면 그룹</h2><span>4명</span></div>
         <div class="card-streak">
           <svg width="68" height="68" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/><circle cx="18" cy="5" r="1" fill="#fff"/><circle cx="21" cy="9" r=".7" fill="#fff"/></svg>
           <div>
-            <div class="jua" style="font-size:40px;line-height:1;color:#FFC531">12일 연속</div>
-            <div style="font-size:14px;color:#E4E2F2;margin-top:6px">어젯밤 4명 모두 계획대로 잠들었어요</div>
+            <div class="jua" style="font-size:40px;line-height:1;color:#FFC531" id="g-streak">12일 연속</div>
+            <div style="font-size:14px;color:#E4E2F2;margin-top:6px" id="g-streak-sub">어젯밤 4명 모두 계획대로 잠들었어요</div>
           </div>
         </div>
         <div class="week" id="week"></div>
@@ -290,37 +530,60 @@ button{font-family:inherit;color:inherit}
           <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFB067" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.5"/></svg>
           <span>한 명이라도 계획한 시간을 넘기면 연속 기록이 0일로 돌아가요</span>
         </div>
-        <div class="sec"><h2 class="jua">오늘 밤 현황</h2><span id="g-time">23:00 기준</span></div>
+        <div class="sec"><h2 class="jua" id="g-head">오늘 밤 현황</h2><span id="g-time">23:00 기준</span></div>
         <div class="g-list" id="g-list"></div>
+        <div class="g-note">불빛과 ‘목표 초과’ 표시는 우리 그룹 안에서만 보여요. 먼저 잠든 사람은 목표를 넘긴 친구에게 잠들기 제안을 보낼 수 있어요.</div>
         <div style="padding:16px 20px 0">
           <button class="ghost press jua"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A99EFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>친구 초대하기</button>
+        </div>
+        </div>
+        <div id="mate-duel" hidden>
+          <div class="sec"><h2 class="jua">1:1 대결</h2><span>그룹과 별개로 겨뤄요</span></div>
+          <div id="duel"></div>
+          <div class="sec"><h2 class="jua">지난 대결</h2><span id="duel-hist-n"></span></div>
+          <div id="duel-hist"></div>
         </div>
       </div>
 
       <div class="panel" id="tab-stats">
         <div class="sec" style="margin-top:12px"><h2 class="jua">수면 기록</h2></div>
-        <div class="st-card">
-          <div style="font-size:13px;color:#A8E9C6;font-weight:600">어젯밤 · 10월 11일</div>
-          <div class="jua" style="font-size:25px;color:#7EE2AE;margin-top:2px">계획보다 13분 일찍 잠들었어요</div>
-          <div style="margin-top:12px;height:14px;border-radius:999px;background:#222140;border:2px solid #2E6B4C;overflow:hidden"><div style="width:71%;height:100%;background:#34C27A;border-radius:999px"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:#A8E9C6;margin-top:6px;font-weight:600"><span>사용 32분</span><span>계획 45분</span></div>
+        <div class="st-card" id="st-result"></div>
+        <div class="st-tiles" id="st-tiles"></div>
+        <div class="sec"><h2 class="jua">날짜별 수면 단계</h2><span class="est">추정치</span></div>
+        <div class="datebar" id="st-date"></div>
+        <div class="cal" id="st-cal" hidden></div>
+        <div class="chart" id="st-sleep"></div>
+        <div class="sec"><h2 class="jua" id="st-chart-title">최근 7일 폰 사용 시간</h2></div>
+        <div class="mtabs seg" id="st-view">
+          <button class="jua" data-act="view" data-v="use">사용 시간</button>
+          <button class="jua" data-act="view" data-v="ext">연장 횟수</button>
         </div>
-        <div class="st-tiles">
-          <div>잠든 시각<b>23:32</b></div>
-          <div>수면 시간<b>7시간 18분</b></div>
-          <div>잠들기까지<b>32분</b></div>
-          <div>내 연속 기록<b style="color:#FFC531">15일</b></div>
+        <div class="chart" id="st-chart"></div>
+      </div>
+
+      <div class="panel" id="tab-me">
+        <div id="me-main">
+          <div class="sec" style="margin-top:12px"><h2 class="jua">내 정보</h2></div>
+          <div class="me-prof" id="me-prof"></div>
+          <div class="st-tiles three" id="me-tiles"></div>
+          <div class="sec"><h2 class="jua">꾸미기</h2></div>
+          <div class="list"><button class="li feat" data-act="open-light" id="me-light-row"></button></div>
+          <div class="sec"><h2 class="jua">계정</h2></div>
+          <div class="list" id="me-account"></div>
+          <div class="sec"><h2 class="jua">설정</h2></div>
+          <div class="list" id="me-settings"></div>
+          <div class="sec"><h2 class="jua">고객 지원</h2></div>
+          <div class="list" id="me-support"></div>
+          <div class="me-foot"><button class="linkbtn" data-act="ui">로그아웃</button><button class="linkbtn" data-act="ui" style="color:#9894B8">회원 탈퇴</button></div>
         </div>
-        <div class="sec"><h2 class="jua">지난주 폰 사용 시간</h2><span>막대를 눌러 보세요</span></div>
-        <div class="chart">
-          <div style="font-size:14px;font-weight:700;min-height:20px" id="st-detail"></div>
-          <div style="position:relative;height:130px;margin-top:8px">
-            <div id="st-goal" style="position:absolute;left:0;right:0;border-top:2px dashed #8F82FF"></div>
-            <span id="st-goal-l" style="position:absolute;right:0;font-size:11px;font-weight:700;color:#A99EFF;background:#15142B;padding:0 4px">계획 45분</span>
-            <div class="bars" id="st-bars"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;text-align:center;margin-top:6px;font-size:12px;font-weight:700;color:#B3B0CC" id="st-days"></div>
-          <div class="legend"><span><i style="background:#34C27A"></i>계획 이내</span><span><i style="background:#FFC531"></i>조금 초과</span><span><i style="background:#FF5A4E"></i>많이 초과</span></div>
+        <div id="me-light" hidden>
+          <div class="backbar"><button data-act="back"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A99EFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>내 정보</button></div>
+          <div class="sec" style="margin-top:4px"><h2 class="jua">내 불빛</h2><span>모양만 바뀌고 상태 색은 그대로예요</span></div>
+          <div class="g-note" style="margin-top:6px">친구들 팝업 속 내 불빛, 내 팝업 시계, 홈 화면 위젯의 내 칸에 이렇게 보여요.</div>
+          <div class="lp" id="light-preview"></div>
+          <div class="sec"><h2 class="jua">모양 고르기</h2><span id="light-count"></span></div>
+          <div class="shapes" id="shapes"></div>
+          <div class="g-note">고른 불빛은 바로 저장되고, 앱을 다시 열어도 그대로 남아요. 개인 연속 기록 7·14·30일을 달성하거나 1:1 대결에서 이기면 새 모양이 열려요.</div>
         </div>
       </div>
     </div>
@@ -328,16 +591,17 @@ button{font-family:inherit;color:inherit}
     <div class="toast" id="toast" role="status">
       <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0"><circle cx="12" cy="12" r="11" fill="#34C27A"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div style="flex:1;min-width:0">
-        <div class="jua" style="font-size:18px;color:#7EE2AE">태엽을 다 감았어요!</div>
-        <div style="font-size:13px;color:#A8E9C6"><span id="toast-bed">23:45</span>까지 팝업 시계가 함께해요</div>
+        <div class="jua" style="font-size:18px;color:#7EE2AE" id="toast-title">태엽을 다 감았어요!</div>
+        <div style="font-size:13px;color:#A8E9C6" id="toast-sub"></div>
       </div>
       <button class="toast-btn jua press" id="toast-home">홈으로</button>
     </div>
 
     <nav class="sm-nav" id="sm-nav" aria-label="슬립메이트 메뉴">
       <button class="on" data-tab="clock"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M5 4l3-2M19 4l-3-2"/></svg>시계</button>
-      <button data-tab="group"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.8"/><path d="M16.5 14.6c2.6.2 4.4 2 5 5"/></svg>그룹</button>
+      <button data-tab="mate"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.8"/><path d="M16.5 14.6c2.6.2 4.4 2 5 5"/></svg>메이트</button>
       <button data-tab="stats"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>기록</button>
+      <button data-tab="me"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8.5" r="4"/><path d="M4 20.5c1-4 4.2-6 8-6s7 2 8 6"/></svg>내 정보</button>
     </nav>
 
     <div class="splash hide" id="splash">
@@ -373,7 +637,8 @@ button{font-family:inherit;color:inherit}
   <button class="popup off" id="popup" aria-label="팝업 시계"></button>
 
   <div class="notice" id="notice" role="status">
-    <div style="display:flex;align-items:center;gap:12px">
+    <button class="n-x" id="n-x" aria-label="알림 닫기"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#B3B0CC" stroke-width="3" stroke-linecap="round"/></svg></button>
+    <div style="display:flex;align-items:center;gap:12px;padding-right:30px">
       <div class="n-av" id="n-av"></div>
       <div style="min-width:0">
         <div class="jua" style="font-size:18px" id="n-title"></div>
@@ -381,8 +646,8 @@ button{font-family:inherit;color:inherit}
       </div>
     </div>
     <div class="n-btns">
-      <button class="press jua" id="snooze" style="border:2px solid #3A3866;background:#2D2B52;box-shadow:0 4px 0 #3A3866;color:#F2F0FF">5분만 더</button>
-      <button class="press jua" id="sleepNow" style="border:none;background:#34C27A;box-shadow:0 4px 0 #23995C;color:#0F2A1C">나도 끄고 자기</button>
+      <button class="press jua btn2" id="snooze">5분만 더</button>
+      <button class="press jua btn-g" id="sleepNow">나도 끄고 자기</button>
     </div>
   </div>
 
@@ -400,17 +665,39 @@ button{font-family:inherit;color:inherit}
     <span class="bi"><span class="mascot" data-s="32"></span></span>
     <span style="flex:1;min-width:0;display:block">
       <span class="bt"><span>슬립메이트</span><span>지금</span></span>
-      <span class="bh" style="display:block">오늘 밤 태엽을 감을 시간이에요</span>
-      <span class="bb" style="display:block">지민, 서윤, 도현님은 벌써 계획을 세웠어요</span>
+      <span class="bh" style="display:block" id="b-h">오늘 밤 태엽을 감을 시간이에요</span>
+      <span class="bb" style="display:block" id="b-b">지민, 서윤, 도현님은 벌써 계획을 세웠어요</span>
     </span>
   </button>
+  <button class="nightpill jua" id="nightpill"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>오늘 밤 23:00으로 건너뛰기</button>
+
+  <!-- 묻는 시트 (I-01) · 잠들기 제안 보내기 (I-08) -->
+  <div class="sheet-bg" id="ask"><div class="sheet" role="dialog" aria-modal="true">
+    <h3 class="jua" id="ask-h"></h3><p id="ask-p"></p>
+    <div class="sh-btns"><button class="press jua btn2" id="ask-a"></button><button class="press jua btn1" id="ask-b"></button></div>
+  </div></div>
+  <div class="sheet-bg" id="suggest"><div class="sheet" role="dialog" aria-modal="true" id="sg-body"></div></div>
+
+  <!-- 연장 미션 (I-03) · 제안 영상 (I-08) -->
+  <div class="ovl" id="mission" role="dialog" aria-modal="true" aria-label="연장 미션"></div>
+  <div class="ovl" id="video" role="dialog" aria-modal="true" aria-label="잠들기 제안 영상"></div>
 
   <div class="sleep" id="sleep">
-    <svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>
-    <div class="jua" style="font-size:30px">잘 자요</div>
-    <div class="msg" id="sleep-msg"></div>
-    <button class="ghost press jua" id="restart">처음부터 다시 보기</button>
+    <div class="sl-main">
+      <svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>
+      <div class="jua" style="font-size:30px">잘 자요</div>
+      <div class="msg" id="sleep-msg"></div>
+    </div>
+    <div class="sl-box" id="sl-measure" hidden></div>
+    <div class="sl-acts">
+      <button class="ghost press jua" id="toMorning">아침으로 넘어가기</button>
+      <button class="linkbtn" id="restart">처음부터 다시 보기</button>
+    </div>
   </div>
+
+  <!-- 스마트 알람 · 아침 요약 (I-12) -->
+  <div class="ovl alarm" id="alarm" role="dialog" aria-modal="true" aria-label="알람"></div>
+  <div class="ovl morning" id="morning" role="dialog" aria-modal="true" aria-label="아침 요약"></div>
 
   <button class="homebar" id="homebar" aria-label="홈으로"><span></span></button>
 </div>
@@ -420,6 +707,7 @@ button{font-family:inherit;color:inherit}
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
+  var each = function (list, fn) { Array.prototype.forEach.call(list, fn); };
   var phone = $('phone'), frame = $('frame'), scale = 1;
 
   function fit() {
@@ -437,14 +725,67 @@ button{font-family:inherit;color:inherit}
 
   /* ---------- 공통 데이터 ---------- */
   var MS_PER_MIN = 1000;          // 실제 1초 = 앱 속 1분
-  var START = 23 * 60, T_MAX = 120;
-  var people = [
-    { name: '나', sleepAt: null, color: '#C2BAFF' },
-    { name: '지민', sleepAt: 20, goal: '23:25', color: '#FFD8A8' },
-    { name: '서윤', sleepAt: 38, goal: '23:40', color: '#B9EBCF' },
-    { name: '도현', sleepAt: 55, goal: '00:00', color: '#FFC9D1' }
+  var START = 23 * 60, T_MAX = 180, FREE_EXT = 3, ALARM = 7 * 60 + 30;
+  var BASE = new Date(2026, 9, 12);   // 0일째 = 10월 12일 월요일
+  var WD = ['일', '월', '화', '수', '목', '금', '토'];
+  var TYPE_NAME = { all: '매일', weekday: '평일', weekend: '주말' };
+  var FRIENDS = [
+    { name: '지민', color: '#FFD8A8' },
+    { name: '서윤', color: '#B9EBCF' },
+    { name: '도현', color: '#FFC9D1' }
   ];
+  // 요일별 친구들의 밤: [잠드는 시각, 목표 취침, 이미 제안을 보낸 사람] (23:00부터 분)
+  var SCRIPTS = [
+    [[20, 25], [38, 40], [72, 50]],            // 월 · 도현 목표 초과
+    [[28, 30], [33, 35], [44, 45]],            // 화 · 모두 성공
+    [[15, 20], [52, 40, '지민'], [58, 50]],    // 수 · 서윤·도현 초과 (서윤은 이미 제안 받음)
+    [[24, 30], [36, 40], [41, 45]],            // 목
+    [[50, 60], [70, 75], [85, 90]],            // 금 · 주말 밤
+    [[55, 60], [92, 75], [80, 90]],            // 토 · 서윤 초과
+    [[26, 30], [34, 40], [42, 45]]             // 일
+  ];
+  var ORD = ['첫 번째로', '두 번째로', '세 번째로', '네 번째로'];
+  var OPP_NAMES = ['달빛수달', '새벽고양이', '별헤는밤', '포근한곰'];
+  var VIDEOS = [
+    { id: 'rain', title: '창밖 빗소리', len: 10, bg: 'linear-gradient(160deg,#1E2A4A,#0B1020)' },
+    { id: 'fire', title: '타닥타닥 모닥불', len: 8, bg: 'linear-gradient(160deg,#4A2414,#120806)' },
+    { id: 'sea', title: '밤바다 파도', len: 12, bg: 'linear-gradient(160deg,#10324A,#050E18)' }
+  ];
+  var VID_ART = {
+    rain: '<svg width="S" height="S" viewBox="0 0 44 40" aria-hidden="true"><path d="M12 16a8 8 0 0 1 15-3 6 6 0 1 1 3 11H13a6 6 0 0 1-1-8z" fill="#8FA6D9"/><path d="M14 30l-2 6M22 30l-2 6M30 30l-2 6" stroke="#8FA6D9" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    fire: '<svg width="S" height="S" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c2 7 10 10 10 19a10 10 0 0 1-20 0c0-5 3-8 5-10 0 4 2 6 4 6-1-6 0-11 1-15z" fill="#FF9A4D"/><path d="M20 20c1 3 5 5 5 9a5 5 0 0 1-10 0c0-3 3-5 5-9z" fill="#FFD27A"/><path d="M8 37h24" stroke="#7A4A2E" stroke-width="3" stroke-linecap="round"/></svg>',
+    sea: '<svg width="S" height="S" viewBox="0 0 44 40" aria-hidden="true"><circle cx="30" cy="11" r="5" fill="#FFE6A0"/><path d="M2 26c5 0 5-4 10-4s5 4 10 4 5-4 10-4 5 4 10 4M2 34c5 0 5-4 10-4s5 4 10 4 5-4 10-4 5 4 10 4" stroke="#7FB3D9" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>'
+  };
+  function vidArt(id, s) { return VID_ART[id].replace(/"S"/g, '"' + s + '"'); }
+  // 미션 시간은 프로토타입에서 줄여서 실행한다(secs = 실제 초)
+  var MISSIONS = [
+    { id: 'asmr', name: 'ASMR', desc: '빗소리를 들어요 · 화면이 어두워져요', len: '1분', secs: 10, rec: true },
+    { id: 'read', name: '글 읽기', desc: '짧고 잔잔한 글을 끝까지 읽어요', len: '2분', secs: 6 },
+    { id: 'ad', name: '잔잔한 광고', desc: '자극이 적은 광고를 끝까지 봐요', len: '30초', secs: 8 },
+    { id: 'lecture', name: '지루한 강의', desc: '느리고 단조로운 강의를 봐요', len: '2분', secs: 12 }
+  ];
+  var SHAPE_LIST = [
+    { id: 'dot', name: '기본', need: 0 },
+    { id: 'star', name: '별', need: 7 },
+    { id: 'heart', name: '하트', need: 14 },
+    { id: 'flower', name: '꽃', need: 30 },
+    { id: 'crown', name: '왕관', need: 'duel' }
+  ];
+  var SHAPES = {
+    dot: '<circle cx="12" cy="12" r="10"/>',
+    star: '<path d="M12 1.5l3.1 6.5 7.1.9-5.2 4.9 1.3 7L12 17.4l-6.3 3.4 1.3-7L1.8 8.9l7.1-.9z"/>',
+    heart: '<path d="M12 21.5S1.8 15.2 1.8 8.3A5.3 5.3 0 0 1 12 5.8a5.3 5.3 0 0 1 10.2 2.5c0 6.9-10.2 13.2-10.2 13.2z"/>',
+    flower: '<circle cx="12" cy="5.7" r="4.4"/><circle cx="18.3" cy="10.3" r="4.4"/><circle cx="15.9" cy="17.6" r="4.4"/><circle cx="8.1" cy="17.6" r="4.4"/><circle cx="5.7" cy="10.3" r="4.4"/>',
+    crown: '<path d="M2 6.5l5.2 4.7L12 3l4.8 8.2L22 6.5 19.8 20H4.2z"/>'
+  };
+  var LOOK = {
+    awake: { dot: '#FFC531', glow: 'rgba(255,197,49,.8)', bg: '#3D3418', fg: '#FFD66B', status: '폰 하는 중' },
+    over: { dot: '#FF5A4E', glow: 'rgba(255,90,78,.85)', bg: '#4A1E24', fg: '#FF8A80', status: '목표 초과' },
+    asleep: { dot: '#4A4870', glow: null, bg: '#2D2B52', fg: '#B3B0CC', status: '잠들었어요' }
+  };
   var MOON = '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z" fill="#FFC531"/></svg>';
+  var MOON_P = 'M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5z';
+  var LOCK = '<svg class="lk" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#9894B8" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   function mascot(s) {
     return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 48 48" aria-hidden="true">' +
       '<path d="M13 42 L10 46 M35 42 L38 46" stroke="#B3B0CC" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
@@ -454,25 +795,144 @@ button{font-family:inherit;color:inherit}
       '<circle cx="24" cy="27" r="12" fill="#FFF8EC"/>' +
       '<path d="M16.5 25 q2.5 2.5 5 0 M26.5 25 q2.5 2.5 5 0 M21 31 q3 2.2 6 0" stroke="#2B2A3A" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
   }
-  Array.prototype.forEach.call(document.querySelectorAll('.mascot'), function (el) {
+  each(document.querySelectorAll('.mascot'), function (el) {
     el.style.display = 'inline-flex';
     el.innerHTML = mascot(+el.dataset.s);
   });
 
-  var S, lastMin, shownKey, bannerTimer;
-  function initState() {
-    S = { screen: 'home', tab: 'clock', raw: 45, plan: null, t: 0, collapsed: false,
-          dismissed: {}, reminders: [], asleep: false, splashed: false, visitedFeed: false };
-    lastMin = -1; shownKey = null;
-  }
-  initState();
-
+  /* ---------- 작은 도구 ---------- */
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
   function hm(m) { m = ((m % 1440) + 1440) % 1440; return pad2(Math.floor(m / 60)) + ':' + pad2(m % 60); }
-  function now() { return Math.floor(S.t); }
-  function isAwake(i) { var p = people[i]; return p.sleepAt == null ? !S.asleep : now() < p.sleepAt; }
-  function awakeNames() { return people.filter(function (p, i) { return isAwake(i); }).map(function (p) { return p.name; }); }
   function dur(m) { var h = Math.floor(m / 60), r = m % 60; return h ? (r ? h + '시간 ' + r + '분' : h + '시간') : r + '분'; }
+  function rnd(seed) { var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+  function dateOf(d) { var x = new Date(BASE); x.setDate(x.getDate() + d); return x; }
+  function dayLabel(d) { var x = dateOf(d); return (x.getMonth() + 1) + '월 ' + x.getDate() + '일 ' + WD[x.getDay()] + '요일'; }
+  function shortDate(d) { var x = dateOf(d); return (x.getMonth() + 1) + '월 ' + x.getDate() + '일'; }
+  function wdOf(d) { return WD[dateOf(d).getDay()]; }
+  function snap(v) { return Math.round(v / 5) * 5; }
+  function clamp(v) { return Math.max(0, Math.min(180, v)); }
+  function sum(a) { return a.reduce(function (s, x) { return s + x; }, 0); }
+
+  /* ---------- 상태 ----------
+     P: 날이 바뀌어도 남는 것(설정·기록·연속 기록·대결·불빛)
+     S: 오늘 밤 한 번의 흐름 */
+  var P, S, people, lastMin, shownKey, bannerTimer, bannerAct, toastTimer, duelTimer, runTimer;
+
+  function entry(d, plan, used, ext, wake, measured, deadline) {
+    var dl = deadline == null ? plan + ext * 5 : deadline;
+    var e = { day: d, plan: plan, used: used, ext: ext, deadline: dl, ok: used <= dl, wake: wake, measured: measured };
+    e.slept = wake + 1440 - (START + used);
+    e.deep = Math.max(40, Math.round(96 + rnd(d + 300) * 22 - Math.max(0, used - plan) * 1.1 - Math.max(0, used - 60) * 0.3));
+    return e;
+  }
+  function mockHistory() {
+    // 최근 7일(10/5~10/11)은 기존 기록 화면 값을 그대로 쓴다. 그 이전은 연장이 점점 줄어드는 흐름으로 만든다.
+    var fixed = { '-7': [40, 0], '-6': [52, 2], '-5': [30, 0], '-4': [63, 4], '-3': [45, 0], '-2': [38, 1], '-1': [32, 0] };
+    var H = [];
+    for (var d = -60; d <= -1; d++) {
+      var plan = 45, used, ext, f = fixed[d];
+      if (f) { used = f[0]; ext = f[1]; }
+      else {
+        var k = (d + 60) / 60;
+        ext = Math.floor(rnd(d) * (5 - 3 * k));
+        used = Math.round(28 + rnd(d + 100) * 24 + ext * 4);
+      }
+      if (d === -14) { used = 74; ext = 3; }                                  // 개인 연속 기록이 끊긴 날
+      else if (d > -14 && used > plan + ext * 5) used = plan + ext * 5 - 2;    // 최근 13일은 모두 성공
+      var wake = d === -1 ? 6 * 60 + 50 : 6 * 60 + 40 + Math.floor(rnd(d + 200) * 40);
+      // 수면 측정은 최근 3주 남짓 동안 켜 둔 것으로 본다(가끔 끈 날도 있음) → 캘린더에서 날짜별로 확인
+      var e = entry(d, plan, used, ext, wake, d >= -7 || (d >= -24 && rnd(d + 600) > 0.3));
+      e.g = d >= -12 ? true : d === -13 ? false : e.ok && rnd(d + 400) > 0.25;  // 그룹 성공 여부
+      H.push(e);
+    }
+    return H;
+  }
+  function initP() {
+    P = { day: 0, repeat: false, askedRepeat: false, split: false, wkend: { 5: true, 6: true },
+          def: { all: 45, weekday: 45, weekend: 45 }, groupStreak: 12, myStreak: 13,
+          lastGroupMsg: '어젯밤 4명 모두 계획대로 잠들었어요', hist: mockHistory(),
+          shape: 'dot', unlocked: { dot: true, star: true }, duel: null, duelPick: 7,
+          consent: null, morning: null, clock: 0, splashed: false,
+          statView: 'use', extRange: 7, selBar: 6, selStage: null,
+          selDay: null, calOpen: false, calMonth: null,      // 기록: 날짜 선택(null = 가장 최근 밤)
+          mateSub: 'group', duelHist: [], meView: 'main' };
+  }
+  // 평일/주말 구분은 자동 반복과 따로 켤 수 있다. 자동 반복이 꺼져 있으면 그 요일 기본값으로 태엽이 미리 감겨 있다.
+  function tonightType() { return P.split ? (P.wkend[dateOf(P.day).getDay()] ? 'weekend' : 'weekday') : 'all'; }
+
+  // 내 불빛 설정은 새로고침해도 남도록 브라우저에 저장한다(‘처음부터 다시 보기’를 누를 때만 지움)
+  var LIGHT_KEY = 'sleepmate.light';
+  function saveLight() {
+    try { localStorage.setItem(LIGHT_KEY, JSON.stringify({ shape: P.shape, unlocked: Object.keys(P.unlocked).filter(function (k) { return P.unlocked[k]; }) })); } catch (e) {}
+  }
+  function loadLight() {
+    try {
+      var v = JSON.parse(localStorage.getItem(LIGHT_KEY));
+      if (!v || !Array.isArray(v.unlocked)) return;
+      v.unlocked.forEach(function (id) { if (SHAPES[id]) P.unlocked[id] = true; });
+      if (SHAPES[v.shape] && P.unlocked[v.shape]) P.shape = v.shape;
+    } catch (e) {}
+  }
+  function clearLight() { try { localStorage.removeItem(LIGHT_KEY); } catch (e) {} }
+  function shapeName(id) { return SHAPE_LIST.filter(function (s) { return s.id === id; })[0].name; }
+  function setShape(id) {
+    if (!P.unlocked[id]) return false;
+    P.shape = id;
+    saveLight();
+    return true;
+  }
+  function initNight() {
+    var sc = SCRIPTS[P.day % 7];
+    people = [{ name: '나', me: true, color: '#C2BAFF' }].concat(FRIENDS.map(function (f, i) {
+      return { name: f.name, color: f.color, sleepAt: sc[i][0], goalAt: sc[i][1], gotSuggest: sc[i][2] || null };
+    }));
+    var type = tonightType();
+    S = { phase: 'night', screen: 'home', tab: 'clock', type: type, raw: P.def[type], plan: null, deadline: null, from: 0, ext: 0, t: 0,
+          collapsed: false, dismissed: {}, asleep: false, sleepAt: null, visitedFeed: false,
+          auto: false, rewinding: false, editType: null, editRaw: 45, askKind: null, askV: 0,
+          gotSuggest: null, sent: null, sheetDone: false, sgTo: null, sgVid: 'rain',
+          paused: false, overlay: null, measuring: false, via: null, pastDl: [] };
+    if (P.repeat) { S.plan = S.deadline = P.def[type]; S.auto = true; }   // I-01 자동 적용
+    lastMin = -1; shownKey = null;
+  }
+  initP();
+  loadLight();
+  initNight();
+
+  function now() { return Math.floor(S.t); }
+  function clockText() { return S.phase === 'morning' ? hm(P.clock) : hm(START + now()); }
+  function stateOf(i) {
+    var p = people[i], t = now();
+    if (S.phase === 'morning') return 'asleep';
+    if (p.me) {
+      if (S.asleep) return 'asleep';
+      return S.plan != null && t > S.deadline ? 'over' : 'awake';
+    }
+    if (t >= p.sleepAt) return 'asleep';
+    return t > p.goalAt ? 'over' : 'awake';
+  }
+  function sleepRanks() {
+    var list = [];
+    people.forEach(function (p, i) { if (stateOf(i) === 'asleep') list.push({ i: i, at: p.me ? S.sleepAt : p.sleepAt }); });
+    list.sort(function (a, b) { return a.at - b.at; });
+    var r = {};
+    list.forEach(function (x, k) { r[x.i] = k; });
+    return r;
+  }
+  function awakeNames() { return people.filter(function (p, i) { return stateOf(i) !== 'asleep'; }).map(function (p) { return p.name; }); }
+
+  // 불빛 하나: 상태 색(I-06)은 고정, 모양(I-11)만 바뀌고, 잠든 사람은 달(I-07)이 떠오른다
+  function light(state, shape, size, rank, extra) {
+    var L = LOOK[state], moon = '', glow;
+    if (state === 'asleep' && rank != null) {
+      var op = [1, .62, .42, .3][rank] || .3;
+      moon = '<path transform="translate(4.6 4.4) scale(.62)" d="' + MOON_P + '" fill="#FFE6A0" opacity="' + op + '"/>';
+      glow = rank === 0 ? 'drop-shadow(0 0 4px rgba(255,230,160,.85))' : 'none';
+    } else glow = L.glow ? 'drop-shadow(0 0 3px ' + L.glow + ')' : 'none';
+    return '<svg class="lt' + (state === 'over' ? ' blink' : '') + (extra ? ' ' + extra : '') + '" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" style="filter:' + glow + '" aria-hidden="true">' +
+      '<g fill="' + L.dot + '">' + (SHAPES[shape] || SHAPES.dot) + '</g>' + moon + '</svg>';
+  }
+  function shapeOf(p) { return p.me ? P.shape : 'dot'; }
 
   /* ---------- 홈 화면 ---------- */
   (function buildHome() {
@@ -487,7 +947,7 @@ button{font-family:inherit;color:inherit}
       ['사진', 'linear-gradient(135deg,#FF8A65,#B75CFF)', g('<path d="M4 18l5-6 4 4 3-3 4 5z"/><circle cx="16" cy="8" r="2"/>')],
       ['음악', '#E5484D', g('<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>')],
       ['지도', '#2FA36B', g('<path d="M12 21s-6-5.4-6-10a6 6 0 0 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2"/>')],
-      ['캘린더', '#F2F0FF', '<span style="display:flex;flex-direction:column;align-items:center;line-height:1"><span style="font-size:10px;font-weight:700;color:#E5484D">월요일</span><span style="font-size:26px;color:#15142B;font-weight:400" class="jua">12</span></span>'],
+      ['캘린더', '#F2F0FF', '<span style="display:flex;flex-direction:column;align-items:center;line-height:1"><span style="font-size:10px;font-weight:700;color:#E5484D" id="cal-wd">월요일</span><span style="font-size:26px;color:#15142B;font-weight:400" class="jua" id="cal-d">12</span></span>'],
       ['날씨', '#3E7BE0', g('<path d="M7 18h10a4 4 0 0 0 0-8 5.5 5.5 0 0 0-10.6 1.5A3.3 3.3 0 0 0 7 18z"/>')],
       ['슬립메이트', '#6C5CE7', mascot(48), 'sm'],
       ['모먼트', 'linear-gradient(45deg,#FFC531,#FF5A7A 50%,#A44CE0)', g('<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".6" fill="#fff"/>'), 'mo']
@@ -510,30 +970,37 @@ button{font-family:inherit;color:inherit}
       if (ic.dataset.app) { openApp(ic.dataset.app, ic.querySelector('.sq')); return; }
       ic.classList.remove('nope'); void ic.offsetWidth; ic.classList.add('nope');
     });
-    $('widget').addEventListener('click', function () { openApp('sm', $('widget')); });
+    $('widget').addEventListener('click', function () { openApp('sm', $('widget'), 'mate', 'group'); });
   })();
 
-  function memberLook(a) {
-    return {
-      dot: a ? '#FFC531' : '#5E5B80',
-      glow: a ? '0 0 8px 2px rgba(255,197,49,.75)' : 'none',
-      bg: a ? '#3D3418' : '#2D2B52',
-      fg: a ? '#FFD66B' : '#B3B0CC',
-      status: a ? '폰 하는 중' : '잠들었어요'
-    };
-  }
   function renderHome() {
-    $('h-time').textContent = hm(START + now());
-    var n = awakeNames().length;
-    $('w-sub').textContent = n === 4 ? '4명 모두 깨어 있어요' : n + '명 깨어 있음 · ' + (4 - n) + '명 잠들었어요';
-    $('w-grid').innerHTML = people.map(function (p, i) {
-      var a = isAwake(i), L = memberLook(a);
-      return '<div class="w-m" style="background:' + L.bg + '"><div class="w-av" style="background:' + p.color + ';opacity:' + (a ? 1 : .55) + '">' + p.name.slice(0, 1) +
-        '<span class="w-dot" style="background:' + L.dot + ';box-shadow:' + L.glow + '"></span></div>' +
-        '<div><div class="w-n">' + p.name + '</div><div class="w-s" style="color:' + L.fg + '">' + L.status + '</div></div></div>';
-    }).join('');
-    $('ic-sm').classList.toggle('hint', S.plan == null);
-    $('ic-mo').classList.toggle('hint', S.plan != null && !S.visitedFeed);
+    $('h-time').textContent = clockText();
+    $('h-date').textContent = dayLabel(P.day);
+    $('cal-wd').textContent = wdOf(P.day) + '요일';
+    $('cal-d').textContent = dateOf(P.day).getDate();
+    $('scr-home').classList.toggle('am', S.phase === 'morning');
+    each(document.querySelectorAll('.streak-n'), function (el) { el.textContent = P.groupStreak + '일'; });
+    if (S.phase === 'morning') {
+      var M = P.morning;
+      $('w-sub').textContent = M.groupOk ? '어젯밤 4명 모두 계획대로 잠들었어요' : '어젯밤 ' + M.okCount + '명이 계획대로 잠들었어요';
+      $('w-grid').innerHTML = M.rows.map(function (r, k) {
+        return '<div class="w-m" style="background:#2D2B52"><div class="w-av" style="background:' + r.color + '">' + r.name.slice(0, 1) +
+          '<span class="w-dot">' + light('asleep', r.me ? P.shape : 'dot', 15, k) + '</span></div>' +
+          '<div><div class="w-n">' + r.name + '</div><div class="w-s" style="color:#B3B0CC">' + hm(START + r.at) + ' 소등</div></div></div>';
+      }).join('');
+    } else {
+      var st = people.map(function (p, i) { return stateOf(i); });
+      var nA = st.filter(function (s) { return s !== 'asleep'; }).length, nO = st.filter(function (s) { return s === 'over'; }).length;
+      $('w-sub').textContent = (nA === 4 ? '4명 모두 깨어 있어요' : nA + '명 깨어 있음 · ' + (4 - nA) + '명 잠들었어요') + (nO ? ' · ' + nO + '명 목표 초과' : '');
+      $('w-grid').innerHTML = people.map(function (p, i) {
+        var s = st[i], L = LOOK[s];
+        return '<div class="w-m" style="background:' + L.bg + '"><div class="w-av" style="background:' + p.color + ';opacity:' + (s === 'asleep' ? .55 : 1) + '">' + p.name.slice(0, 1) +
+          '<span class="w-dot">' + light(s, shapeOf(p), 15) + '</span></div>' +
+          '<div><div class="w-n">' + p.name + '</div><div class="w-s" style="color:' + L.fg + '">' + L.status + '</div></div></div>';
+      }).join('');
+    }
+    $('ic-sm').classList.toggle('hint', S.phase === 'night' && S.plan == null);
+    $('ic-mo').classList.toggle('hint', S.phase === 'night' && S.plan != null && !S.visitedFeed);
   }
 
   /* ---------- 화면 이동 ---------- */
@@ -541,14 +1008,17 @@ button{font-family:inherit;color:inherit}
     var r = el.getBoundingClientRect(), pr = phone.getBoundingClientRect();
     return ((r.left + r.width / 2 - pr.left) / scale) + 'px ' + ((r.top + r.height / 2 - pr.top) / scale) + 'px';
   }
-  function openApp(name, fromEl) {
-    if (S.screen === name || S.asleep) return;
+  function openApp(name, fromEl, tab, sub) {
+    if (S.asleep && S.phase === 'night') return;
+    if (tab && name === 'sm') setTab(tab, sub);
+    if (S.screen === name) return;
+    if (S.screen !== 'home') { $('scr-' + S.screen).classList.remove('on'); }
     var el = $('scr-' + name);
     el.style.transformOrigin = originOf(fromEl || $('ic-' + name));
     $('banner').classList.remove('show');
     clearTimeout(bannerTimer);
-    if (name === 'sm' && !S.splashed) {
-      S.splashed = true;
+    if (name === 'sm' && !P.splashed) {
+      P.splashed = true;
       $('splash').classList.remove('hide');
       setTimeout(function () { $('splash').classList.add('hide'); }, 1200);
     }
@@ -559,7 +1029,7 @@ button{font-family:inherit;color:inherit}
     renderLive();
   }
   function goHome() {
-    if (S.screen === 'home' || S.asleep) return;
+    if (S.screen === 'home' || (S.asleep && S.phase === 'night') || S.overlay) return;
     var el = $('scr-' + S.screen);
     el.style.transformOrigin = originOf($('ic-' + S.screen));
     el.classList.remove('on');
@@ -570,12 +1040,34 @@ button{font-family:inherit;color:inherit}
   }
   $('homebar').addEventListener('click', goHome);
   $('toast-home').addEventListener('click', goHome);
-  $('banner').addEventListener('click', function () { openApp('sm', $('banner').querySelector('.bi')); });
+  $('banner').addEventListener('click', function () {
+    var from = $('banner').querySelector('.bi');
+    if (bannerAct === 'mo') openApp('mo', from); else openApp('sm', from, bannerAct);
+  });
   function scheduleBanner() {
     clearTimeout(bannerTimer);
     bannerTimer = setTimeout(function () {
-      if (S.screen === 'home' && S.plan == null) $('banner').classList.add('show');
+      if (S.screen !== 'home' || S.asleep && S.phase === 'night') return;
+      var h, b;
+      if (S.phase === 'morning') { h = '어젯밤 기록이 도착했어요'; b = '수면 시간, 연장 횟수, 그룹 결과를 확인해 보세요'; bannerAct = 'stats'; }
+      else if (S.plan == null) { h = '오늘 밤 태엽을 감을 시간이에요'; b = '지민, 서윤, 도현님은 벌써 계획을 세웠어요'; bannerAct = 'clock'; }
+      else if (S.auto) {
+        h = '오늘 밤 ' + dur(S.plan) + '이 자동으로 감겼어요';
+        b = hm(START + S.plan) + '까지 팝업 시계가 함께해요' + (S.type === 'weekend' ? ' · 주말 모드' : '');
+        bannerAct = 'clock';
+      } else return;
+      $('b-h').textContent = h; $('b-b').textContent = b;
+      $('banner').classList.add('show');
     }, 1400);
+  }
+
+  function toast(title, sub, homeBtn) {
+    $('toast-title').textContent = title;
+    $('toast-sub').textContent = sub;
+    $('toast-home').style.display = homeBtn ? '' : 'none';
+    $('toast').classList.add('show');
+    clearTimeout(toastTimer);
+    if (!homeBtn) toastTimer = setTimeout(function () { $('toast').classList.remove('show'); }, 2800);
   }
 
   /* ---------- 슬립메이트: 태엽 시계 ---------- */
@@ -596,11 +1088,20 @@ button{font-family:inherit;color:inherit}
     $('d-crown-p').setAttribute('d', crown + 'Z');
   })();
 
+  // set: 오늘 밤 처음 감기 · active: 풀리는 중 · rewind: 오늘만 다시 감기 · edit: 기본값 감기 · morning: 아침 미리보기
+  function dialMode() { return S.editType ? 'edit' : S.phase === 'morning' ? 'morning' : S.rewinding ? 'rewind' : S.plan != null ? 'active' : 'set'; }
+  function curRaw() { return S.editType ? S.editRaw : S.raw; }
+  function setRaw(v) { if (S.editType) S.editRaw = v; else S.raw = v; }
+  function weekendDaysText() {
+    var d = [1, 2, 3, 4, 5, 6, 0].filter(function (x) { return P.wkend[x]; }).map(function (x) { return WD[x]; });
+    return d.length ? d.join('·') + '요일' : '고른 요일 없음';
+  }
   function renderDial() {
-    var active = S.plan != null;
-    var left = active ? S.plan - now() : 0;
-    var raw = active ? Math.max(left, 0) : S.raw;
-    var mins = active ? raw : Math.round(raw / 5) * 5;
+    var mode = dialMode(), t = now();
+    var locked = mode === 'active' || mode === 'morning';
+    var left = mode === 'active' ? S.deadline - t : 0;
+    var raw = mode === 'active' ? Math.max(left, 0) : mode === 'morning' ? P.def[tonightType()] : curRaw();
+    var mins = mode === 'active' ? raw : snap(raw);
     var frac = (raw % 60) / 60, wedge = '';
     if (raw >= 60 && frac < 0.001) wedge = 'M140 28 A112 112 0 1 1 139.99 28 Z';
     else if (frac > 0.001) {
@@ -609,39 +1110,111 @@ button{font-family:inherit;color:inherit}
     }
     var zone = mins < 25 ? 0 : mins < 60 ? 1 : 2;
     $('d-wedge').setAttribute('d', wedge);
-    $('d-wedge').setAttribute('fill', active ? '#34C27A' : ['#34C27A', '#FFC531', '#FF5A4E'][zone]);
+    $('d-wedge').setAttribute('fill', mode === 'active' ? (S.ext && left >= 0 ? '#A99EFF' : '#34C27A') : ['#34C27A', '#FFC531', '#FF5A4E'][zone]);
     $('d-face').setAttribute('fill', ['#262449', '#4A2030', '#5A2434', '#6A2838'][Math.min(Math.floor(raw / 60), 3)]);
     $('d-hand').setAttribute('transform', 'rotate(' + frac * 360 + ' 140 140)');
     $('d-crown').setAttribute('transform', 'rotate(' + raw * 12 + ' 140 140)');
-    var chip = $('d-chip');
-    if (active) {
+    var chip = $('d-chip'), chipTone = zone;
+    if (mode === 'active') {
       $('d-label').textContent = left >= 0 ? dur(left) + ' 남음' : '+' + dur(-left) + ' 초과';
-      $('d-bed').innerHTML = '지금 ' + hm(START + now()) + ' · 목표 취침 <b>' + hm(START + S.plan) + '</b>';
-      chip.textContent = left >= 0 ? '태엽이 풀리는 중' : '약속 시간이 지났어요';
-      chip.style.background = left >= 0 ? '#123A2A' : '#4A1E24';
-      chip.style.color = left >= 0 ? '#7EE2AE' : '#FF8A80';
+      $('d-bed').innerHTML = '지금 ' + hm(START + t) + ' · 목표 취침 <b>' + hm(START + S.deadline) + '</b>';
+      chip.textContent = left < 0 ? '약속 시간이 지났어요' : S.ext ? '연장 중 · ' + S.ext + '번째' : '태엽이 풀리는 중';
+      chipTone = left < 0 ? 2 : S.ext ? 1 : 0;
+    } else if (mode === 'morning') {
+      $('d-label').textContent = dur(mins);
+      $('d-bed').innerHTML = '오늘 밤 23:00 · 목표 취침 <b>' + hm(START + mins) + '</b>';
+      chip.textContent = P.repeat ? '밤이 되면 자동으로 감겨요' : '밤에 직접 감아요';
+      chipTone = 0;
     } else {
       $('d-label').textContent = dur(mins);
-      $('d-bed').innerHTML = '지금 23:00 · 목표 취침 <b>' + hm(START + mins) + '</b>';
+      if (mode === 'edit') $('d-bed').innerHTML = TYPE_NAME[S.editType] + ' 기본값 · ' + (S.editType === 'weekend' ? weekendDaysText() + ' 밤' : S.editType === 'weekday' ? weekdayDaysText() + ' 밤' : '매일 밤');
+      else if (mode === 'rewind') $('d-bed').innerHTML = '지금 ' + hm(START + t) + ' · 새 목표 취침 <b>' + hm(START + t + mins) + '</b>';
+      else $('d-bed').innerHTML = '지금 23:00 · 목표 취침 <b>' + hm(START + mins) + '</b>';
       chip.textContent = ['짧고 좋아요', '조금 길어요', '너무 길어요'][zone];
-      chip.style.background = ['#123A2A', '#3D3418', '#4A1E24'][zone];
-      chip.style.color = ['#7EE2AE', '#FFD66B', '#FF8A80'][zone];
     }
+    chip.style.background = ['#123A2A', '#3D3418', '#4A1E24'][chipTone];
+    chip.style.color = ['#7EE2AE', '#FFD66B', '#FF8A80'][chipTone];
     $('d-svg').setAttribute('aria-label', '태엽 시계: ' + $('d-label').textContent);
-    Array.prototype.forEach.call($('presets').children, function (b) { b.classList.toggle('sel', !active && +b.dataset.v === mins); });
-    $('tab-clock').classList.toggle('locked', active);
-    $('c-title').textContent = active ? '오늘 밤 태엽이 풀리는 중' : '오늘 밤, 폰은 얼마나 할까요?';
-    $('c-sub').textContent = active ? '팝업 시계가 다른 앱 위에서 함께해요' : '가운데 태엽을 돌려서 시간을 감아 주세요';
-    $('save').disabled = active;
-    $('save').textContent = active ? hm(START + S.plan) + '까지 함께하는 중' : '이대로 감기 완료';
+    each($('presets').children, function (b) { b.classList.toggle('sel', !locked && +b.dataset.v === mins); });
+    $('tab-clock').classList.toggle('locked', locked);
+
+    var T = {
+      set: ['오늘 밤, 폰은 얼마나 할까요?', '가운데 태엽을 돌려서 시간을 감아 주세요'],
+      active: ['오늘 밤 태엽이 풀리는 중', S.auto ? '기본값이 자동으로 감겼어요. 팝업 시계가 다른 앱 위에서 함께해요' : '팝업 시계가 다른 앱 위에서 함께해요'],
+      rewind: ['오늘 밤만 다시 감기', '지금부터 쓸 시간을 다시 감아 주세요'],
+      edit: [TYPE_NAME[S.editType] + ' 기본값 감기', (S.editType === 'all' ? '매일 밤 ' : '이 요일 밤마다 ') + (P.repeat ? '이 시간이 자동으로 감겨요' : '태엽이 이 시간으로 미리 감겨 있어요')],
+      morning: ['좋은 아침이에요', P.repeat ? '오늘 밤에 감길 시간을 미리 볼 수 있어요' : '오늘 밤 23:00에 태엽을 감아 주세요']
+    }[mode];
+    $('c-title').textContent = T[0];
+    $('c-sub').textContent = T[1];
+    var badges = '';
+    if (mode === 'active' && S.auto) badges += '<span class="badge">자동 적용 중</span>';
+    if (mode === 'edit') badges += '<span class="badge ed">기본값 편집 중</span>';
+    else if ((mode === 'morning' || mode === 'set' ? tonightType() : S.type) === 'weekend') badges += '<span class="badge wk">주말 모드</span>';
+    $('c-badges').innerHTML = badges;
+
+    $('save').disabled = locked;
+    $('save').textContent = mode === 'active' ? hm(START + S.deadline) + '까지 함께하는 중' : mode === 'morning' ? (P.repeat ? '밤 23:00에 자동으로 감겨요' : '밤 23:00에 감을 수 있어요') :
+      mode === 'rewind' ? '다시 감기 완료' : mode === 'edit' ? TYPE_NAME[S.editType] + ' 기본값 저장' : '이대로 감기 완료';
+
+    var showTabs = P.split;
+    $('mtabs').hidden = !showTabs;
+    if (showTabs) {
+      var tt = tonightType(), cur = S.editType || (mode === 'morning' ? null : tt);
+      each($('mtabs').children, function (b) {
+        b.classList.toggle('on', b.dataset.type === cur);
+        b.textContent = TYPE_NAME[b.dataset.type] + (b.dataset.type === tt ? ' · 오늘 밤' : '');
+      });
+    }
+    var canRewind = mode === 'active' && t < S.plan && !S.ext;
+    $('sa-rewind').hidden = mode !== 'active';
+    $('sa-rewind').disabled = !canRewind;
+    $('sa-rewind').textContent = P.repeat ? '오늘만 다시 감기' : '다시 감기';
+    $('sa-sleep').hidden = mode !== 'active';
+    $('sa-cancel').hidden = !(mode === 'rewind' || mode === 'edit');
+    $('sa-edit').hidden = !(mode === 'morning' && !P.split);
+    $('sa-tonight').hidden = mode !== 'morning';
+    $('sub-hint').textContent = mode === 'active' && !canRewind ? (S.ext ? '연장한 뒤에는 다시 감을 수 없어요.' : '약속 시간이 지나서 다시 감을 수 없어요. 알림의 ‘5분만 더’를 써 주세요.') : '';
+  }
+
+  function weekdayDaysText() {
+    var d = [1, 2, 3, 4, 5, 6, 0].filter(function (x) { return !P.wkend[x]; }).map(function (x) { return WD[x]; });
+    return d.length ? d.join('·') + '요일' : '고른 요일 없음';
+  }
+  // 매일 반복 설정: 자동 반복 시간(1-1)과 평일/주말 시간·주말 요일(1-2)을 여기서 바로 정한다
+  function renderSettings() {
+    var sw = function (act, on, dis) { return '<button class="sw" role="switch" data-act="' + act + '" aria-checked="' + !!on + '"' + (dis ? ' disabled' : '') + '></button>'; };
+    var ico = function (d) { return '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '" stroke="#F2F0FF" stroke-width="3" stroke-linecap="round"/></svg>'; };
+    var timeRow = function (type, title, days) {
+      var v = P.def[type];
+      return '<div class="set-row"><div style="flex:1;min-width:0"><b>' + title + '</b><small>목표 취침 ' + hm(START + v) + (days ? ' · ' + days + ' 밤' : '') + '</small>' +
+        '<button class="linkbtn" data-act="wind" data-type="' + type + '">태엽으로 감기</button></div>' +
+        '<div class="stepper"><button data-act="step" data-type="' + type + '" data-d="-5" aria-label="' + title + ' 5분 줄이기"' + (v <= 5 ? ' disabled' : '') + '>' + ico('M5 12h14') + '</button>' +
+        '<span class="jua" aria-live="polite">' + dur(v) + '</span>' +
+        '<button data-act="step" data-type="' + type + '" data-d="5" aria-label="' + title + ' 5분 늘리기"' + (v >= 180 ? ' disabled' : '') + '>' + ico('M5 12h14M12 5v14') + '</button></div></div>';
+    };
+    var h = '<div class="set-row"><div style="flex:1;min-width:0"><b>자동 반복</b><small>' +
+      (P.repeat ? '매일 밤 23:00에 아래 시간이 자동으로 감겨요. 바꾸고 싶은 날만 다시 감으면 돼요' : '켜면 아래 시간이 매일 밤 자동으로 감겨요. 꺼 두면 태엽이 이 시간으로 미리 감겨 있고, 직접 완료를 눌러요') + '</small></div>' + sw('rep', P.repeat) + '</div>';
+    if (!P.split) h += timeRow('all', '매일 쓸 시간');
+    h += '<div class="set-row"><div style="flex:1;min-width:0"><b>평일/주말 따로</b><small>' +
+      (P.split ? '평일과 주말에 서로 다른 시간을 써요' : '주말엔 다른 시간을 쓰고 싶을 때 켜요') + '</small></div>' + sw('split', P.split) + '</div>';
+    if (P.split) {
+      h += timeRow('weekday', '평일 시간', weekdayDaysText()) + timeRow('weekend', '주말 시간', weekendDaysText());
+      h += '<div class="set-row"><div style="flex:1;min-width:0"><b>주말로 볼 요일</b><small>눌러서 고르거나 풀어요. 고른 요일 밤에 주말 시간이 적용돼요</small><div class="days">' +
+        [1, 2, 3, 4, 5, 6, 0].map(function (d) { return '<button data-act="wk" data-d="' + d + '" class="' + (P.wkend[d] ? 'on' : '') + '" aria-pressed="' + !!P.wkend[d] + '" aria-label="' + WD[d] + '요일 주말로 보기">' + WD[d] + '</button>'; }).join('') + '</div></div></div>';
+    }
+    var type = tonightType(), wd = wdOf(P.day);
+    var today = S.phase === 'night' && S.plan != null ? '오늘 밤 태엽은 이미 감겼어요. 바꾼 시간은 내일 밤부터 적용돼요.' :
+      '오늘(' + wd + ') 밤엔 ' + (type === 'all' ? '' : TYPE_NAME[type] + ' 시간 ') + dur(P.def[type]) + (P.repeat ? '이 자동으로 감겨요.' : '으로 태엽이 미리 감겨 있어요.');
+    h += '<div class="set-note">' + today + ' 그룹 연속 기록은 모드와 상관없이 각자의 그날 계획으로 판정해요.</div>';
+    $('rep').innerHTML = h;
   }
 
   (function wireDial() {
     var dial = $('dial'), c, last, drag = false;
-    var clamp = function (v) { return Math.max(0, Math.min(180, v)); };
-    var snap = function (v) { return Math.round(v / 5) * 5; };
+    var locked = function () { var m = dialMode(); return m === 'active' || m === 'morning'; };
     dial.addEventListener('pointerdown', function (e) {
-      if (S.plan != null) return;
+      if (locked()) return;
       var r = dial.getBoundingClientRect();
       c = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       last = Math.atan2(e.clientY - c.y, e.clientX - c.x);
@@ -654,69 +1227,577 @@ button{font-family:inherit;color:inherit}
       if (d > Math.PI) d -= 2 * Math.PI;
       if (d < -Math.PI) d += 2 * Math.PI;
       last = a;
-      S.raw = clamp(S.raw + (d / (2 * Math.PI)) * 60);
+      setRaw(clamp(curRaw() + (d / (2 * Math.PI)) * 60));
       renderDial();
     });
-    var up = function () { if (!drag) return; drag = false; S.raw = snap(S.raw); renderDial(); };
+    var up = function () { if (!drag) return; drag = false; setRaw(snap(curRaw())); renderDial(); };
     dial.addEventListener('pointerup', up);
     dial.addEventListener('pointercancel', up);
-    $('minus').addEventListener('click', function () { S.raw = clamp(snap(S.raw) - 5); renderDial(); });
-    $('plus').addEventListener('click', function () { S.raw = clamp(snap(S.raw) + 5); renderDial(); });
-    $('presets').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { S.raw = +b.dataset.v; renderDial(); } });
+    $('minus').addEventListener('click', function () { setRaw(clamp(snap(curRaw()) - 5)); renderDial(); });
+    $('plus').addEventListener('click', function () { setRaw(clamp(snap(curRaw()) + 5)); renderDial(); });
+    $('presets').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { setRaw(+b.dataset.v); renderDial(); } });
     $('save').addEventListener('click', function () {
-      if (S.plan != null) return;
-      S.plan = Math.max(5, snap(S.raw));
+      var mode = dialMode(), v = Math.max(5, snap(curRaw()));
+      if (mode === 'edit') {
+        var type = S.editType;
+        P.def[type] = v;
+        if (type === 'weekend') P.wkSet = true;
+        S.editType = null;
+        toast(TYPE_NAME[type] + ' 기본값을 저장했어요', dur(v) + ' · ' + (type === 'weekend' ? weekendDaysText() + ' 밤' : type === 'weekday' ? weekdayDaysText() + ' 밤' : '매일 밤') + (P.repeat ? '마다 자동으로 감겨요' : '에 미리 감겨 있어요'));
+        renderSettings(); renderDial();
+        return;
+      }
+      if (mode === 'rewind') {
+        S.from = now(); S.plan = S.deadline = now() + v; S.rewinding = false; shownKey = null;
+        toast('태엽을 다시 감았어요', hm(START + S.plan) + '까지 팝업 시계가 함께해요', true);
+        if (P.repeat) ask('rewind', v);
+        renderLive();
+        return;
+      }
+      if (mode !== 'set') return;
+      S.type = tonightType();
+      S.plan = S.deadline = v; S.from = 0;
       S.t = 0; lastMin = -1;
-      $('toast-bed').textContent = hm(START + S.plan);
-      $('toast').classList.add('show');
+      toast('태엽을 다 감았어요!', hm(START + v) + '까지 팝업 시계가 함께해요', true);
+      if (!P.askedRepeat) ask('repeat', v);
       renderLive();
     });
   })();
 
-  /* ---------- 슬립메이트: 탭 ---------- */
-  $('sm-nav').addEventListener('click', function (e) {
-    var b = e.target.closest('button');
-    if (!b) return;
-    S.tab = b.dataset.tab;
-    Array.prototype.forEach.call($('sm-nav').children, function (x) { x.classList.toggle('on', x === b); });
-    ['clock', 'group', 'stats'].forEach(function (t) { $('tab-' + t).classList.toggle('on', t === S.tab); });
-    $('sm-body').scrollTop = 0;
+  $('tab-clock').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b || b.disabled) return;
+    var act = b.dataset.act;
+    if (act === 'rep') {
+      P.repeat = !P.repeat; P.askedRepeat = true; S.editType = null;
+      toast(P.repeat ? '자동 반복을 켰어요' : '자동 반복을 껐어요', P.repeat ? '다음 밤부터 정해 둔 시간이 자동으로 감겨요' : '다음 밤부터는 직접 태엽을 감아요');
+    } else if (act === 'split') {
+      P.split = !P.split; S.editType = null;
+      // 주말 시간을 한 번도 안 정했다면 지금 쓰는 시간에서 시작한다
+      if (P.split) { P.def.weekday = P.def.all; if (!P.wkSet) P.def.weekend = P.def.all; toast('평일/주말을 따로 정해요', '주말 시간과 주말로 볼 요일을 골라 주세요'); }
+      else P.def.all = P.def.weekday;
+      if (dialMode() === 'set') S.raw = P.def[tonightType()];
+    } else if (act === 'step') {
+      var ty = b.dataset.type;
+      P.def[ty] = Math.max(5, Math.min(180, P.def[ty] + (+b.dataset.d)));
+      if (ty === 'weekend') P.wkSet = true;
+      if (S.editType === ty) S.editRaw = P.def[ty];
+      if (dialMode() === 'set' && ty === tonightType()) S.raw = P.def[ty];   // 아직 안 감은 밤이면 태엽에도 바로 반영
+    } else if (act === 'wind') {
+      S.editType = b.dataset.type; S.editRaw = P.def[S.editType]; S.rewinding = false;
+      $('sm-body').scrollTop = 0;
+    } else if (act === 'wk') {
+      var d = +b.dataset.d;
+      P.wkend[d] = !P.wkend[d];
+      if (dialMode() === 'set') S.raw = P.def[tonightType()];
+    } else if (act === 'mt') {
+      // 밤에는 ‘오늘 밤’ 탭이 지금 태엽, 다른 탭은 그 요일의 기본값 편집. 아침에는 두 탭 모두 기본값 편집.
+      var type = b.dataset.type;
+      if ((S.phase === 'night' && type === tonightType()) || S.editType === type) S.editType = null;
+      else { S.editType = type; S.editRaw = P.def[type]; }
+    } else if (act === 'rewind') {
+      S.rewinding = true; S.raw = Math.max(5, snap(S.deadline - now()));
+    } else if (act === 'cancel') {
+      S.rewinding = false; S.editType = null;
+    } else if (act === 'editdef') {
+      S.editType = tonightType(); S.editRaw = P.def[S.editType];
+    } else if (act === 'sleep') {
+      goSleep(); return;
+    } else if (act === 'tonight') {
+      nextNight(); return;
+    }
+    renderSettings();
+    renderDial();
   });
 
-  $('week').innerHTML = ['화', '수', '목', '금', '토', '일', '월'].map(function (d, i) {
-    var done = i < 6;
-    return '<div>' + d + '<i class="' + (done ? 'done' : 'today') + '">' + (done ? '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#2B2A3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '') + '</i></div>';
-  }).join('');
+  // 묻는 시트: 처음 감기 완료 후 자동 반복(I-01), 오늘만 다시 감은 뒤 기본값 저장 여부(I-01)
+  function ask(kind, v) {
+    S.askKind = kind; S.askV = v; S.paused = true;
+    if (kind === 'repeat') {
+      $('ask-h').textContent = '내일부터도 이 시간으로 할까요?';
+      $('ask-p').textContent = '매일 밤 ' + dur(v) + '이 자동으로 감겨요. 바꾸고 싶은 날만 다시 감으면 돼요.';
+      $('ask-a').textContent = '오늘만';
+      $('ask-b').textContent = '네, 매일 이 시간으로';
+    } else {
+      $('ask-h').textContent = '오늘 밤에만 적용할까요?';
+      $('ask-p').textContent = '내일은 ' + TYPE_NAME[tonightType()] + ' 기본값 ' + dur(P.def[tonightType()]) + '으로 돌아가요. 기본값도 ' + dur(v) + '으로 바꿀 수 있어요.';
+      $('ask-a').textContent = '오늘만';
+      $('ask-b').textContent = '기본값으로도 저장';
+    }
+    $('ask').classList.add('show');
+  }
+  function closeAsk(yes) {
+    if (S.askKind === 'repeat') {
+      P.askedRepeat = true;
+      if (yes) { P.repeat = true; P.def[tonightType()] = S.askV; toast('자동 반복을 켰어요', '내일 밤부터 ' + dur(S.askV) + '이 자동으로 감겨요', true); }
+    } else if (yes) {
+      P.def[tonightType()] = S.askV;
+      toast('기본값도 바꿨어요', '내일부터 ' + dur(S.askV) + '이 자동으로 감겨요', true);
+    }
+    S.askKind = null; S.paused = false;
+    $('ask').classList.remove('show');
+    renderSettings(); renderLive();
+  }
+  $('ask-a').addEventListener('click', function () { closeAsk(false); });
+  $('ask-b').addEventListener('click', function () { closeAsk(true); });
 
+  /* ---------- 슬립메이트: 탭 ---------- */
+  // 메뉴: 시계 · 메이트(수면 그룹 / 1:1 대결) · 기록 · 내 정보
+  var TABS = ['clock', 'mate', 'stats', 'me'];
+  function setTab(t, sub) {
+    if (t === 'me' && S.tab !== 'me') P.meView = 'main';
+    if (t === 'mate' && sub) P.mateSub = sub;
+    S.tab = t;
+    each($('sm-nav').children, function (x) { x.classList.toggle('on', x.dataset.tab === t); });
+    TABS.forEach(function (x) { $('tab-' + x).classList.toggle('on', x === t); });
+    $('sm-body').scrollTop = 0;
+    if (t === 'stats') renderStats();
+    if (t === 'mate') renderMate();
+    if (t === 'me') renderMe();
+  }
+  $('sm-nav').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b) setTab(b.dataset.tab);
+  });
+
+  function renderMate() {
+    each($('mate-sub').children, function (b) { b.classList.toggle('on', b.dataset.v === P.mateSub); b.setAttribute('aria-pressed', b.dataset.v === P.mateSub); });
+    $('mate-group').hidden = P.mateSub !== 'group';
+    $('mate-duel').hidden = P.mateSub !== 'duel';
+    renderDuel();
+  }
+  $('tab-mate').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'msub') { P.mateSub = b.dataset.v; $('sm-body').scrollTop = 0; renderMate(); return; }
+    if (act === 'dpick') P.duelPick = +b.dataset.v;
+    else if (act === 'dgo') { duelStartSearch(); return; }
+    else if (act === 'dcancel') { P.duel = null; clearTimeout(duelTimer); }
+    else if (act === 'dnew') { if (P.duel && P.duel.status === 'done') P.duelHist.unshift(P.duel); P.duel = null; }
+    else if (act === 'dff') {
+      var D = P.duel, got = null;
+      if (D.status === 'ready') D.status = 'active';
+      while (D.me.length < D.period && !got) {
+        var i = D.me.length, ok = rnd(D.seed + i * 3 + 1) < .8;
+        D.me.push({ ok: ok, ext: Math.floor(rnd(D.seed + i * 5 + 2) * 2), over: ok ? 0 : 6 });
+        D.opp.push(oppDay(D.seed, D.me.length));
+        if (D.me.length >= D.period) got = finishDuel() || 'done';
+      }
+      if (got === 'crown') toast('왕관 불빛이 열렸어요!', '대결에서 이긴 보상이에요. 내 정보 › 내 불빛에서 골라 보세요');
+    }
+    renderDuel();
+  });
+
+  /* ---------- 그룹 탭 ---------- */
+  function histOf(d) { for (var i = P.hist.length - 1; i >= 0; i--) if (P.hist[i].day === d) return P.hist[i]; return null; }
   function renderGroup() {
+    $('g-streak').textContent = P.groupStreak + '일 연속';
+    $('g-streak-sub').textContent = P.lastGroupMsg;
+    var cells = [];
+    for (var d = P.day - 6; d <= P.day; d++) {
+      var e = histOf(d), cls = d === P.day ? 'today' : e && e.g ? 'done' : 'miss';
+      cells.push('<div>' + wdOf(d) + '<i class="' + cls + '">' +
+        (cls === 'done' ? '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#2B2A3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' :
+         cls === 'miss' ? '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#77739A" stroke-width="3" stroke-linecap="round"/></svg>' : '') + '</i></div>');
+    }
+    $('week').innerHTML = cells.join('');
+
+    var first = '<span class="first"><svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="' + MOON_P + '" fill="#FFE6A0"/></svg>오늘 가장 먼저 잠듦</span>';
+    if (S.phase === 'morning') {
+      $('g-head').textContent = '어젯밤 결과';
+      $('g-time').textContent = '잠든 순서';
+      $('g-list').innerHTML = P.morning.rows.map(function (r, k) {
+        return '<div class="g-row"><div class="g-av" style="background:' + r.color + '">' + r.name.slice(0, 1) + '</div>' +
+          '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">' + r.name + (k === 0 ? first.replace('오늘', '어젯밤') : '') + '</div><div style="font-size:13px;color:#B3B0CC">' + hm(START + r.at) + ' 소등 · 목표 ' + hm(START + r.goal) + '</div></div>' +
+          '<div class="g-chip" style="background:' + (r.ok ? '#123A2A' : '#2D2B52') + ';color:' + (r.ok ? '#7EE2AE' : '#B3B0CC') + '">' + (r.ok ? '계획 성공' : '조금 늦었어요') + '</div></div>';
+      }).join('');
+      return;
+    }
+    $('g-head').textContent = '오늘 밤 현황';
     $('g-time').textContent = hm(START + now()) + ' 기준';
-    $('g-list').innerHTML = people.map(function (p, i) {
-      var a = isAwake(i), L = memberLook(a);
-      var goal = p.sleepAt == null ? (S.plan != null ? hm(START + S.plan) : '아직 안 정했어요') : p.goal;
+    var ranks = sleepRanks();
+    var order = people.map(function (p, i) { return i; }).sort(function (a, b) {
+      return (ranks[a] != null ? ranks[a] : 10 + a) - (ranks[b] != null ? ranks[b] : 10 + b);
+    });
+    $('g-list').innerHTML = order.map(function (i) {
+      var p = people[i], s = stateOf(i), L = LOOK[s];
+      var goal = p.me ? (S.plan != null ? hm(START + S.deadline) + (S.ext ? ' (연장 ' + (S.ext * 5) + '분 포함)' : '') : '아직 안 정했어요') : hm(START + p.goalAt);
+      var at = p.me ? S.sleepAt : p.sleepAt;
       return '<div class="g-row"><div class="g-av" style="background:' + p.color + '">' + p.name.slice(0, 1) + '</div>' +
-        '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">' + p.name + '</div><div style="font-size:13px;color:#B3B0CC">목표 취침 ' + goal + '</div></div>' +
-        '<div class="g-chip" style="background:' + L.bg + ';color:' + L.fg + '"><i style="background:' + L.dot + ';box-shadow:' + L.glow + '"></i>' + L.status + '</div></div>';
+        '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px">' + p.name + (ranks[i] === 0 ? first : '') + '</div><div style="font-size:13px;color:#B3B0CC">목표 취침 ' + goal + (s === 'asleep' ? ' · ' + hm(START + at) + ' 소등' : '') + '</div></div>' +
+        '<div class="g-chip" style="background:' + L.bg + ';color:' + L.fg + '">' + light(s, shapeOf(p), 12, ranks[i]) + L.status + '</div></div>';
     }).join('');
   }
 
-  (function buildStats() {
-    var goal = 45, maxV = 90, H = 130, sel = 6;
-    var data = [['월', 40], ['화', 52], ['수', 30], ['목', 81], ['금', 45], ['토', 38], ['일', 32]];
-    var goalPx = H - Math.round((goal / maxV) * H);
-    $('st-goal').style.top = goalPx + 'px';
-    $('st-goal-l').style.top = (goalPx - 16) + 'px';
-    $('st-days').innerHTML = data.map(function (d) { return '<span>' + d[0] + '</span>'; }).join('');
-    function draw() {
-      $('st-bars').innerHTML = data.map(function (d, i) {
-        var over = d[1] - goal, color = over <= 0 ? '#34C27A' : over <= 15 ? '#FFC531' : '#FF5A4E';
-        return '<button data-i="' + i + '" class="' + (i === sel ? 'sel' : '') + '" style="height:' + Math.round((Math.min(d[1], maxV) / maxV) * H) + 'px;background:' + color + '" aria-label="' + d[0] + '요일 ' + d[1] + '분"></button>';
-      }).join('');
-      var d = data[sel], over = d[1] - goal;
-      $('st-detail').textContent = d[0] + '요일 · ' + d[1] + '분 사용 · ' + (over <= 0 ? '계획 이내' : over + '분 초과');
+  /* ---------- 기록 탭 ---------- */
+  function genStages(e) {
+    var seed = e.day * 31 + 7, total = e.slept, lat = 6 + Math.floor(rnd(seed) * 9);
+    var cyc = Math.max(3, Math.round((total - lat) / 92)), W = [.34, .26, .19, .12, .06, .03, .02], ws = 0, i;
+    for (i = 0; i < cyc; i++) ws += W[i] || .02;
+    var out = [['awake', lat]], rest = total - lat, base = Math.floor(rest / cyc), used = 0;
+    for (i = 0; i < cyc; i++) {
+      var len = i === cyc - 1 ? rest - used : base; used += len;
+      var a = i < cyc - 1 && rnd(seed + i) > .45 ? 3 + Math.floor(rnd(seed + i * 5) * 7) : 0;
+      var d = Math.max(0, Math.min(Math.round(e.deep * (W[i] || .02) / ws), len - a - 16));
+      var l = len - a - d, l1 = Math.round(l * .55);
+      out.push(['light', l1]);
+      if (d) out.push(['deep', d]);
+      out.push(['light', l - l1]);
+      if (a) out.push(['awake', a]);
     }
-    $('st-bars').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { sel = +b.dataset.i; draw(); } });
-    draw();
-  })();
+    var m = [];
+    out.forEach(function (s) { if (s[1] <= 0) return; if (m.length && m[m.length - 1][0] === s[0]) m[m.length - 1][1] += s[1]; else m.push([s[0], s[1]]); });
+    return m;
+  }
+  function stagesOf(e) { if (!e._st) e._st = genStages(e); return e._st; }
+  function stageSum(e, k) { return sum(stagesOf(e).filter(function (s) { return s[0] === k; }).map(function (s) { return s[1]; })); }
+
+  /* ---------- 기록: 캘린더 피커 ---------- */
+  var CHEV_L = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#F2F0FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+  var CHEV_R = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#F2F0FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+  var CAL_IC = '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#C9C2FF" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  function selEntry() { return (P.selDay != null && histOf(P.selDay)) || P.hist[P.hist.length - 1]; }
+  function dayIndexOf(y, m, d) { return Math.round((new Date(y, m, d) - BASE) / 864e5); }
+  function renderDatePicker(e) {
+    var H = P.hist, idx = H.indexOf(e), latest = idx === H.length - 1, x = dateOf(e.day);
+    $('st-date').innerHTML =
+      '<button class="nav" data-act="day-prev" aria-label="이전 기록 날짜"' + (idx <= 0 ? ' disabled' : '') + '>' + CHEV_L + '</button>' +
+      '<button class="datebtn jua" data-act="cal-toggle" aria-expanded="' + P.calOpen + '" aria-controls="st-cal" aria-label="날짜 고르기, 지금 ' + shortDate(e.day) + '">' + CAL_IC +
+      (x.getMonth() + 1) + '월 ' + x.getDate() + '일 ' + WD[x.getDay()] + '요일 밤' + (latest ? '<small>어젯밤</small>' : '') + '</button>' +
+      '<button class="nav" data-act="day-next" aria-label="다음 기록 날짜"' + (latest ? ' disabled' : '') + '>' + CHEV_R + '</button>';
+    $('st-cal').hidden = !P.calOpen;
+    if (P.calOpen) renderCal(e);
+  }
+  function renderCal(e) {
+    var sd = dateOf(e.day), cm = P.calMonth || { y: sd.getFullYear(), m: sd.getMonth() };
+    P.calMonth = cm;
+    var f = dateOf(P.hist[0].day), l = dateOf(P.day);
+    var minM = f.getFullYear() * 12 + f.getMonth(), maxM = l.getFullYear() * 12 + l.getMonth(), curM = cm.y * 12 + cm.m;
+    var lead = new Date(cm.y, cm.m, 1).getDay(), n = new Date(cm.y, cm.m + 1, 0).getDate();
+    var h = '<div class="cal-head"><button data-act="cal-prev" aria-label="이전 달"' + (curM <= minM ? ' disabled' : '') + '>' + CHEV_L + '</button>' +
+      '<b class="jua">' + cm.y + '년 ' + (cm.m + 1) + '월</b><button data-act="cal-next" aria-label="다음 달"' + (curM >= maxM ? ' disabled' : '') + '>' + CHEV_R + '</button></div><div class="cal-grid">';
+    WD.forEach(function (w) { h += '<span class="cal-wd">' + w + '</span>'; });
+    for (var i = 0; i < lead; i++) h += '<span></span>';
+    for (var d = 1; d <= n; d++) {
+      var di = dayIndexOf(cm.y, cm.m, d), r = histOf(di), on = r && r.day === e.day;
+      var cls = 'cal-d' + (r ? (r.measured ? ' has-st' : ' has-rec') : '') + (on ? ' sel' : '') + (di === P.day ? ' today' : '');
+      var lab = (cm.m + 1) + '월 ' + d + '일, ' + (r ? (r.measured ? '수면 단계 있음' : '사용 기록만 있음') : di === P.day ? '오늘 밤, 아직 기록 없음' : '기록 없음');
+      h += '<button class="' + cls + '" data-act="cal-day" data-d="' + di + '"' + (r ? '' : ' disabled') + ' aria-label="' + lab + '"' + (on ? ' aria-current="date"' : '') + '>' + d + '</button>';
+    }
+    h += '</div><div class="cal-legend"><span><i style="background:#A99EFF"></i>수면 단계 있음</span><span><i style="border:1.5px solid #9894B8"></i>사용 기록만</span>' +
+      '<span><i style="box-shadow:inset 0 0 0 2px #8F82FF;border-radius:3px;width:12px;height:12px"></i>오늘</span><span style="color:#77739A">흐린 날 · 기록 없음</span></div>';
+    $('st-cal').innerHTML = h;
+  }
+
+  function renderStats() {
+    var H = P.hist, e = H[H.length - 1];
+    // 어젯밤 결과 카드 (I-05 연장 횟수 함께)
+    var over = Math.max(0, e.used - e.deadline);
+    var tone = e.used <= e.plan ? 'good' : e.ok ? 'mid' : 'bad';
+    var head = e.used < e.plan ? '계획보다 ' + (e.plan - e.used) + '분 일찍 잠들었어요' : e.used === e.plan ? '계획한 시간에 맞춰 잠들었어요' :
+      e.ok ? '연장 ' + e.ext + '번 끝에 약속을 지켰어요' : '목표보다 ' + over + '분 늦게 잠들었어요';
+    $('st-result').className = 'st-card ' + (tone === 'good' ? '' : tone);
+    $('st-result').innerHTML = '<div class="st-top"><span>어젯밤 · ' + shortDate(e.day) + '</span><span class="ext-chip">연장 ' + e.ext + '번</span></div>' +
+      '<div class="jua st-head">' + head + '</div>' +
+      '<div class="st-track"><div style="width:' + Math.min(100, Math.round(e.used / e.plan * 100)) + '%"></div></div>' +
+      '<div class="st-foot"><span>사용 ' + e.used + '분</span><span>계획 ' + e.plan + '분' + (e.deadline > e.plan ? ' + 연장 ' + (e.deadline - e.plan) + '분' : '') + '</span></div>';
+    $('st-tiles').innerHTML = '<div>잠든 시각<b>' + hm(START + e.used) + '</b></div><div>수면 시간<b>' + dur(e.slept) + '</b></div>' +
+      '<div>잠들기까지<b>' + dur(e.used) + '</b></div><div>내 연속 기록<b style="color:#FFC531">' + P.myStreak + '일</b></div>';
+
+    // 날짜별 수면 단계 (I-12) · 캘린더 피커로 고른 날의 기록
+    e = selEntry();
+    renderDatePicker(e);
+    var sh, daySum = '<div class="day-sum"><span>소등 <b>' + hm(START + e.used) + '</b></span><span>기상 <b>' + hm(e.wake) + '</b></span><span>수면 <b>' + dur(e.slept) + '</b></span>' +
+      '<span>폰 <b>' + e.used + '분</b> / 계획 ' + e.plan + '분</span><span>연장 <b>' + e.ext + '번</b></span></div>';
+    if (e.measured) {
+      var seg = stagesOf(e), Wd = 320, L = 58, R = 6, k = (Wd - L - R) / e.slept, acc = 0;
+      var Y = { awake: 16, light: 46, deep: 76 }, C = { awake: '#FFC531', light: '#A99EFF', deep: '#6C5CE7' }, N = { awake: '깨어 있음', light: '얕은 잠', deep: '깊은 잠' };
+      var svg = '<svg viewBox="0 0 ' + Wd + ' 112" width="100%" role="img" aria-label="' + shortDate(e.day) + ' 밤 수면 단계 그래프">';
+      ['awake', 'light', 'deep'].forEach(function (s) {
+        svg += '<line x1="' + L + '" x2="' + (Wd - R) + '" y1="' + Y[s] + '" y2="' + Y[s] + '" stroke="#2D2B52" stroke-width="1"/>' +
+          '<text x="0" y="' + (Y[s] + 4) + '" font-size="11" font-weight="700" fill="#B3B0CC">' + N[s] + '</text>';
+      });
+      var prevY = null, sel = P.selStage;
+      seg.forEach(function (s, i) {
+        var x0 = L + acc * k, w = s[1] * k, st0 = acc;
+        acc += s[1];
+        if (prevY != null) svg += '<line x1="' + x0.toFixed(1) + '" x2="' + x0.toFixed(1) + '" y1="' + prevY + '" y2="' + Y[s[0]] + '" stroke="#5E5B80" stroke-width="1"/>';
+        prevY = Y[s[0]];
+        svg += '<rect x="' + x0.toFixed(1) + '" y="' + (Y[s[0]] - 8) + '" width="' + Math.max(w - 1, 1.5).toFixed(1) + '" height="16" rx="3" fill="' + C[s[0]] + '"' +
+          (sel === i ? ' stroke="#F2F0FF" stroke-width="2"' : '') + ' data-act="stage" data-i="' + i + '" style="cursor:pointer"><title>' +
+          hm(START + e.used + st0) + '–' + hm(START + e.used + acc) + ' ' + N[s[0]] + ' ' + dur(s[1]) + '</title></rect>';
+      });
+      var t0 = START + e.used, t1 = t0 + e.slept;
+      svg += '<text x="' + L + '" y="106" font-size="11" fill="#9894B8">' + hm(t0) + '</text>';
+      for (var hh = Math.ceil(t0 / 120) * 120; hh < t1 - 100; hh += 120) {
+        if (hh - t0 < 50) continue;
+        svg += '<text x="' + (L + (hh - t0) * k).toFixed(1) + '" y="106" font-size="11" fill="#9894B8" text-anchor="middle">' + hm(hh) + '</text>';
+      }
+      svg += '<text x="' + (Wd - R) + '" y="106" font-size="11" fill="#9894B8" text-anchor="end">' + hm(t1) + '</text></svg>';
+      var detail = sel != null && seg[sel] ? (function () {
+        var st = sum(seg.slice(0, sel).map(function (s) { return s[1]; }));
+        return hm(START + e.used + st) + '–' + hm(START + e.used + st + seg[sel][1]) + ' · ' + N[seg[sel][0]] + ' ' + dur(seg[sel][1]);
+      })() : '막대를 누르면 그 구간을 볼 수 있어요';
+      // 며칠간의 관계: 계획 안에 끈 날 vs 넘긴 날의 깊은 잠
+      var ms = H.filter(function (x) { return x.measured; });
+      var good = ms.filter(function (x) { return x.used <= x.plan; }), bad = ms.filter(function (x) { return x.used > x.plan; });
+      var ins;
+      if (ms.length >= 3 && good.length && bad.length) {
+        var avg = function (a) { return sum(a.map(function (x) { return stageSum(x, 'deep'); })) / a.length; };
+        var diff = Math.round(avg(good) - avg(bad));
+        ins = diff > 0 ? '계획 안에 폰을 끈 날, 깊은 잠이 평균 <b>' + dur(diff) + '</b> 더 길었어요 (측정 ' + ms.length + '일)' : '폰을 끈 시각과 깊은 잠 사이에 아직 뚜렷한 차이가 없어요 (측정 ' + ms.length + '일)';
+      } else ins = '측정한 날이 3일 넘게 쌓이면, 폰을 끈 시각과 깊은 잠의 관계를 알려 드려요';
+      sh = daySum + '<div class="detail" style="font-size:13px;color:#B3B0CC">' + detail + '</div>' + svg +
+        '<div class="sl-sum"><b class="jua">깊은 잠 ' + dur(stageSum(e, 'deep')) + '</b><span>얕은 잠 ' + dur(stageSum(e, 'light')) + ' · 깨어 있음 ' + dur(stageSum(e, 'awake')) + '</span></div>' +
+        '<div class="insight">' + ins + '</div>' +
+        '<div class="fine">폰의 움직임과 소리로 추정한 값이에요. 의료적 진단이 아니에요. 소리는 기기 안에서만 분석하고 녹음 파일은 저장하지 않아요.</div>';
+    } else {
+      sh = daySum + '<div style="font-size:14px;color:#B3B0CC;line-height:1.5;margin-top:6px">이 날은 수면을 측정하지 않아서 수면 단계가 없어요.<br>‘잘 자요’ 화면에서 측정을 켜면 다음 날 아침부터 볼 수 있어요. 측정한 날은 캘린더에 보라색 점으로 표시돼요.</div>';
+    }
+    $('st-sleep').innerHTML = sh;
+
+    // 최근 7일 사용 시간 / 연장 횟수 (I-05)
+    each($('st-view').children, function (b) { b.classList.toggle('on', b.dataset.v === P.statView); });
+    $('st-chart-title').textContent = P.statView === 'use' ? '최근 7일 폰 사용 시간' : '연장 횟수 누적';
+    var L7 = H.slice(-7), ch;
+    if (P.statView === 'use') {
+      var maxV = Math.max(90, Math.max.apply(null, L7.map(function (x) { return x.used; }))), BH = 104;
+      var sel7 = Math.min(P.selBar, L7.length - 1), d7 = L7[sel7], o7 = d7.used - d7.plan;
+      ch = '<div class="detail">' + wdOf(d7.day) + '요일 · ' + d7.used + '분 사용 · ' + (o7 <= 0 ? '계획 이내' : o7 + '분 초과') + ' · 연장 ' + d7.ext + '번</div><div class="cols">' +
+        L7.map(function (x, i) {
+          var o = x.used - x.plan, color = o <= 0 ? '#34C27A' : o <= 15 ? '#FFC531' : '#FF5A4E';
+          var bh = Math.round(Math.min(x.used, maxV) / maxV * BH), ph = Math.round(x.plan / maxV * BH), dots = '';
+          for (var j = 0; j < x.ext; j++) dots += '<i></i>';
+          return '<div class="col"><span class="plan-mk" style="bottom:' + ph + 'px"></span>' +
+            '<button class="bar' + (i === sel7 ? ' sel' : '') + '" data-act="bar" data-i="' + i + '" style="height:' + bh + 'px;background:' + color + '" aria-label="' + wdOf(x.day) + '요일 ' + x.used + '분 사용, 연장 ' + x.ext + '번"></button>' +
+            '<span class="dots" style="bottom:' + (bh + 4) + 'px">' + dots + '</span></div>';
+        }).join('') + '</div><div class="xl">' + L7.map(function (x) { return '<span>' + wdOf(x.day) + '</span>'; }).join('') + '</div>' +
+        '<div class="legend"><span><i style="background:#34C27A"></i>계획 이내</span><span><i style="background:#FFC531"></i>15분 이내 초과</span><span><i style="background:#FF5A4E"></i>많이 초과</span>' +
+        '<span><i style="background:#C9C2FF;border-radius:50%"></i>연장 1번</span><span><i style="background:none;border-top:2px dashed #C9C2FF;border-radius:0;height:0;width:12px"></i>계획</span></div>';
+    } else {
+      var n = P.extRange, cur = H.slice(-n), prev = H.slice(-2 * n, -n);
+      var cum = function (a) { var s = 0; return a.map(function (x) { s += x.ext; return s; }); };
+      var cc = cum(cur), cp = cum(prev), tc = cc[cc.length - 1] || 0, tp = cp[cp.length - 1] || 0, diff2 = tp - tc;
+      var unit = n === 7 ? '지난주' : '지난달', lab = n === 7 ? '7일' : '30일';
+      var Wc = 320, Hc = 150, Lc = 26, Rc = 14, Tc = 12, Bc = 24, ymax = Math.max(tc, tp, 4);
+      var xs = function (i) { return Lc + i / (n - 1) * (Wc - Lc - Rc); }, ys = function (v) { return Tc + (1 - v / ymax) * (Hc - Tc - Bc); };
+      var line = function (a) { return a.map(function (v, i) { return (i ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(v).toFixed(1); }).join(''); };
+      var svg2 = '<svg viewBox="0 0 ' + Wc + ' ' + Hc + '" width="100%" id="cum" role="img" aria-label="최근 ' + lab + '과 그 전 ' + lab + '의 연장 횟수 누적 비교" style="touch-action:pan-y">';
+      [0, Math.round(ymax / 2), ymax].forEach(function (v) {
+        svg2 += '<line x1="' + Lc + '" x2="' + (Wc - Rc) + '" y1="' + ys(v).toFixed(1) + '" y2="' + ys(v).toFixed(1) + '" stroke="#2D2B52"/><text x="' + (Lc - 6) + '" y="' + (ys(v) + 4).toFixed(1) + '" font-size="11" fill="#9894B8" text-anchor="end">' + v + '</text>';
+      });
+      svg2 += '<path d="' + line(cp) + '" fill="none" stroke="#8C88B5" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round"/>' +
+        '<path d="' + line(cc) + '" fill="none" stroke="#A99EFF" stroke-width="2.5" stroke-linejoin="round"/>' +
+        '<circle cx="' + xs(n - 1) + '" cy="' + ys(tp) + '" r="4" fill="#8C88B5" stroke="#15142B" stroke-width="2"/>' +
+        '<circle cx="' + xs(n - 1) + '" cy="' + ys(tc) + '" r="5" fill="#A99EFF" stroke="#15142B" stroke-width="2"/>' +
+        '<line id="cum-x" y1="' + Tc + '" y2="' + (Hc - Bc) + '" stroke="#F2F0FF" stroke-opacity=".5" visibility="hidden"/>' +
+        '<text x="' + Lc + '" y="' + (Hc - 6) + '" font-size="11" fill="#9894B8">' + lab + ' 전</text><text x="' + (Wc - Rc) + '" y="' + (Hc - 6) + '" font-size="11" fill="#9894B8" text-anchor="end">어제</text>' +
+        '<rect x="' + Lc + '" y="0" width="' + (Wc - Lc - Rc) + '" height="' + Hc + '" fill="transparent" id="cum-hit"/></svg>';
+      ch = '<div class="mtabs mini" id="st-range"><button class="jua' + (n === 7 ? ' on' : '') + '" data-act="range" data-v="7">주</button><button class="jua' + (n === 30 ? ' on' : '') + '" data-act="range" data-v="30">월</button></div>' +
+        '<div class="jua cmp" style="color:' + (diff2 > 0 ? '#7EE2AE' : diff2 < 0 ? '#FFD66B' : '#F2F0FF') + '">' + (diff2 > 0 ? unit + '보다 ' + diff2 + '번 줄었어요' : diff2 < 0 ? unit + '보다 ' + (-diff2) + '번 늘었어요' : unit + '와 같아요') + '</div>' +
+        '<div class="cmp-sub" id="cum-d">최근 ' + lab + ' 연장 ' + tc + '번 · 그 전 ' + lab + ' ' + tp + '번</div>' + svg2 +
+        '<div class="legend"><span><i style="background:#A99EFF;height:3px;width:14px;border-radius:2px"></i>최근 ' + lab + ' (' + tc + '번)</span><span><i style="background:none;border-top:2px dashed #8C88B5;border-radius:0;height:0;width:14px"></i>그 전 ' + lab + ' (' + tp + '번)</span></div>';
+      setTimeout(function () { wireCum(cc, cp, n, xs, lab); }, 0);
+    }
+    $('st-chart').innerHTML = ch;
+  }
+  function wireCum(cc, cp, n, xs, lab) {
+    var hit = $('cum-hit'), svg = $('cum');
+    if (!hit) return;
+    var show = function (e) {
+      var r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 320;
+      var i = Math.max(0, Math.min(n - 1, Math.round((x - xs(0)) / (xs(1) - xs(0)))));
+      var gx = $('cum-x'); gx.setAttribute('x1', xs(i)); gx.setAttribute('x2', xs(i)); gx.setAttribute('visibility', 'visible');
+      $('cum-d').textContent = (i + 1) + '일째까지 · 최근 ' + cc[i] + '번 · 그 전 ' + (cp[i] || 0) + '번';
+    };
+    hit.addEventListener('pointermove', show);
+    hit.addEventListener('pointerdown', show);
+    hit.addEventListener('pointerleave', function () {
+      $('cum-x').setAttribute('visibility', 'hidden');
+      $('cum-d').textContent = '최근 ' + lab + ' 연장 ' + cc[n - 1] + '번 · 그 전 ' + lab + ' ' + (cp[n - 1] || 0) + '번';
+    });
+  }
+
+  /* ---------- 1:1 대결 (I-10) ---------- */
+  function duelStats(days) {
+    var best = 0, cur = 0, ok = 0, ext = 0, over = 0;
+    days.forEach(function (d) { if (d.ok) { cur++; ok++; best = Math.max(best, cur); } else cur = 0; ext += d.ext; over += d.over; });
+    return { best: best, cur: cur, ok: ok, ext: ext, avgOver: days.length ? Math.round(over / days.length) : 0, n: days.length };
+  }
+  function oppDay(seed, i) { var ok = rnd(seed + i * 7) < .7; return { ok: ok, ext: Math.floor(rnd(seed + i * 13) * 3), over: ok ? 0 : 4 + Math.floor(rnd(seed + i * 17) * 20) }; }
+  function duelRecord(me) {
+    var D = P.duel;
+    if (!D || !(D.status === 'ready' || D.status === 'active') || P.day < D.start) return null;
+    D.status = 'active';
+    D.me.push(me); D.opp.push(oppDay(D.seed, D.me.length));
+    if (D.me.length >= D.period) return finishDuel();
+    return null;
+  }
+  // 승부: 기간 중 가장 길게 이어 간 ‘제시간 취침’ 연속 일수 → 같으면 연장 횟수가 적은 사람
+  function finishDuel() {
+    var D = P.duel, a = duelStats(D.me), b = duelStats(D.opp);
+    D.status = 'done';
+    if (a.best !== b.best) { D.win = a.best > b.best ? 'me' : 'opp'; D.why = '최장 연속 성공으로 정했어요'; }
+    else if (a.ext !== b.ext) { D.win = a.ext < b.ext ? 'me' : 'opp'; D.why = '연속 성공이 같아서 연장 횟수로 정했어요'; }
+    else { D.win = 'draw'; D.why = '연속 성공과 연장 횟수가 모두 같아요'; }
+    if (D.win === 'me' && !P.unlocked.crown) { P.unlocked.crown = true; saveLight(); return 'crown'; }
+    return null;
+  }
+  function renderDuel() {
+    var D = P.duel, h = '<div class="duel">';
+    var av = function (name, color) { return '<div class="g-av" style="background:' + color + '">' + name.slice(0, 1) + '</div>'; };
+    var vs = function (mid) { return '<div class="vs"><div class="vs-p">' + av('나', '#C2BAFF') + '나</div><div class="vs-mid">' + mid + '</div><div class="vs-p">' + av(D.opp_name, '#9CD3F0') + D.opp_name + '</div></div>'; };
+    if (!D) {
+      h += '<b class="jua" style="font-size:19px">랜덤 1:1 대결</b><p>대결을 신청한 다른 사용자와 무작위로 짝을 지어요. 정한 기간 동안 <b>더 길게 연속으로 제시간에 잔 사람</b>이 이기고, 같으면 <b>연장을 덜 쓴 사람</b>이 이겨요.</p>' +
+        '<div class="mtabs mini">' + [7, 14, 28].map(function (p) { return '<button class="jua' + (P.duelPick === p ? ' on' : '') + '" data-act="dpick" data-v="' + p + '">' + (p / 7) + '주</button>'; }).join('') + '</div>' +
+        '<button class="cta press jua" data-act="dgo">대결 걸기</button>' +
+        '<div class="fine">같은 기간을 고른 사람끼리만 짝이 돼요. 상대에게는 다음 날 결과(성공 여부·연장 횟수)만 보이고, 실시간 불빛과 ‘목표 초과’는 그룹 안에서만 보여요.</div>';
+    } else if (D.status === 'searching' || D.status === 'pending') {
+      h += '<div style="display:flex;align-items:center;gap:12px"><span class="spin"></span><div><b style="font-size:15px">' +
+        (D.status === 'searching' ? (D.period / 7) + '주 대결 상대를 찾고 있어요' : D.opp_name + '님과 짝이 됐어요') + '</b><div style="font-size:13px;color:#B3B0CC">' +
+        (D.status === 'searching' ? '같은 기간으로 대결을 건 사람 중에서 골라요' : '상대가 수락하기를 기다리는 중…') + '</div></div></div>' +
+        '<button class="linkbtn" data-act="dcancel" style="margin-top:8px">취소</button>';
+    } else if (D.status === 'ready') {
+      h += vs('<b>VS</b>' + (D.period / 7) + '주 대결') + '<p style="text-align:center;margin-bottom:0">대결이 성사됐어요! <b>' + shortDate(D.start) + ' 밤</b>부터 ' + D.period + '일 동안 겨뤄요.</p>' +
+        '<button class="linkbtn" data-act="dff" style="display:block;margin:4px auto 0">프로토타입: ' + D.period + '일을 예시 결과로 채우기</button>';
+    } else {
+      var a = duelStats(D.me), b = duelStats(D.opp);
+      var row = function (label, x, y, better) { return '<tr><td class="' + (better === 1 ? 'win' : '') + '">' + x + '</td><td>' + label + '</td><td class="' + (better === -1 ? 'win' : '') + '">' + y + '</td></tr>'; };
+      var cmp = function (x, y, lowWins) { return x === y ? 0 : (lowWins ? x < y : x > y) ? 1 : -1; };
+      var mid = D.status === 'done' ? '<b>' + (D.win === 'me' ? '승리!' : D.win === 'opp' ? '아쉬운 패배' : '무승부') + '</b>' + D.period + '일 대결 끝' : '<b>' + a.n + '/' + D.period + '</b>일째';
+      h += vs(mid) + '<table class="vt">' +
+        row('최장 연속 성공', a.best + '일', b.best + '일', cmp(a.best, b.best)) +
+        row('연장 횟수', a.ext + '번', b.ext + '번', cmp(a.ext, b.ext, true)) +
+        row('성공 일수', a.ok + '/' + a.n, b.ok + '/' + b.n, cmp(a.ok, b.ok)) +
+        row('평균 초과', a.avgOver + '분', b.avgOver + '분', cmp(a.avgOver, b.avgOver, true)) + '</table>';
+      if (D.status === 'done') {
+        h += '<p style="margin-top:10px">' + (D.win === 'me' ? '이겼어요! 보상으로 <b>왕관 불빛</b>이 열렸어요. ' : D.win === 'opp' ? '다음 대결에서 왕관 불빛을 노려 봐요. ' : '') + '(' + D.why + ')</p>' +
+          '<button class="cta press jua" data-act="dnew">새 대결 걸기</button>';
+      } else {
+        h += '<p style="margin-top:10px;margin-bottom:0">지금 연속 성공: 나 ' + a.cur + '일 · ' + D.opp_name + ' ' + b.cur + '일</p>' +
+          '<button class="linkbtn" data-act="dff">프로토타입: 남은 ' + (D.period - a.n) + '일을 예시 결과로 채우기</button>';
+      }
+    }
+    $('duel').innerHTML = h + '</div>';
+    // 지난 대결: ‘새 대결 걸기’를 누르면 끝난 대결이 여기로 옮겨 간다
+    var DH = P.duelHist;
+    $('duel-hist-n').textContent = DH.length ? DH.length + '번' : '';
+    $('duel-hist').innerHTML = DH.length ? '<div class="list">' + DH.map(function (x) {
+      var a = duelStats(x.me), b = duelStats(x.opp);
+      var res = x.win === 'me' ? ['승리', '#7EE2AE'] : x.win === 'opp' ? ['패배', '#FF8A80'] : ['무승부', '#B3B0CC'];
+      return '<div class="li" style="cursor:default"><span class="g-av" style="background:#9CD3F0;width:34px;height:34px;font-size:15px">' + x.opp_name.slice(0, 1) + '</span>' +
+        '<div>' + x.opp_name + '님과 ' + (x.period / 7) + '주 대결<small>' + shortDate(x.start) + ' 시작 · 최장 연속 ' + a.best + '일 vs ' + b.best + '일 · 연장 ' + a.ext + '번 vs ' + b.ext + '번</small></div>' +
+        '<span class="val jua" style="color:' + res[1] + ';font-size:16px">' + res[0] + '</span></div>';
+    }).join('') + '</div>' : '<div class="g-note" style="margin-top:10px">끝난 대결은 ‘새 대결 걸기’를 누르면 여기에 쌓여요.</div>';
+  }
+  function duelStartSearch() {
+    P.duel = { period: P.duelPick, status: 'searching', opp_name: OPP_NAMES[Math.floor(Math.random() * OPP_NAMES.length)], seed: Math.floor(Math.random() * 1000), me: [], opp: [] };
+    renderDuel();
+    clearTimeout(duelTimer);
+    duelTimer = setTimeout(function () {
+      if (!P.duel || P.duel.status !== 'searching') return;
+      P.duel.status = 'pending'; renderDuel();
+      duelTimer = setTimeout(function () {
+        if (!P.duel || P.duel.status !== 'pending') return;
+        P.duel.status = 'ready'; P.duel.start = P.day + 1;   // 수락한 다음 날 밤부터
+        renderDuel();
+      }, 1800);
+    }, 1600);
+  }
+
+  /* ---------- 내 불빛 꾸미기 (I-11) ---------- */
+  function renderShapes() {
+    $('shapes').innerHTML = SHAPE_LIST.map(function (s) {
+      var un = !!P.unlocked[s.id], on = P.shape === s.id;
+      var cond = s.need === 'duel' ? '대결에서 이기면' : s.need ? s.need + '일 연속' : '처음부터';
+      var sub = on ? '사용 중' : un ? cond + ' 달성' : s.need === 'duel' ? cond : cond + ' · ' + Math.max(0, s.need - P.myStreak) + '일 남음';
+      if (s.need === 0 && !on) sub = '처음부터';
+      return '<button class="shape' + (on ? ' on' : '') + (un ? '' : ' lock') + '" data-act="shape" data-id="' + s.id + '"' + (un ? '' : ' aria-disabled="true"') + ' aria-label="' + s.name + ' 불빛, ' + sub + '">' +
+        (un ? '' : LOCK) + light(un ? 'awake' : 'asleep', s.id, 30) + '<b>' + s.name + '</b><small>' + sub + '</small></button>';
+    }).join('');
+  }
+
+  $('tab-stats').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'view') { P.statView = b.dataset.v; }
+    else if (act === 'range') { P.extRange = +b.dataset.v; }
+    else if (act === 'bar') { P.selBar = +b.dataset.i; }
+    else if (act === 'stage') { P.selStage = P.selStage === +b.dataset.i ? null : +b.dataset.i; }
+    else if (act === 'cal-toggle') { P.calOpen = !P.calOpen; P.calMonth = null; }
+    else if (act === 'cal-prev' || act === 'cal-next') {
+      var m = P.calMonth.y * 12 + P.calMonth.m + (act === 'cal-next' ? 1 : -1);
+      P.calMonth = { y: Math.floor(m / 12), m: m % 12 };
+    }
+    else if (act === 'cal-day') { P.selDay = +b.dataset.d; P.selStage = null; P.calOpen = false; P.calMonth = null; }
+    else if (act === 'day-prev' || act === 'day-next') {
+      var H = P.hist, k = H.indexOf(selEntry()) + (act === 'day-next' ? 1 : -1);
+      if (H[k]) { P.selDay = H[k].day; P.selStage = null; P.calMonth = null; }
+    }
+    renderStats();
+  });
+
+  /* ---------- 내 정보 (마이페이지 UI) · 내 불빛 꾸미기 ---------- */
+  var ICON = function (d, col) { return '<span class="ic2"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="' + (col || '#C9C2FF') + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg></span>'; };
+  var CHEV = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#77739A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+  function li(act, icon, title, sub, val) {
+    return '<button class="li" data-act="' + act + '">' + icon + '<div style="min-width:0">' + title + (sub ? '<small>' + sub + '</small>' : '') + '</div>' + (val ? '<span class="val">' + val + '</span>' : '<span style="margin-left:auto"></span>') + CHEV + '</button>';
+  }
+  function renderMe() {
+    $('me-main').hidden = P.meView !== 'main';
+    $('me-light').hidden = P.meView !== 'light';
+    var nUn = SHAPE_LIST.filter(function (s) { return P.unlocked[s.id]; }).length;
+    if (P.meView === 'light') { renderLightPage(nUn); return; }
+    $('me-prof').innerHTML = '<div class="me-av">나<span class="w-dot">' + light('awake', P.shape, 20) + '</span></div>' +
+      '<div style="min-width:0"><div class="jua" style="font-size:22px">나</div><div style="font-size:13px;color:#B3B0CC">@sleepmate_me · 우리 수면 그룹</div></div>' +
+      '<button class="me-edit" data-act="ui">프로필 편집</button>';
+    $('me-tiles').innerHTML = '<div>내 연속 기록<b style="color:#FFC531">' + P.myStreak + '일</b></div><div>그룹 연속<b>' + P.groupStreak + '일</b></div><div>열린 불빛<b>' + nUn + '/' + SHAPE_LIST.length + '</b></div>';
+    $('me-light-row').innerHTML = '<span class="ic2" style="background:#2F2A66">' + light('awake', P.shape, 20) + '</span><div style="min-width:0">내 불빛<small>친구들 팝업과 위젯에 보이는 내 불빛 모양을 골라요</small></div>' +
+      '<span class="val">' + shapeName(P.shape) + '</span>' + CHEV;
+    $('me-account').innerHTML =
+      li('ui', ICON('<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3.5 6.5l8.5 6 8.5-6"/>'), '이메일 계정', 'sleepmate_me@example.com', '연결됨') +
+      li('ui', ICON('<rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'), '비밀번호 변경') +
+      li('ui', ICON('<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>'), '연결된 기기', '', '이 휴대폰');
+    $('me-settings').innerHTML =
+      li('to-clock', ICON('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/>'), '매일 반복 설정', '자동 반복 시간 · 평일/주말 시간', P.repeat ? '켜짐' : '꺼짐') +
+      li('ui', ICON('<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>'), '알림 설정', '소등 알림 · 아침 요약 · 잠들기 제안') +
+      li('ui', ICON('<circle cx="9" cy="8" r="3.2"/><path d="M3 19c.7-3.2 3-5 6-5s5.3 1.8 6 5"/><path d="M16 11l2 2 4-4"/>'), '친구 상태 공개 범위', '불빛과 ‘목표 초과’를 볼 수 있는 사람', '우리 그룹만') +
+      li('ui', ICON('<path d="M3 12h4l2-5 4 10 2-5h6"/>'), '수면 측정 데이터', '측정 권한 · 기록 내보내기 · 삭제', P.consent === true ? '측정 켜짐' : P.consent === false ? '측정 꺼짐' : '묻기 전') +
+      li('ui', ICON('<path d="' + MOON_P + '"/>'), '화면 테마', '', '밤하늘');
+    $('me-support').innerHTML =
+      li('ui', ICON('<path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9a4 4 0 0 1 0 6"/>'), '공지사항') +
+      li('ui', ICON('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17v.5"/>'), '도움말 · 자주 묻는 질문') +
+      li('ui', ICON('<path d="M4 5h16v11H9l-5 4z"/>'), '의견 보내기') +
+      li('ui', ICON('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>'), '앱 버전', '', 'v2.0 프로토타입');
+  }
+  function renderLightPage(nUn) {
+    var st = [['awake', '폰 하는 중'], ['over', '목표 초과'], ['asleep', '잠들었어요']];
+    $('light-preview').innerHTML = st.map(function (s) {
+      return '<div><span class="w-av" style="background:#C2BAFF;opacity:' + (s[0] === 'asleep' ? .55 : 1) + '">나<span class="w-dot">' + light(s[0], P.shape, 20, s[0] === 'asleep' ? 0 : null) + '</span></span>' +
+        '<span style="color:' + LOOK[s[0]].fg + '">' + s[1] + '</span></div>';
+    }).join('');
+    $('light-count').textContent = nUn + '/' + SHAPE_LIST.length + '개 열림';
+    renderShapes();
+  }
+  $('tab-me').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'open-light') { P.meView = 'light'; $('sm-body').scrollTop = 0; }
+    else if (act === 'back') { P.meView = 'main'; $('sm-body').scrollTop = 0; }
+    else if (act === 'to-clock') { setTab('clock'); setTimeout(function () { $('rep').scrollIntoView({ block: 'center' }); }, 0); return; }
+    else if (act === 'shape') {
+      var id = b.dataset.id;
+      if (!setShape(id)) { toast('아직 잠긴 불빛이에요', b.querySelector('small').textContent); return; }
+      var nm = shapeName(id);
+      toast('내 불빛을 ' + nm + (/[꽃관본]$/.test(nm) ? '으로' : '로') + ' 바꿨어요', '내 팝업, 친구들 팝업 속 내 불빛, 위젯이 모두 바뀌어요');
+      renderLive();
+    }
+    else if (act === 'ui') { toast('준비 중인 화면이에요', '이번 프로토타입에서는 화면 구성만 해 두었어요'); return; }
+    renderMe();
+  });
 
   /* ---------- 모먼트 피드 ---------- */
   (function buildFeed() {
@@ -759,38 +1840,43 @@ button{font-family:inherit;color:inherit}
   /* ---------- 팝업 시계 ---------- */
   var pp = $('popup');
   function renderPopup() {
-    var vis = S.screen === 'mo' && S.plan != null && !S.asleep;
+    var vis = S.phase === 'night' && S.screen === 'mo' && S.plan != null && !S.asleep && !S.overlay;
     pp.classList.toggle('off', !vis);
-    if (S.plan == null) return;
-    var t = now(), goal = S.plan, over = t - goal, color, frac;
+    if (S.plan == null || S.phase !== 'night') return;
+    var t = now(), dl = S.deadline, over = t - dl, color, frac, main, cap;
     var lerp = function (a, b, k) { return Math.round(a + (b - a) * k); };
-    if (over <= 0) { color = 'rgb(52,194,122)'; frac = (goal - t) / goal; }
-    else {
+    if (over > 0) {
       var k = Math.min(over / 30, 1);
-      color = 'rgb(' + lerp(255, 255, k) + ',' + lerp(197, 90, k) + ',' + lerp(49, 78, k) + ')';
-      frac = 1;
+      color = 'rgb(255,' + lerp(197, 90, k) + ',' + lerp(49, 78, k) + ')';
+      frac = 1; main = '+' + over + '분'; cap = '초과';
+    } else {
+      frac = Math.max(0, Math.min(1, (dl - t) / Math.max(1, dl - S.from)));
+      color = S.ext ? '#A99EFF' : 'rgb(52,194,122)';   // I-04 연장 중에는 보라 링
+      main = (dl - t) + '분'; cap = S.ext ? '연장 중' : '남음';
     }
     var deg = (frac * 360).toFixed(1);
-    var awakeArr = people.map(function (p, i) { return isAwake(i); });
-    var awake = awakeArr.filter(Boolean).length;
+    var st = people.map(function (p, i) { return stateOf(i); }), ranks = sleepRanks();
+    var awake = st.filter(function (s) { return s !== 'asleep'; }).length, nOver = st.filter(function (s) { return s === 'over'; }).length;
     pp.style.opacity = (0.45 + 0.55 * (Math.max(awake - 1, 0) / 3)).toFixed(2);
     pp.classList.toggle('collapsed', S.collapsed);
-    pp.setAttribute('aria-label', S.collapsed ? '접힌 팝업 시계, 왼쪽으로 밀거나 눌러서 펼치기' : '팝업 시계, 오른쪽으로 밀거나 눌러서 접기');
-    var lightStyle = function (a) { return 'background:' + (a ? '#FFC531' : '#5E5B80') + ';box-shadow:' + (a ? '0 0 8px 3px rgba(255,197,49,.75)' : 'none'); };
+    pp.setAttribute('aria-label', (S.collapsed ? '접힌 팝업 시계, 왼쪽으로 밀거나 눌러서 펼치기' : '팝업 시계, 오른쪽으로 밀거나 눌러서 접기') + ' · ' + main + ' ' + cap + ' · ' + awake + '명 깨어 있음');
+    var lt = function (i, size) { var p = people[i]; return light(st[i], shapeOf(p), size, ranks[i], !p.me && p.sleepAt === t ? 'rise' : ''); };
     if (!S.collapsed) {
       var angles = [-54, -18, 18, 54];
-      var lights = awakeArr.map(function (a, i) {
+      var lights = people.map(function (p, i) {
         var r = angles[i] * Math.PI / 180;
-        return '<span class="pp-light" style="left:' + (46 + 44 * Math.sin(r) - 7).toFixed(1) + 'px;top:' + (46 - 44 * Math.cos(r) - 7).toFixed(1) + 'px;' + lightStyle(a) + '"></span>';
+        return '<span class="pp-light" style="left:' + (46 + 44 * Math.sin(r) - 8).toFixed(1) + 'px;top:' + (46 - 44 * Math.cos(r) - 8).toFixed(1) + 'px">' + lt(i, 16) + '</span>';
       }).join('');
       pp.innerHTML = '<div class="pp-x"><div class="pp-wrap">' + lights +
         '<div class="pp-ring" style="background:conic-gradient(' + color + ' 0deg ' + deg + 'deg,#3A3866 ' + deg + 'deg 360deg)"><div class="pp-hole">' +
-        '<span class="pp-left jua">' + (over <= 0 ? (goal - t) + '분' : '+' + over + '분') + '</span><span class="pp-cap">' + (over <= 0 ? '남음' : '초과') + '</span></div></div></div>' +
-        '<span class="pp-awake">' + (awake <= 1 ? '나만 남았어요' : awake + '명 남았어요') + '</span><span class="pp-goal">목표 ' + hm(START + goal) + '</span></div>';
+        '<span class="pp-left jua">' + main + '</span><span class="pp-cap">' + cap + '</span></div></div></div>' +
+        '<span class="pp-awake">' + (awake <= 1 ? '나만 남았어요' : awake + '명 남았어요') + '</span>' +
+        (nOver ? '<span class="pp-over">' + nOver + '명 초과</span>' : '') +
+        '<span class="pp-goal">' + (S.type === 'weekend' ? '주말 · ' : '') + '목표 ' + hm(START + dl) + '</span></div>';
     } else {
-      pp.innerHTML = '<div class="pp-c">' + awakeArr.map(function (a) { return '<span class="dot" style="' + lightStyle(a) + '"></span>'; }).join('') +
+      pp.innerHTML = '<div class="pp-c">' + people.map(function (p, i) { return lt(i, 12); }).join('') +
         '<div class="pp-bar"><div style="height:' + Math.round(frac * 100) + '%;background:' + color + '"></div></div>' +
-        '<span class="jua" style="font-size:12px;line-height:1.1;text-align:center">' + (over <= 0 ? (goal - t) + '분' : '+' + over) + '</span></div>';
+        '<span class="jua" style="font-size:12px;line-height:1.1;text-align:center">' + (over > 0 ? '+' + over : (dl - t) + '분') + '</span></div>';
     }
   }
   (function wirePopup() {
@@ -826,80 +1912,440 @@ button{font-family:inherit;color:inherit}
     });
   })();
 
-  /* ---------- 소등 알림 ---------- */
+  /* ---------- 소등 알림 · 연장 (3.5, I-03, I-04, I-07) ---------- */
   function currentEvent() {
+    if (S.plan == null) return null;
     var t = now(), evs = [];
-    people.forEach(function (p) { if (p.sleepAt != null && t >= p.sleepAt) evs.push({ key: p.name, at: p.sleepAt, kind: 'friend', p: p }); });
-    if (S.plan != null && t >= S.plan) evs.push({ key: 'goal', at: S.plan, kind: 'goal' });
-    S.reminders.forEach(function (r) { if (t >= r) evs.push({ key: 'r' + r, at: r, kind: 'remind' }); });
+    people.forEach(function (p) {
+      if (!p.me && t >= p.sleepAt) evs.push({ key: p.name, at: p.sleepAt, kind: S.gotSuggest === p.name ? 'suggest' : 'friend', p: p });
+    });
+    // 지나간 마감(연장 전 마감들)도 남겨 둬야, 연장한 뒤에 예전 친구 알림이 다시 떠오르지 않는다
+    S.pastDl.forEach(function (d, k) { evs.push({ key: 'dl' + d, at: d, kind: k ? 'ext' : 'goal' }); });
+    if (t >= S.deadline) evs.push({ key: 'dl' + S.deadline, at: S.deadline, kind: S.ext ? 'ext' : 'goal' });
     evs.sort(function (a, b) { return a.at - b.at; });
     return evs.length ? evs[evs.length - 1] : null;
   }
+  function vidOfDay() { return VIDEOS[P.day % VIDEOS.length]; }
   function renderNotice() {
     var ev = currentEvent();
-    var show = !!ev && S.plan != null && S.screen === 'mo' && !S.asleep && now() - ev.at < 12 && !S.dismissed[ev.key];
-    if (ev && ev.key !== shownKey) {
-      shownKey = ev.key;
+    var show = !!ev && S.phase === 'night' && S.screen === 'mo' && !S.asleep && !S.overlay && now() - ev.at < 15 && !S.dismissed[ev.key];
+    if (ev) {
       var av = $('n-av');
-      if (ev.kind === 'friend') {
+      if (ev.kind === 'friend' || ev.kind === 'suggest') {
         av.style.background = ev.p.color;
         av.innerHTML = ev.p.name.slice(0, 1) + '<span class="n-moon">' + MOON + '</span>';
-        $('n-title').textContent = ev.p.name + '님이 방금 소등했어요';
+        if (ev.kind === 'friend') {
+          var before = people.filter(function (q) { return !q.me && q.sleepAt < ev.p.sleepAt; }).length;
+          $('n-title').textContent = ev.p.name + '님이 오늘 ' + ORD[before] + ' 소등했어요';
+        } else $('n-title').textContent = ev.p.name + '님이 잠들기 제안을 보냈어요';
       } else {
         av.style.background = '#6C5CE7';
         av.innerHTML = mascot(38);
-        $('n-title').textContent = ev.kind === 'goal' ? '약속한 ' + hm(START + S.plan) + '이 됐어요' : '5분이 지났어요, 이제 잘 시간!';
+        $('n-title').textContent = ev.kind === 'goal' ? '약속한 ' + hm(START + S.plan) + '이 됐어요' : '연장한 5분이 끝났어요';
+      }
+      var names = awakeNames();
+      $('n-sub').textContent = ev.kind === 'suggest' ? '‘' + vidOfDay().title + '’ 영상을 같이 보며 잘까요?' : '아직 깨어 있는 사람: ' + (names.length ? names.join(', ') : '없음');
+      var sn = $('snooze'), sl = $('sleepNow');
+      if (ev.kind === 'suggest') { sn.textContent = '다음에'; sl.textContent = '같이 보며 자기'; }
+      else {
+        sl.textContent = '나도 끄고 자기';
+        sn.textContent = now() < S.deadline ? '조금 더 볼게요' : S.ext < FREE_EXT ? '5분만 더 (' + (FREE_EXT - S.ext) + '/' + FREE_EXT + ')' : '5분만 더 · 미션';
       }
     }
-    var names = awakeNames();
-    $('n-sub').textContent = '아직 깨어 있는 사람: ' + (names.length ? names.join(', ') : '없음');
+    if (ev && ev.key !== shownKey && show) shownKey = ev.key;
     $('notice').classList.toggle('show', show);
   }
+  function dismissCurrent() { var ev = currentEvent(); if (ev) S.dismissed[ev.key] = true; }
+  // 연장: 이전 마감에서 5분을 더한다. 알림을 늦게 눌렀다면 그만큼 이미 쓴 것으로 본다.
+  function extend() {
+    dismissCurrent();
+    S.pastDl.push(S.deadline);
+    S.from = S.deadline; S.deadline += 5; S.ext++;
+    renderLive();
+  }
+  $('n-x').addEventListener('click', function () { dismissCurrent(); renderLive(); });
   $('snooze').addEventListener('click', function () {
     var ev = currentEvent();
-    if (ev) S.dismissed[ev.key] = true;
-    if (now() + 5 <= T_MAX) S.reminders.push(now() + 5);
-    renderNotice();
+    if (!ev) return;
+    if (ev.kind === 'suggest' || now() < S.deadline) { dismissCurrent(); renderLive(); return; }
+    if (S.ext < FREE_EXT) extend(); else openMission();
   });
   $('sleepNow').addEventListener('click', function () {
-    var t = now(), goal = S.plan;
-    S.asleep = true;
-    var friends = people.filter(function (p) { return p.sleepAt != null && t >= p.sleepAt; }).map(function (p) { return p.name; });
-    $('sleep-msg').innerHTML = (t <= goal ? '계획보다 ' + (goal - t) + '분 일찍 폰을 껐어요.<br>그룹 기록을 지켰어요!' : '계획보다 ' + (t - goal) + '분 늦었지만,<br>이제라도 푹 자요.') +
-      (friends.length ? '<br><br>' + friends.join(', ') + '님도 잠들어 있어요.' : '');
-    $('sleep').classList.add('show');
+    var ev = currentEvent();
+    if (ev && ev.kind === 'suggest') playVideo(ev.p); else goSleep();
+  });
+
+  /* ---------- 연장 미션 (I-03) ---------- */
+  var audio = null;
+  function startNoise() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      var ctx = new AC(), len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0), last = 0;
+      for (var i = 0; i < len; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.5; }
+      var src = ctx.createBufferSource(), g = ctx.createGain();
+      src.buffer = buf; src.loop = true;
+      g.gain.setValueAtTime(0, ctx.currentTime);
+      g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 1.5);
+      src.connect(g); g.connect(ctx.destination); src.start();
+      audio = { ctx: ctx, g: g };
+    } catch (e) { audio = null; }
+  }
+  function stopNoise() {
+    if (!audio) return;
+    var a = audio; audio = null;
+    try { a.g.gain.linearRampToValueAtTime(0, a.ctx.currentTime + 0.4); setTimeout(function () { a.ctx.close(); }, 500); } catch (e) {}
+  }
+  var READ_TEXT = ['밤이 깊어지면 동네의 소리가 하나씩 꺼진다. 마지막 버스가 지나가고, 편의점 문이 여닫히는 소리도 드문드문해진다.',
+    '창문 너머로 보이는 불 켜진 창은 몇 개 남지 않았다. 그 안에서도 누군가는 이불을 정리하고, 누군가는 내일 입을 옷을 의자에 걸어 둔다.',
+    '물 한 잔을 천천히 마신다. 컵을 내려놓는 소리가 생각보다 크게 들린다. 방 안이 그만큼 조용해졌다는 뜻이다.',
+    '오늘 하루 있었던 일을 하나씩 떠올려 본다. 잘한 일도, 아쉬운 일도 이제는 내일의 몫이다. 지금 할 일은 그저 눈을 감는 것뿐이다.',
+    '숨을 들이쉬고, 조금 더 길게 내쉰다. 어깨가 내려가고 손끝이 따뜻해진다. 베개가 머리의 무게를 받아 준다.',
+    '멀리서 바람이 한 번 불고 지나간다. 그 소리를 끝으로, 밤은 아주 고요해진다.'];
+  var LECTURE = ['자, 오늘은 감가상각에 대해 알아보겠습니다.', '감가상각은… 유형자산의 원가를… 사용 기간에 걸쳐… 나누는 것입니다.',
+    '정액법은… 취득원가에서… 잔존가치를 뺀 금액을…', '…내용연수로… 나누어서… 매년 같은 금액을…', '그러니까… 이 부분은… 다음 시간에 다시… 보겠습니다.'];
+  function openMission() {
+    S.overlay = 'mission'; S.paused = true;
+    var free = '오늘 자유 연장 ' + FREE_EXT + '번을 다 썼어요. 미션 하나를 끝까지 하면 5분을 더 드려요. 중간에 나가면 연장되지 않아요.';
+    $('mission').innerHTML = '<div class="m-wrap"><div class="jua" style="font-size:28px">연장 미션</div><p style="font-size:14px;color:#B3B0CC;line-height:1.55;margin:6px 0 4px">' + free + '</p>' +
+      MISSIONS.map(function (m) {
+        return '<button class="m-item press" data-act="pick" data-id="' + m.id + '"><div><b>' + m.name + (m.rec ? '<span class="rec">추천</span>' : '') + '</b><small>' + m.desc + '</small></div><span class="m-len">' + m.len + '</span></button>';
+      }).join('') +
+      '<div class="sh-btns" style="grid-template-columns:1fr;margin-top:18px"><button class="press jua btn-g" data-act="sleep">미션 말고 그냥 자기</button></div>' +
+      '<button class="linkbtn" data-act="back" style="display:block;margin:12px auto 0">돌아가기</button>' +
+      '<div class="fine" style="text-align:center">프로토타입에서는 미션 시간을 짧게 줄였고, 미션 중에는 시계가 멈춰요.</div></div>';
+    $('mission').classList.add('show');
+    renderLive();
+  }
+  function runMission(id) {
+    var m = MISSIONS.filter(function (x) { return x.id === id; })[0], stage;
+    if (id === 'asmr') stage = '<div class="m-stage" style="background:#050409"><div class="breath"></div><div class="jua" style="font-size:20px;color:#77739A;margin-top:26px">빗소리</div><div style="font-size:13px;color:#4E4B6E;margin-top:4px">눈을 감고 소리만 들어 보세요</div></div>';
+    else if (id === 'ad') stage = '<div class="m-stage" style="background:linear-gradient(160deg,#3B3366,#6E5A8E 60%,#B996B9)"><div class="float"><svg width="150" height="80" viewBox="0 0 150 80" aria-hidden="true"><path d="M8 30c0-12 20-20 67-20s67 8 67 20v14c0 14-24 24-67 24S8 58 8 44z" fill="#E9DDF5"/><path d="M8 34h134" stroke="#B9A6D8" stroke-width="3"/><ellipse cx="48" cy="44" rx="18" ry="8" fill="#CDB9EA"/><ellipse cx="102" cy="44" rx="18" ry="8" fill="#CDB9EA"/></svg></div>' +
+      '<div class="jua" style="font-size:24px;margin-top:18px">포근 라벤더 수면 안대</div><div style="font-size:14px;color:#E9DDF5;margin-top:6px">오늘 밤, 조금 더 깜깜하게</div><div style="position:absolute;left:12px;top:12px;font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.35)">광고 · 가상의 상품</div></div>';
+    else if (id === 'lecture') stage = '<div class="m-stage" style="background:#E9E6DA;color:#3A3A3A;justify-content:flex-start;text-align:left;align-items:flex-start;padding:24px 22px"><div style="font-size:12px;color:#7A7A6A;font-weight:700">회계원리 · 3강</div><div style="font-size:24px;font-weight:700;margin-top:6px">감가상각의 이해</div>' +
+      '<ul style="margin:16px 0 0;padding-left:18px;font-size:15px;line-height:1.9;color:#4A4A4A"><li>유형자산과 내용연수</li><li>정액법과 정률법</li><li>잔존가치의 추정</li></ul><div class="sub-line" id="m-sub">' + LECTURE[0] + '</div></div>';
+    else stage = '<div class="m-stage read" id="m-read">' + READ_TEXT.map(function (p) { return '<p>' + p + '</p>'; }).join('') + '<p style="text-align:center;color:#77739A">— 끝 —</p></div>';
+    $('mission').innerHTML = '<div class="m-run"><div class="m-meta"><span class="jua" style="font-size:18px;color:#F2F0FF">' + m.name + '</span><span id="m-left">' + (id === 'read' ? '끝까지 읽으면 연장돼요' : '') + '</span></div>' +
+      stage + '<div class="prog"><div id="m-prog"></div></div>' +
+      '<button class="press jua btn2" data-act="quit" style="height:50px;border-radius:14px;font-size:17px;cursor:pointer">그만두기 (연장 안 됨)</button></div>';
+    if (id === 'asmr') startNoise();
+    var t0 = Date.now(), readEnd = false, rd = $('m-read');
+    if (rd) rd.addEventListener('scroll', function () { if (rd.scrollTop + rd.clientHeight >= rd.scrollHeight - 8) readEnd = true; });
+    clearInterval(runTimer);
+    runTimer = setInterval(function () {
+      var k = Math.min(1, (Date.now() - t0) / (m.secs * 1000));
+      if (id === 'read') {
+        var sk = rd.scrollHeight > rd.clientHeight ? rd.scrollTop / (rd.scrollHeight - rd.clientHeight) : 1;
+        k = Math.min(k, sk);
+        if (readEnd && Date.now() - t0 >= m.secs * 1000) k = 1;
+      } else {
+        $('m-left').textContent = Math.ceil(m.secs * (1 - k)) + '초 남음';
+        if (id === 'lecture') $('m-sub').textContent = LECTURE[Math.min(LECTURE.length - 1, Math.floor(k * LECTURE.length))];
+      }
+      $('m-prog').style.width = (k * 100).toFixed(1) + '%';
+      if (k >= 1) {
+        clearInterval(runTimer); stopNoise();
+        $('mission').innerHTML = '<div class="m-run" style="align-items:center;justify-content:center;text-align:center"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#34C27A"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="jua" style="font-size:26px">5분 연장됐어요</div><div style="font-size:14px;color:#B3B0CC">미션까지 하면서 연장했어요. 이번엔 꼭 지켜요</div></div>';
+        setTimeout(function () { closeMission(true); }, 1000);
+      }
+    }, 100);
+  }
+  function closeMission(extended) {
+    clearInterval(runTimer); stopNoise();
+    S.overlay = null; S.paused = false;
+    $('mission').classList.remove('show');
+    if (extended) extend(); else renderLive();
+  }
+  $('mission').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'pick') runMission(b.dataset.id);
+    else if (act === 'quit' || act === 'back') closeMission(false);
+    else if (act === 'sleep') { clearInterval(runTimer); stopNoise(); $('mission').classList.remove('show'); S.overlay = null; S.paused = false; goSleep(); }
+  });
+
+  /* ---------- 잠들기 제안 (I-08) ---------- */
+  function overFriends() { return people.filter(function (p, i) { return !p.me && stateOf(i) === 'over'; }); }
+  function goSleep(opts) {
+    if (S.asleep || S.plan == null || S.phase !== 'night') return;
+    if (!(opts && opts.noSheet) && !S.sheetDone) {
+      var c = overFriends(), ok = c.filter(function (p) { return !p.gotSuggest; });
+      if (ok.length) { S.sgTo = ok[0].name; openSuggest(); return; }
+    }
+    finishSleep(opts && opts.via);
+  }
+  function openSuggest() {
+    S.overlay = 'suggest'; S.paused = true; S.sheetDone = true;
+    renderSuggest();
+    $('suggest').classList.add('show');
+    renderLive();
+  }
+  function renderSuggest() {
+    var c = overFriends();
+    var h = '<h3 class="jua">' + S.sgTo + '님에게 잠들기 제안을 보낼까요?</h3>' +
+      '<p>목표 시간을 넘긴 친구에게만 보낼 수 있어요. 한 사람은 하룻밤에 한 번만 제안을 받아요.</p>';
+    if (c.length > 1 || c.some(function (p) { return p.gotSuggest; })) {
+      h += '<div class="to-row">' + c.map(function (p) {
+        return '<button class="to' + (p.name === S.sgTo ? ' on' : '') + '" data-act="to" data-n="' + p.name + '"' + (p.gotSuggest ? ' disabled' : '') + '><span class="g-av" style="background:' + p.color + '">' + p.name.slice(0, 1) + '</span>' +
+          p.name + (p.gotSuggest ? ' · 오늘 이미 받음' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    h += '<div class="vids">' + VIDEOS.map(function (v) {
+      return '<button class="vid' + (v.id === S.sgVid ? ' on' : '') + '" data-act="vid" data-id="' + v.id + '" aria-pressed="' + (v.id === S.sgVid) + '"><div class="th" style="background:' + v.bg + '">' + vidArt(v.id, 36) + '</div><b>' + v.title + '</b><small>수면 유도 · ' + v.len + '분</small></button>';
+    }).join('') + '</div>' +
+      '<div class="sh-btns"><button class="press jua btn2" data-act="skip">보내지 않기</button><button class="press jua btn-g" data-act="send">보내고 자기</button></div>';
+    $('sg-body').innerHTML = h;
+  }
+  $('suggest').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b || b.disabled) return;
+    var act = b.dataset.act;
+    if (act === 'to') { S.sgTo = b.dataset.n; renderSuggest(); }
+    else if (act === 'vid') { S.sgVid = b.dataset.id; renderSuggest(); }
+    else if (act === 'skip') { $('suggest').classList.remove('show'); finishSleep(); }
+    else if (act === 'send') {
+      S.sent = { to: S.sgTo, vid: S.sgVid };
+      $('sg-body').innerHTML = '<div class="sent"><svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#34C27A"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="jua" style="font-size:24px">보냈어요. 잘 자요</div><div style="font-size:14px;color:#B3B0CC">' + S.sgTo + '님이 영상을 보면 내일 아침 알려 드려요</div></div>';
+      setTimeout(function () { $('suggest').classList.remove('show'); finishSleep(); }, 1200);
+    }
+  });
+  // 받는 쪽: 내가 목표를 넘긴 채 깨어 있을 때 친구가 잠들면, 그 친구가 제안을 보낸다(하룻밤 1번)
+  function onMinute(prev, cur) {
+    if (S.plan == null || S.gotSuggest) return;
+    people.forEach(function (p) {
+      if (!p.me && !S.gotSuggest && p.sleepAt > prev && p.sleepAt <= cur && p.sleepAt > S.deadline) S.gotSuggest = p.name;
+    });
+  }
+  var vidTimer;
+  function playVideo(from) {
+    var v = vidOfDay();
+    dismissCurrent();
+    S.overlay = 'video'; S.paused = true;
+    $('video').innerHTML = '<div class="m-run"><div class="m-meta"><span class="jua" style="font-size:18px;color:#F2F0FF">' + from.name + '님이 보낸 영상</span><span>' + v.len + '분</span></div>' +
+      '<div class="m-stage" style="background:' + v.bg + '">' + (v.id === 'rain' ? '<div class="rain"></div>' : '') + '<div class="float">' + vidArt(v.id, 150) + '</div>' +
+      '<div class="jua" style="font-size:22px;margin-top:18px;position:relative">' + v.title + '</div><div style="font-size:13px;color:#B3B0CC;margin-top:4px;position:relative" id="v-msg">화면이 점점 어두워져요</div><div class="v-dim" id="v-dim"></div></div>' +
+      '<div class="prog"><div id="v-prog"></div></div><button class="press jua btn2" data-act="vquit" style="height:50px;border-radius:14px;font-size:17px;cursor:pointer">그만 보기</button></div>';
+    $('video').classList.add('show');
+    startNoise();
+    var t0 = Date.now(), secs = 8;
+    clearInterval(vidTimer);
+    vidTimer = setInterval(function () {
+      var k = Math.min(1, (Date.now() - t0) / (secs * 1000));
+      $('v-prog').style.width = (k * 100) + '%';
+      $('v-dim').style.opacity = (k * 0.85).toFixed(2);
+      if (k >= 1) {
+        clearInterval(vidTimer);
+        $('v-msg').textContent = '화면을 끄는 중…';
+        setTimeout(function () { stopNoise(); $('video').classList.remove('show'); finishSleep('video'); }, 900);
+      }
+    }, 100);
+    renderLive();
+  }
+  $('video').addEventListener('click', function (e) {
+    if (!e.target.closest('[data-act="vquit"]')) return;
+    clearInterval(vidTimer); stopNoise();
+    $('video').classList.remove('show');
+    S.overlay = null; S.paused = false;
     renderLive();
   });
-  $('restart').addEventListener('click', function () {
-    initState();
+
+  /* ---------- 잘 자요 · 수면 측정 (I-12) ---------- */
+  function finishSleep(via) {
+    var t = now();
+    S.asleep = true; S.sleepAt = t; S.via = via || null; S.overlay = null; S.paused = false;
+    $('notice').classList.remove('show');
+    var msg = t <= S.plan ? '계획보다 ' + (S.plan - t) + '분 일찍 폰을 껐어요.<br>그룹 기록을 지켰어요!' :
+      t <= S.deadline ? '연장 ' + S.ext + '번 끝에 약속을 지켰어요.<br>내일은 연장 없이 해 봐요.' :
+      '계획보다 ' + (t - S.deadline) + '분 늦었지만,<br>이제라도 푹 자요.';
+    var friends = people.filter(function (p) { return !p.me && t >= p.sleepAt; }).map(function (p) { return p.name; });
+    if (via === 'video') msg += '<br><br>' + S.gotSuggest + '님의 제안 덕분에 잠들었어요.';
+    if (S.sent) msg += '<br><br>' + S.sent.to + '님에게 ‘' + VIDEOS.filter(function (v) { return v.id === S.sent.vid; })[0].title + '’ 영상을 보냈어요.';
+    else if (friends.length && via !== 'video') msg += '<br><br>' + friends.join(', ') + '님도 잠들어 있어요.';
+    if (!friends.length) msg += '<br><br>오늘 우리 그룹에서 가장 먼저 잠들었어요.';
+    $('sleep-msg').innerHTML = msg;
+    S.measuring = P.consent === true;
+    $('sl-measure').hidden = true;
+    $('sleep').classList.remove('measuring');
+    $('sleep').classList.add('show');
+    setTimeout(renderMeasure, 1300);
+    renderLive();
+  }
+  function renderMeasure() {
+    if (!S.asleep || S.phase !== 'night') return;
+    var box = $('sl-measure'), h;
+    if (P.consent == null) {
+      h = '<b class="jua">오늘 밤 수면을 측정할까요?</b>폰을 머리맡에 두면 움직임과 소리로 수면 단계를 추정하고, 얕은 잠일 때 스마트 알람으로 깨워 드려요.' +
+        '<div class="fine" style="margin-top:8px">마이크와 동작 센서 권한이 필요해요. 소리는 기기 안에서만 분석하고 녹음 파일은 저장하지 않아요.</div>' +
+        '<div class="sh-btns" style="margin-top:12px"><button class="press jua btn2" data-act="mno">측정 안 함</button><button class="press jua btn1" data-act="myes">측정 시작</button></div>';
+    } else if (S.measuring) {
+      h = '<b class="jua">수면 측정 중 · 추정치</b>충전기에 연결해서 머리맡에 두세요. 스마트 알람은 ' + hm(ALARM) + ' 전 30분 안에서 얕은 잠일 때 울려요.' +
+        '<div class="fine" style="margin-top:8px">측정하는 동안 팝업 시계와 친구 알림은 모두 꺼지고, 잠금 화면이 유지돼요.</div>' +
+        '<button class="linkbtn" data-act="moff">오늘은 측정 끄기</button>';
+    } else {
+      h = '<b class="jua">수면 측정 꺼짐</b>알람은 ' + hm(ALARM) + '에 울려요.<button class="linkbtn" data-act="mon" style="display:block">오늘 밤 측정하기</button>';
+    }
+    box.innerHTML = h;
+    box.hidden = false;
+    $('sleep').classList.toggle('measuring', S.measuring);
+  }
+  $('sl-measure').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'myes') { P.consent = true; S.measuring = true; }
+    else if (act === 'mno') { P.consent = false; S.measuring = false; }
+    else if (act === 'moff') S.measuring = false;
+    else if (act === 'mon') { P.consent = true; S.measuring = true; }
+    renderMeasure();
+  });
+
+  /* ---------- 하룻밤 정산 → 아침 ---------- */
+  function settleNight() {
+    var d = P.day, me = { ok: S.sleepAt <= S.deadline, ext: S.ext, over: Math.max(0, S.sleepAt - S.deadline) };
+    var vid = S.sent ? VIDEOS.filter(function (v) { return v.id === S.sent.vid; })[0] : null;
+    var rows = people.map(function (p) {
+      if (p.me) return { name: p.name, me: true, color: p.color, at: S.sleepAt, goal: S.deadline, ok: me.ok };
+      var at = p.sleepAt;
+      if (S.sent && S.sent.to === p.name) at = Math.min(at, S.sleepAt + vid.len);   // 제안 영상을 보고 잠듦(프로토타입 가정)
+      return { name: p.name, color: p.color, at: at, goal: p.goalAt, ok: at <= p.goalAt };
+    });
+    rows.sort(function (a, b) { return a.at - b.at; });
+    var okCount = rows.filter(function (r) { return r.ok; }).length, groupOk = okCount === rows.length;
+    var wake = S.measuring ? ALARM - 5 - Math.floor(rnd(d + 500) * 20) : ALARM;
+    var e = entry(d, S.plan, S.sleepAt, S.ext, wake, S.measuring, S.deadline);
+    e.g = groupOk;
+    P.hist.push(e);
+    var prevGroup = P.groupStreak;
+    P.groupStreak = groupOk ? P.groupStreak + 1 : 0;
+    P.myStreak = me.ok ? P.myStreak + 1 : 0;
+    P.lastGroupMsg = groupOk ? '어젯밤 4명 모두 계획대로 잠들었어요' : '어젯밤엔 계획을 넘긴 사람이 있었어요. 오늘부터 다시 쌓아요';
+    var unlocks = [];
+    SHAPE_LIST.forEach(function (s) { if (typeof s.need === 'number' && s.need && P.myStreak >= s.need && !P.unlocked[s.id]) { P.unlocked[s.id] = true; unlocks.push(s); } });
+    if (unlocks.length) saveLight();
+    P.selDay = null; P.selStage = null; P.calOpen = false; P.calMonth = null;   // 기록 탭은 새로 생긴 어젯밤 기록부터 보여 준다
+    var duelLine = null, D = P.duel;
+    if (D && (D.status === 'ready' || D.status === 'active') && d >= D.start) {
+      var got = duelRecord(me);
+      if (got === 'crown') unlocks.push(SHAPE_LIST[4]);
+      var a = duelStats(D.me), b = duelStats(D.opp);
+      duelLine = D.status === 'done' ? (D.win === 'me' ? D.opp_name + '님과의 대결에서 이겼어요!' : D.win === 'opp' ? D.opp_name + '님과의 대결이 끝났어요. 아쉽게 졌어요' : D.opp_name + '님과 비겼어요') :
+        '대결 ' + a.n + '/' + D.period + '일째 · 연속 성공 나 ' + a.cur + '일, ' + D.opp_name + ' ' + b.cur + '일';
+    }
+    P.morning = { day: d, me: me, e: e, rows: rows, okCount: okCount, groupOk: groupOk, prevGroup: prevGroup, unlocks: unlocks, duelLine: duelLine,
+                  sent: S.sent ? { to: S.sent.to, title: vid.title, at: rows.filter(function (r) { return r.name === S.sent.to; })[0].at } : null,
+                  via: S.via, from: S.gotSuggest, wake: wake, measured: S.measuring };
+    P.day++;
+    P.clock = wake + 2;
+  }
+  function goMorning() {
+    settleNight();
+    S.phase = 'morning';
+    S.editType = null; S.rewinding = false;
     ['sm', 'mo'].forEach(function (n) { $('scr-' + n).classList.remove('on'); });
     $('scr-home').classList.remove('dim');
     $('toast').classList.remove('show');
+    S.screen = 'home';
+    showAlarm();
+    $('sleep').classList.remove('show', 'measuring');
+    renderLive();
+  }
+  $('toMorning').addEventListener('click', goMorning);
+  function showAlarm() {
+    var M = P.morning;
+    $('alarm').innerHTML = '<div style="font-size:15px;color:#C9C2FF;font-weight:600">' + dayLabel(P.day) + '</div><div class="jua big">' + hm(M.wake) + '</div>' +
+      '<div class="jua" style="font-size:22px">' + (M.measured ? '스마트 알람' : '알람') + '</div>' +
+      '<div style="font-size:14px;color:#D9D7EA;line-height:1.5">' + (M.measured ? '얕은 잠일 때 깨웠어요 · 원래 알람 ' + hm(ALARM) : '좋은 아침이에요') + '</div>' +
+      '<button class="cta press jua" data-act="wake" style="width:240px;margin-top:20px">일어났어요</button>';
+    $('alarm').classList.add('show');
+  }
+  $('alarm').addEventListener('click', function (e) {
+    if (!e.target.closest('[data-act="wake"]')) return;
+    P.clock = P.morning.wake + 3;
+    if (P.morning.measured) {
+      $('alarm').innerHTML = '<span class="spin" style="width:40px;height:40px"></span><div class="jua" style="font-size:22px">수면을 분석하고 있어요</div><div style="font-size:14px;color:#D9D7EA">폰을 집어 든 순간 측정을 멈췄어요</div>';
+      setTimeout(function () { $('alarm').classList.remove('show'); showMorning(); }, 1200);
+    } else { $('alarm').classList.remove('show'); showMorning(); }
+    renderLive();
+  });
+  function showMorning() {
+    var M = P.morning, e = M.e, c = [];
+    var card = function (ic, bg, title, body) { return '<div class="am-card"><span class="am-ic" style="background:' + bg + '">' + ic + '</span><div><b>' + title + '</b>' + (body || '') + '</div></div>'; };
+    var moon = function (col) { return '<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="' + MOON_P + '" fill="' + (col || '#FFC531') + '"/></svg>'; };
+    var head = e.used < e.plan ? '계획보다 ' + (e.plan - e.used) + '분 일찍 잠들었어요' : e.used === e.plan ? '계획한 시간에 맞춰 잠들었어요' : e.ok ? '연장 ' + e.ext + '번 끝에 약속을 지켰어요' : '목표보다 ' + M.me.over + '분 늦게 잠들었어요';
+    c.push(card(moon(), e.ok ? '#123A2A' : '#3A1820', head, hm(START + e.used) + ' 소등 · 폰 사용 ' + dur(e.used) + ' · 연장 ' + e.ext + '번'));
+    if (M.measured) c.push(card('<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#A99EFF" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>', '#2D2B52',
+      '수면 ' + dur(e.slept) + ' · 깊은 잠 ' + dur(stageSum(e, 'deep')), '<span class="est">추정치</span> 스마트 알람이 얕은 잠일 때 ' + hm(M.wake) + '에 깨웠어요'));
+    c.push(card('<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="' + MOON_P + '" fill="#FFC531"/><circle cx="18" cy="5" r="1.4" fill="#fff"/></svg>', '#3D3418',
+      M.groupOk ? '그룹 연속 기록 ' + P.groupStreak + '일째' : '그룹 연속 기록이 0일부터 다시 시작해요',
+      M.groupOk ? '4명 모두 계획대로 잠들었어요' : '어젯밤 계획을 넘긴 사람이 있었어요 (' + M.prevGroup + '일에서 멈춤). 오늘 밤 다시 쌓아 봐요'));
+    var f = M.rows[0];
+    c.push(card(moon('#FFE6A0'), '#3A3420', '가장 먼저 잠든 사람: ' + (f.me ? '나' : f.name + '님'), hm(START + f.at) + '에 가장 먼저 불을 껐어요' + (f.me ? '. 멋져요!' : '')));
+    if (M.sent) c.push(card('<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#7EE2AE" stroke-width="2.4" stroke-linejoin="round"><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/></svg>', '#123A2A',
+      '제안이 통했어요', M.sent.to + '님이 ‘' + M.sent.title + '’ 영상을 보며 ' + hm(START + M.sent.at) + '에 잠들었어요'));
+    if (M.via === 'video') c.push(card(moon(), '#2D2B52', M.from + '님의 제안으로 잠들었어요', '다음엔 내가 먼저 잠들어 친구를 도와줘요'));
+    M.unlocks.forEach(function (s) {
+      c.push(card(light('awake', s.id, 20), '#2F2A66', '새 불빛이 열렸어요: ' + s.name, (s.need === 'duel' ? '대결에서 이긴 보상이에요' : s.need + '일 연속 기록을 달성했어요') + ' <button class="linkbtn" data-act="use" data-id="' + s.id + '">바로 쓰기</button>'));
+    });
+    if (M.duelLine) c.push(card('<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFD66B" stroke-width="2.4" stroke-linecap="round"><path d="M5 19L19 5M14 5h5v5M5 5l5 5M14 14l5 5M19 14v5h-5"/></svg>', '#3D3418', '1:1 대결', M.duelLine + ' <button class="linkbtn" data-act="duel">대결 보기</button>'));
+    $('morning').innerHTML = '<div class="m-wrap"><div style="font-size:15px;color:#E4E0FF;font-weight:600">' + dayLabel(P.day) + '</div><div class="jua" style="font-size:32px">좋은 아침이에요</div>' + c.join('') +
+      '<div class="am-btns"><button class="press jua btn2" data-act="stats">기록 자세히 보기</button><button class="press jua btn1" data-act="night">오늘 밤 23:00으로</button></div>' +
+      '<button class="linkbtn" data-act="restart" style="display:block;margin:14px auto 0;color:#E4E0FF">처음부터 다시 보기</button></div>';
+    $('morning').classList.add('show');
+    renderLive();
+  }
+  $('morning').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'use') { setShape(b.dataset.id); b.textContent = '사용 중'; b.disabled = true; renderLive(); }
+    else if (act === 'stats') { $('morning').classList.remove('show'); renderLive(); openApp('sm', $('ic-sm'), 'stats'); }
+    else if (act === 'duel') { $('morning').classList.remove('show'); renderLive(); openApp('sm', $('ic-sm'), 'mate', 'duel'); }
+    else if (act === 'night') nextNight();
+    else if (act === 'restart') restart();
+  });
+  $('nightpill').addEventListener('click', nextNight);
+
+  /* ---------- 다음 날 밤 · 처음부터 ---------- */
+  function resetUI() {
+    clearInterval(runTimer); clearInterval(vidTimer); stopNoise();
+    ['sm', 'mo'].forEach(function (n) { $('scr-' + n).classList.remove('on'); });
+    $('scr-home').classList.remove('dim');
+    ['toast', 'banner', 'notice'].forEach(function (id) { $(id).classList.remove('show'); });
+    ['ask', 'suggest', 'mission', 'video', 'alarm', 'morning'].forEach(function (id) { $(id).classList.remove('show'); });
+    $('sleep').classList.remove('show', 'measuring');
     $('splash').classList.add('hide');
-    $('sleep').classList.remove('show');
     $('feed').scrollTop = 0;
-    $('sm-nav').children[0].click();
+    setTab('clock');
+    renderSettings();
     renderDial();
+    renderStats();
     renderLive();
     scheduleBanner();
-  });
+  }
+  function nextNight() { initNight(); resetUI(); }
+  function restart() { clearTimeout(duelTimer); clearLight(); initP(); initNight(); resetUI(); }
+  $('restart').addEventListener('click', restart);
 
   /* ---------- 시간 흐름 ---------- */
   function renderLive() {
-    $('sb-time').textContent = hm(START + now());
+    $('sb-time').textContent = clockText();
     renderHome();
     renderGroup();
     renderDial();
     renderPopup();
     renderNotice();
+    $('nightpill').classList.toggle('show', S.phase === 'morning' && S.screen === 'home' && !$('alarm').classList.contains('show') && !$('morning').classList.contains('show'));
   }
   setInterval(function () {
-    if (S.plan == null || S.asleep) return;
+    if (S.phase !== 'night' || S.plan == null || S.asleep || S.paused) return;
     if (S.t < T_MAX) S.t = Math.min(T_MAX, S.t + 100 / MS_PER_MIN);
-    if (now() !== lastMin) { lastMin = now(); renderLive(); }
+    if (now() !== lastMin) { onMinute(lastMin, now()); lastMin = now(); renderLive(); }
   }, 100);
 
+  renderSettings();
   renderDial();
+  renderStats();
   renderLive();
   scheduleBanner();
 })();
